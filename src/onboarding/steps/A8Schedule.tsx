@@ -1,4 +1,7 @@
+import { useRef, useState } from 'react';
+import { ChevronDownIcon } from '../../components/icons';
 import { Mascot } from '../../components/Mascot';
+import { TimeWheelSheet } from '../../components/TimeWheelSheet';
 import {
   Button,
   ProgressBar,
@@ -7,13 +10,7 @@ import {
   ScreenFooter,
   Spacer,
 } from '../../components/ui';
-import {
-  DAY_INITIALS,
-  fromTimeInputValue,
-  scheduleSentence,
-  splitTime,
-  toTimeInputValue,
-} from '../state';
+import { DAY_INITIALS, scheduleSentence, splitTime } from '../state';
 import { PROGRESS, type StepProps } from '../types';
 
 const DAY_NAMES = [
@@ -26,7 +23,17 @@ const DAY_NAMES = [
   'Sunday',
 ];
 
+/** The shortest sitting day the scheduler can put a break inside. */
+const MIN_WINDOW = 30;
+const LAST_MINUTE = 1439;
+
+type Edited = 'start' | 'end';
+
 export function A8Schedule({ state, set, next }: StepProps) {
+  const [editing, setEditing] = useState<Edited | null>(null);
+  const startCard = useRef<HTMLButtonElement>(null);
+  const endCard = useRef<HTMLButtonElement>(null);
+
   const toggleDay = (index: number) => {
     set((current) => ({
       activeDays: current.activeDays.map((on, i) => (i === index ? !on : on)),
@@ -36,23 +43,31 @@ export function A8Schedule({ state, set, next }: StepProps) {
   const start = splitTime(state.startMinutes);
   const end = splitTime(state.endMinutes);
 
-  /** Times are clamped so "ends" can never sit before "starts". */
-  const setStart = (value: string) => {
-    const minutes = fromTimeInputValue(value);
-    if (minutes === null) return;
+  /**
+   * Times are clamped so "ends" can never sit before "starts": whichever end
+   * the wheels are moving wins, and the other is pushed out of the way.
+   */
+  const setStart = (minutes: number) => {
+    const startMinutes = Math.min(minutes, LAST_MINUTE - MIN_WINDOW);
     set((current) => ({
-      startMinutes: minutes,
-      endMinutes: Math.min(1439, Math.max(current.endMinutes, minutes + 30)),
+      startMinutes,
+      endMinutes: Math.max(current.endMinutes, startMinutes + MIN_WINDOW),
     }));
   };
 
-  const setEnd = (value: string) => {
-    const minutes = fromTimeInputValue(value);
-    if (minutes === null) return;
+  const setEnd = (minutes: number) => {
+    const endMinutes = Math.max(minutes, MIN_WINDOW);
     set((current) => ({
-      endMinutes: minutes,
-      startMinutes: Math.max(0, Math.min(current.startMinutes, minutes - 30)),
+      endMinutes,
+      startMinutes: Math.min(current.startMinutes, endMinutes - MIN_WINDOW),
     }));
+  };
+
+  /** Closing hands focus back to the card that opened the sheet. */
+  const closeSheet = () => {
+    const opener = editing === 'start' ? startCard.current : endCard.current;
+    setEditing(null);
+    opener?.focus();
   };
 
   return (
@@ -80,33 +95,41 @@ export function A8Schedule({ state, set, next }: StepProps) {
         </div>
 
         <div className="times">
-          <label className="time-card">
+          <button
+            ref={startCard}
+            type="button"
+            className="time-card"
+            aria-label={`Sitting starts at ${start.clock} ${start.suffix}`}
+            aria-haspopup="dialog"
+            aria-expanded={editing === 'start'}
+            onClick={() => setEditing('start')}
+          >
             <span className="eyebrow">Starts</span>
             <span className="time-card__value">
               {start.clock} <span className="time-card__suffix">{start.suffix}</span>
             </span>
-            <input
-              className="time-card__input"
-              type="time"
-              aria-label="Sitting starts at"
-              value={toTimeInputValue(state.startMinutes)}
-              onChange={(event) => setStart(event.target.value)}
-            />
-          </label>
+            <span className="time-card__caret" aria-hidden="true">
+              <ChevronDownIcon size={15} />
+            </span>
+          </button>
 
-          <label className="time-card">
+          <button
+            ref={endCard}
+            type="button"
+            className="time-card"
+            aria-label={`Sitting ends at ${end.clock} ${end.suffix}`}
+            aria-haspopup="dialog"
+            aria-expanded={editing === 'end'}
+            onClick={() => setEditing('end')}
+          >
             <span className="eyebrow">Ends</span>
             <span className="time-card__value">
               {end.clock} <span className="time-card__suffix">{end.suffix}</span>
             </span>
-            <input
-              className="time-card__input"
-              type="time"
-              aria-label="Sitting ends at"
-              value={toTimeInputValue(state.endMinutes)}
-              onChange={(event) => setEnd(event.target.value)}
-            />
-          </label>
+            <span className="time-card__caret" aria-hidden="true">
+              <ChevronDownIcon size={15} />
+            </span>
+          </button>
         </div>
 
         <p className="note a8__note" aria-live="polite">
@@ -125,6 +148,15 @@ export function A8Schedule({ state, set, next }: StepProps) {
           Continue
         </Button>
       </ScreenFooter>
+
+      {editing ? (
+        <TimeWheelSheet
+          title={editing === 'start' ? 'Sitting starts at' : 'Sitting ends at'}
+          minutes={editing === 'start' ? state.startMinutes : state.endMinutes}
+          onChange={editing === 'start' ? setStart : setEnd}
+          onClose={closeSheet}
+        />
+      ) : null}
     </Screen>
   );
 }
