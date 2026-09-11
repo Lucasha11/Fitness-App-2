@@ -49,7 +49,7 @@ export function PausedView({
 
       <div className="paused__stage">
         <Mascot
-          name={poseFor(exercise.region)}
+          name={poseFor(exercise)}
           size={250}
           alt="Paused exercise"
         />

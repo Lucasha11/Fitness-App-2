@@ -484,7 +484,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
       >
         <div className="player__halo">
           <Mascot
-            name={poseFor(current.region)}
+            name={poseFor(current)}
             size={discreet ? 210 : 270}
             alt={`Panda coach demonstrating ${current.name.toLowerCase()}`}
             className={discreet ? undefined : 'bob'}
@@ -540,7 +540,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
 
       {showingSwitch ? (
         <SwitchSides
-          region={current.region}
+          exercise={current}
           onDone={() => setStage('running')}
         />
       ) : null}

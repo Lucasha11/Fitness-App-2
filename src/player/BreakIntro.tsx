@@ -84,7 +84,7 @@ export function BreakIntro({
         }}
       >
         <div className="intro__halo bob">
-          <Mascot name={poseFor(exercise.region)} size={215} alt="Panda coach" />
+          <Mascot name={poseFor(exercise)} size={215} alt="Panda coach" />
         </div>
 
         <div>

@@ -344,6 +344,11 @@ const MASCOTS: MascotName[] = [
   'squats',
   'thumbsup',
   'water',
+  'neckrolls',
+  'spinaltwist',
+  'figurefour',
+  '9090',
+  'marching',
 ];
 
 const ICON_SAMPLES = [
@@ -390,9 +395,10 @@ function Iconography() {
       <p className="ds__note">
         Pattern: the mascot sits on a soft mint circle with a gentle 3.2s bob
         (skipped under reduced motion). The break player picks the pose from the
-        exercise&rsquo;s body area, so the figure always matches the movement. A
-        parallel <code>squirrel-*</code> asset set exists for an alternate coach
-        — swap consistently, never mix species on one screen.
+        exercise itself wherever one is drawn, and falls back to the
+        exercise&rsquo;s body area otherwise, so the figure always matches the
+        movement. A parallel <code>squirrel-*</code> asset set exists for an
+        alternate coach — swap consistently, never mix species on one screen.
       </p>
     </Section>
   );

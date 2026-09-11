@@ -1,5 +1,19 @@
 import type { MascotName } from '../components/Mascot';
+import type { Exercise } from '../exercises';
 import type { BodyRegion } from '../onboarding/state';
+
+/**
+ * Exercises that have their own drawn pose. Everything else falls back to its
+ * body area's pose, so the catalogue can grow ahead of the illustrations.
+ */
+const POSE_BY_EXERCISE: Partial<Record<string, MascotName>> = {
+  'neck-rolls': 'neckrolls',
+  'spinal-twist': 'spinaltwist',
+  'figure-four': 'figurefour',
+  'hip-90-90': '9090',
+  'standing-march': 'marching',
+  'desk-squats': 'squats',
+};
 
 /** Each body area gets a mascot pose, so the figure matches the movement. */
 const POSE_BY_REGION: Record<BodyRegion, MascotName> = {
@@ -25,8 +39,8 @@ const TINT_BY_REGION: Record<BodyRegion, string> = {
   lowEnergy: 'var(--lime)',
 };
 
-export function poseFor(region: BodyRegion): MascotName {
-  return POSE_BY_REGION[region];
+export function poseFor(exercise: Exercise): MascotName {
+  return POSE_BY_EXERCISE[exercise.id] ?? POSE_BY_REGION[exercise.region];
 }
 
 export function tintFor(region: BodyRegion): string {
