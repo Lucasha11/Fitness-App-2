@@ -148,16 +148,30 @@ export function formatTime(minutes: number): string {
   return `${hour12}:${String(minute).padStart(2, '0')} ${suffix}`;
 }
 
-/** `9 * 60` -> `09:00`, the value an `<input type="time">` expects. */
-export function toTimeInputValue(minutes: number): string {
-  const total = ((minutes % 1440) + 1440) % 1440;
-  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+/** The three columns of the A8 time wheels. */
+export interface ClockParts {
+  /** 12 for both noon and midnight, as the wheel reads it. */
+  hour12: number;
+  minute: number;
+  meridiem: 'AM' | 'PM';
 }
 
-export function fromTimeInputValue(value: string): number | null {
-  const match = /^(\d{2}):(\d{2})$/.exec(value);
-  if (!match) return null;
-  return Number(match[1]) * 60 + Number(match[2]);
+export function timeParts(minutes: number): ClockParts {
+  const total = ((minutes % 1440) + 1440) % 1440;
+  const hour24 = Math.floor(total / 60);
+  return {
+    hour12: hour24 % 12 === 0 ? 12 : hour24 % 12,
+    minute: total % 60,
+    meridiem: hour24 < 12 ? 'AM' : 'PM',
+  };
+}
+
+export function minutesFromParts({
+  hour12,
+  minute,
+  meridiem,
+}: ClockParts): number {
+  return ((hour12 % 12) + (meridiem === 'PM' ? 12 : 0)) * 60 + minute;
 }
 
 /** Splits `9:00 AM` so the meridiem can be set in a smaller type size. */

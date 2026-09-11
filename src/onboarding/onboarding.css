@@ -223,8 +223,13 @@
   margin-top: 16px;
 }
 
+/*
+ * The whole card is the tap target; it raises the wheel sheet rather than
+ * handing off to the native time picker, which draws nothing we can style.
+ */
 .time-card {
   flex: 1;
+  border: none;
   border-radius: var(--radius-card);
   background: var(--surface);
   padding: 16px;
@@ -232,6 +237,9 @@
   cursor: pointer;
   display: block;
   position: relative;
+  font-family: inherit;
+  color: inherit;
+  text-align: left;
 }
 
 .time-card__value {
@@ -245,24 +253,22 @@
   font-size: 14px;
 }
 
-/*
- * The native time picker sits invisibly over the card so the whole card is
- * the tap target, while the styled value below stays the visible control.
- */
-.time-card__input {
+.time-card__caret {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
+  right: 13px;
+  bottom: 13px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-pill);
+  background: var(--fill);
+  color: var(--ink-muted);
+  transition: transform 200ms ease;
 }
 
-.time-card:focus-within {
-  outline: 3px solid var(--accent);
-  outline-offset: 3px;
+.time-card[aria-expanded='true'] .time-card__caret {
+  transform: rotate(180deg);
 }
 
 .a8__note {
