@@ -26,6 +26,7 @@ const INTERVALS: { value: Interval; label: string }[] = [
 export function A9Frequency({ state, set, next }: StepProps) {
   const isAuto = state.interval === 'auto';
   const breaks = breaksPerDay(state);
+  const minutes = movementMinutes(breaks);
   const offsets = previewOffsets(breaks);
   const midpoint = formatTime(
     Math.round((state.startMinutes + state.endMinutes) / 2),
@@ -81,8 +82,8 @@ export function A9Frequency({ state, set, next }: StepProps) {
           </div>
 
           <p className="rail__summary" aria-live="polite">
-            That’s about {breaks} breaks a day, roughly{' '}
-            {movementMinutes(breaks)} minutes of movement.
+            That’s about {breaks} break{breaks === 1 ? '' : 's'} a day,
+            roughly {minutes} minute{minutes === 1 ? '' : 's'} of movement.
           </p>
         </div>
 
