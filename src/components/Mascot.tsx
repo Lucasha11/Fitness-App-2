@@ -75,11 +75,25 @@ interface MascotProps {
   /** Empty string marks the mascot as decorative, matching the canvas. */
   alt?: string;
   className?: string;
+  /**
+   * Overrides the screen's coach. Only the picker has any business setting
+   * this: it is the one screen whose job is showing the species side by side,
+   * so it is the documented exception to "never mix species on one screen".
+   * Everywhere else, leave it alone and let the context decide.
+   */
+  coach?: Coach;
 }
 
 /** The MoveMate coach, in whichever species the surrounding screen picked. */
-export function Mascot({ name, size, alt = '', className }: MascotProps) {
-  const coach = useCoach();
+export function Mascot({
+  name,
+  size,
+  alt = '',
+  className,
+  coach: override,
+}: MascotProps) {
+  const contextCoach = useCoach();
+  const coach = override ?? contextCoach;
 
   return (
     <img

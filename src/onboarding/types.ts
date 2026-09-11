@@ -3,6 +3,7 @@ import type { OnboardingState } from './state';
 /** The screens drawn in Onboarding.dc.html, in flow order. */
 export type StepId =
   | 'A1'
+  | 'A1b'
   | 'A2'
   | 'A3'
   | 'A5'
@@ -21,6 +22,7 @@ export type StepId =
 /** The linear spine of onboarding. A17 hangs off A1 and is not part of it. */
 export const MAIN_FLOW: StepId[] = [
   'A1',
+  'A1b',
   'A2',
   'A3',
   'A5',

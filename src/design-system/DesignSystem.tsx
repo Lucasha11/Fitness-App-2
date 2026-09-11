@@ -420,10 +420,12 @@ function Iconography() {
         (skipped under reduced motion). The break player picks the pose from the
         exercise itself wherever one is drawn, and falls back to the
         exercise&rsquo;s body area otherwise, so the figure always matches the
-        movement. The coach comes in two species, picked on A1 and held in one
-        context, so a screen can never mix them — both sets carry every pose,
-        and <code>Mascot</code> will not compile until a new pose is drawn for
-        each.
+        movement. The coach is picked on A1b&rsquo;s carousel and held in one
+        context, so a screen can never mix species — both sets carry every
+        pose, and <code>Mascot</code> will not compile until a new pose is
+        drawn for each. Adding an animal means an entry in
+        <code>COACH_PROFILES</code> and its art; the carousel, its pager and
+        its jump rail size themselves off that list.
       </p>
     </Section>
   );

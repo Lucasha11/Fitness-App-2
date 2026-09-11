@@ -9,6 +9,7 @@ import {
   saveState,
 } from './state';
 import { A1Welcome } from './steps/A1Welcome';
+import { A1bCoach } from './steps/A1bCoach';
 import { A2ValueCarousel } from './steps/A2ValueCarousel';
 import { A3DayType } from './steps/A3DayType';
 import { A5Bothers } from './steps/A5Bothers';
@@ -32,6 +33,7 @@ import {
 
 const SCREENS: Record<StepId, (props: StepProps) => React.ReactElement> = {
   A1: A1Welcome,
+  A1b: A1bCoach,
   A2: A2ValueCarousel,
   A3: A3DayType,
   A5: A5Bothers,

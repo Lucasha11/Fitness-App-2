@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react';
+import type { MascotName } from './Mascot';
 
 /**
  * Which animal the coach is. The two asset sets are complete parallels, and
@@ -21,6 +22,39 @@ export const COACH_LABEL: Record<Coach, string> = {
   panda: 'Panda',
   squirrel: 'Squirrel',
 };
+
+/**
+ * What the picker shows for each coach. Adding an animal here (with its art
+ * in `Mascot`) is the whole job — A1b's carousel, its pager and its jump rail
+ * all size themselves off this list.
+ */
+export interface CoachProfile {
+  value: Coach;
+  /** The name on the card. The lowercase form for copy is COACH_NOUN. */
+  name: string;
+  blurb: string;
+  /** Two short words, the tone the coach speaks in. */
+  traits: [string, string];
+  /** The pose the card leads with. */
+  pose: MascotName;
+}
+
+export const COACH_PROFILES: CoachProfile[] = [
+  {
+    value: 'panda',
+    name: 'Panda',
+    blurb: 'Calm, a bit smug about posture. Will wait all day for you to stand up.',
+    traits: ['Gentle', 'Deadpan'],
+    pose: 'thumbsup',
+  },
+  {
+    value: 'squirrel',
+    name: 'Squirrel',
+    blurb: 'Caffeinated. Will not sit down, and does not believe you can either.',
+    traits: ['Restless', 'Loud'],
+    pose: 'thumbsup',
+  },
+];
 
 /** The panda is the default coach, as shipped with the design. */
 export const CoachContext = createContext<Coach>('panda');
