@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChevronRightIcon, CloseIcon, SwapIcon } from '../components/icons';
+import { COACH_LABEL, useCoach } from '../components/coach';
 import { Mascot } from '../components/Mascot';
 import { type Exercise, formatDuration } from '../exercises';
 import { BODY_REGION_LABELS } from '../onboarding/state';
@@ -50,6 +51,7 @@ export function BreakIntro({
     return () => window.clearInterval(timer);
   }, [onStart]);
 
+  const coach = useCoach();
   const totalSeconds = sequence.reduce((sum, item) => sum + item.seconds, 0);
 
   return (
@@ -84,7 +86,11 @@ export function BreakIntro({
         }}
       >
         <div className="intro__halo bob">
-          <Mascot name={poseFor(exercise)} size={215} alt="Panda coach" />
+          <Mascot
+            name={poseFor(exercise)}
+            size={215}
+            alt={`${COACH_LABEL[coach]} coach`}
+          />
         </div>
 
         <div>

@@ -302,6 +302,12 @@
 
 /* ---- Mascot row ---------------------------------------------------------- */
 
+/* The mascot grid reads either species, so both sets get reviewed. */
+.ds__coach-picker {
+  width: 220px;
+  margin-bottom: 14px;
+}
+
 .ds__mascots {
   display: flex;
   gap: 14px;

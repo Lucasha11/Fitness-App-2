@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { CoachProvider } from '../components/CoachProvider';
 import './onboarding.css';
 import {
   type OnboardingState,
@@ -113,6 +114,12 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
 
   const Screen = SCREENS[step];
 
+  // The live answer sheet is the one here, not the copy App is holding, so
+  // the coach A1 picks takes effect on the very next screen.
   // Re-mount on every step so the entry animation replays and scroll resets.
-  return <Screen key={step} {...props} />;
+  return (
+    <CoachProvider coach={answers.coach}>
+      <Screen key={step} {...props} />
+    </CoachProvider>
+  );
 }

@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { CoachProvider } from './components/CoachProvider';
 import type { Exercise } from './exercises';
 import { OnboardingFlow } from './onboarding/OnboardingFlow';
 import { loadState, type OnboardingState } from './onboarding/state';
@@ -58,35 +59,45 @@ function Root() {
     [seedMeetings],
   );
 
-  if (view.name === 'lockScreen') {
-    return (
-      <LockScreenPreview
-        onExit={() => {
-          window.location.hash = '';
-          setView(
-            answers.completedAt ? { name: 'today' } : { name: 'onboarding' },
-          );
-        }}
-      />
-    );
-  }
+  // One provider over the whole app, so a screen can never mix species.
+  // Onboarding nests its own while the user is still choosing on A1.
+  return (
+    <CoachProvider coach={answers.coach}>
+      {renderView()}
+    </CoachProvider>
+  );
 
-  if (view.name === 'onboarding') {
-    return <OnboardingFlow onComplete={handleOnboardingComplete} />;
-  }
+  function renderView() {
+    if (view.name === 'lockScreen') {
+      return (
+        <LockScreenPreview
+          onExit={() => {
+            window.location.hash = '';
+            setView(
+              answers.completedAt ? { name: 'today' } : { name: 'onboarding' },
+            );
+          }}
+        />
+      );
+    }
 
-  if (view.name === 'player') {
-    return (
-      <BreakPlayer
-        answers={answers}
-        lead={view.lead}
-        slot={view.slot}
-        onExit={() => setView({ name: 'today' })}
-      />
-    );
-  }
+    if (view.name === 'onboarding') {
+      return <OnboardingFlow onComplete={handleOnboardingComplete} />;
+    }
 
-  return <Today answers={answers} onStartBreak={startBreak} />;
+    if (view.name === 'player') {
+      return (
+        <BreakPlayer
+          answers={answers}
+          lead={view.lead}
+          slot={view.slot}
+          onExit={() => setView({ name: 'today' })}
+        />
+      );
+    }
+
+    return <Today answers={answers} onStartBreak={startBreak} />;
+  }
 }
 
 export default function App() {

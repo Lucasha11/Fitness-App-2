@@ -1,4 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
+import { COACHES, COACH_LABEL, type Coach } from '../components/coach';
+import { CoachProvider } from '../components/CoachProvider';
 import { GoalRing } from '../components/GoalRing';
 import { Mascot, type MascotName } from '../components/Mascot';
 import {
@@ -166,7 +168,7 @@ function useActiveSection(ids: string[]): string {
 const PRINCIPLES = [
   {
     title: 'Energetic, not clinical',
-    body: 'A panda coach, streaks and a segmented goal ring — motivation reads as encouragement, never as a scolding.',
+    body: 'An animal coach, streaks and a segmented goal ring — motivation reads as encouragement, never as a scolding.',
   },
   {
     title: 'Loud type, soft shapes',
@@ -184,7 +186,7 @@ function Overview() {
       <div className="ds__eyebrow-pill">Design system · v1</div>
       <h1 className="ds__h1">MoveMate</h1>
       <p className="ds__lede">
-        A playful movement-reminder app. A panda coach nudges you to stand,
+        A playful movement-reminder app. An animal coach nudges you to stand,
         stretch and move — every screen is bold, rounded, and a little bit silly
         on purpose.
       </p>
@@ -367,11 +369,13 @@ const ICON_SAMPLES = [
 ];
 
 function Iconography() {
+  const [coach, setCoach] = useState<Coach>('panda');
+
   return (
     <Section
       id="icon"
       title="Iconography & mascot"
-      intro="Line icons at 14–22px with a 2px stroke and no fill, drawn in one place so they inherit currentColor. The panda coach is the only illustrated element — never mix in another illustration style."
+      intro="Line icons at 14–22px with a 2px stroke and no fill, drawn in one place so they inherit currentColor. The animal coach is the only illustrated element — never mix in another illustration style."
     >
       <div className="ds__row" style={{ marginBottom: 20 }}>
         {ICON_SAMPLES.map(({ Icon, name }) => (
@@ -384,21 +388,42 @@ function Iconography() {
         ))}
       </div>
 
-      <div className="ds__mascots">
-        {MASCOTS.map((name) => (
-          <div key={name} className="ds__mascot">
-            <Mascot name={name} size={100} alt={`Panda coach, ${name}`} />
-          </div>
-        ))}
+      <div className="ds__coach-picker">
+        <Segmented
+          label="Coach"
+          value={coach}
+          onChange={setCoach}
+          options={COACHES.map((option) => ({
+            value: option,
+            label: COACH_LABEL[option],
+          }))}
+          tight
+        />
       </div>
+
+      <CoachProvider coach={coach}>
+        <div className="ds__mascots">
+          {MASCOTS.map((name) => (
+            <div key={name} className="ds__mascot">
+              <Mascot
+                name={name}
+                size={100}
+                alt={`${COACH_LABEL[coach]} coach, ${name}`}
+              />
+            </div>
+          ))}
+        </div>
+      </CoachProvider>
 
       <p className="ds__note">
         Pattern: the mascot sits on a soft mint circle with a gentle 3.2s bob
         (skipped under reduced motion). The break player picks the pose from the
         exercise itself wherever one is drawn, and falls back to the
         exercise&rsquo;s body area otherwise, so the figure always matches the
-        movement. A parallel <code>squirrel-*</code> asset set exists for an
-        alternate coach — swap consistently, never mix species on one screen.
+        movement. The coach comes in two species, picked on A1 and held in one
+        context, so a screen can never mix them — both sets carry every pose,
+        and <code>Mascot</code> will not compile until a new pose is drawn for
+        each.
       </p>
     </Section>
   );

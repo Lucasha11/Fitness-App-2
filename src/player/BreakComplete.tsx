@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FlameIcon } from '../components/icons';
+import { useCoachNoun } from '../components/coach';
 import { Mascot } from '../components/Mascot';
 import './player.css';
 
@@ -50,13 +51,14 @@ export function BreakComplete({
     return () => window.clearInterval(timer);
   }, [onDone]);
 
+  const coach = useCoachNoun();
   const streakLabel =
     streak > 1 ? `${streak}-day streak safe` : 'Streak started';
 
   return (
     <section className="complete" aria-label="Break complete">
       <div className="complete__halo bob">
-        <Mascot name="thumbsup" size={165} alt="Panda celebrating" />
+        <Mascot name="thumbsup" size={165} alt={`Your ${coach} celebrating`} />
       </div>
 
       <div>

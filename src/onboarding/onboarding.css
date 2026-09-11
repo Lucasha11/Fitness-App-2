@@ -10,7 +10,57 @@
   flex: 1;
   display: grid;
   place-items: center;
-  min-height: 0;
+  /*
+   * The swap hint sits under the mascot, so the block has to be allowed to
+   * carry its own height — `min-height: 0` let it collapse and push the pill
+   * into the headline on shorter screens. `.a1__gap` gives up the space.
+   */
+  min-height: min-content;
+  margin-bottom: 20px;
+}
+
+/*
+ * The mascot doubles as the coach picker: the only place the species is
+ * chosen, and placed before any copy names the animal.
+ */
+.a1__swap {
+  display: grid;
+  justify-items: center;
+  /* The artwork carries its own transparent margin, so none is needed here. */
+  gap: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 24px;
+}
+
+.a1__swap-figure {
+  display: block;
+}
+
+.a1__swap:focus-visible {
+  outline: 3px solid var(--ink-on-accent);
+  outline-offset: 6px;
+}
+
+.a1__swap-hint {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: oklch(0.99 0.005 100 / 88%);
+  padding: 7px 16px;
+  border-radius: var(--radius-pill);
+  background: oklch(0.99 0.005 100 / 18%);
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.a1__swap:hover .a1__swap-hint,
+.a1__swap:focus-visible .a1__swap-hint {
+  background: oklch(0.99 0.005 100 / 28%);
+  color: var(--ink-on-accent);
 }
 
 .a1__title {
