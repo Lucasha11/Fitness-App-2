@@ -6,6 +6,7 @@ import {
   SoundOnIcon,
   SwapIcon,
 } from '../components/icons';
+import { COACH_LABEL, useCoach } from '../components/coach';
 import { Mascot } from '../components/Mascot';
 import type { Exercise } from '../exercises';
 import {
@@ -71,6 +72,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
     restRegion,
     setSoundOn,
   } = useSession();
+  const coach = useCoach();
 
   const [sequence, setSequence] = useState<Exercise[]>(() =>
     buildSequence(answers, lead, session),
@@ -484,9 +486,9 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
       >
         <div className="player__halo">
           <Mascot
-            name={poseFor(current.region)}
+            name={poseFor(current)}
             size={discreet ? 210 : 270}
-            alt={`Panda coach demonstrating ${current.name.toLowerCase()}`}
+            alt={`${COACH_LABEL[coach]} coach demonstrating ${current.name.toLowerCase()}`}
             className={discreet ? undefined : 'bob'}
           />
         </div>
@@ -540,7 +542,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
 
       {showingSwitch ? (
         <SwitchSides
-          region={current.region}
+          exercise={current}
           onDone={() => setStage('running')}
         />
       ) : null}

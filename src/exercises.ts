@@ -115,6 +115,15 @@ export const EXERCISES: Exercise[] = [
     cues: ['Ankle over the knee', 'Lean forward a little', 'Sink a bit deeper'],
   },
   {
+    id: 'hip-90-90',
+    name: '90/90 hip switch',
+    region: 'hips',
+    seconds: 60,
+    subtle: false,
+    sides: true,
+    cues: ['Both knees at ninety', 'Sit tall, chest up', 'Switch when it eases'],
+  },
+  {
     id: 'hip-opener',
     name: 'Standing hip opener',
     region: 'hips',

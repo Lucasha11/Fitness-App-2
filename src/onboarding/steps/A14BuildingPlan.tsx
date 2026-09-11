@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CheckIcon } from '../../components/icons';
+import { useCoachNoun } from '../../components/coach';
 import { Mascot } from '../../components/Mascot';
 import { Screen } from '../../components/ui';
 import { BODY_REGION_LABELS } from '../state';
@@ -53,6 +54,7 @@ export function A14BuildingPlan({ state, next }: StepProps) {
     // set up exactly once per visit to this screen.
   }, [lines, next]);
 
+  const coach = useCoachNoun();
   const percent = Math.min(100, ((done + 0.6) / lines.length) * 100);
 
   return (
@@ -61,7 +63,7 @@ export function A14BuildingPlan({ state, next }: StepProps) {
         <Mascot
           name="squats"
           size={250}
-          alt="Panda stretching while your plan builds"
+          alt={`Your ${coach} stretching while your plan builds`}
         />
       </div>
 

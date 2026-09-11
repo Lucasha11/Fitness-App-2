@@ -6,6 +6,8 @@
  * of the app (the scheduler, the exercise picker) can read later.
  */
 
+import { COACHES, type Coach } from '../components/coach';
+
 export type DayType = 'desk' | 'hybrid' | 'driver' | 'student' | 'shift' | 'home';
 
 export type BodyRegion =
@@ -36,6 +38,8 @@ export type AccountChoice = 'apple' | 'email' | 'local';
 
 export interface OnboardingState {
   dayType: DayType | null;
+  /** Which animal coaches the user, picked on A1. */
+  coach: Coach;
   bothers: BodyRegion[];
   visibility: Visibility;
   intensity: Intensity;
@@ -58,6 +62,7 @@ export interface OnboardingState {
 /** Every default here is the value the design shows in its "resting" state. */
 export const initialState: OnboardingState = {
   dayType: null,
+  coach: 'panda',
   bothers: [],
   visibility: 'some',
   intensity: 'moderate',
@@ -264,6 +269,9 @@ export function loadState(): OnboardingState {
       ...initialState,
       ...parsed,
       adaptations: { ...initialState.adaptations, ...parsed.adaptations },
+      coach: COACHES.includes(parsed.coach as Coach)
+        ? (parsed.coach as Coach)
+        : initialState.coach,
       activeDays: Array.isArray(parsed.activeDays) && parsed.activeDays.length === 7
         ? parsed.activeDays
         : initialState.activeDays,

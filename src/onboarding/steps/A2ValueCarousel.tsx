@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { COACH_LABEL, useCoach } from '../../components/coach';
 import { Mascot, type MascotName } from '../../components/Mascot';
 import { Button, Screen } from '../../components/ui';
 import type { StepProps } from '../types';
@@ -7,7 +8,8 @@ interface Page {
   mascot: MascotName;
   title: string;
   body: string;
-  alt: string;
+  /** Takes the coach's label, so the alt names the animal on screen. */
+  alt: (coach: string) => string;
 }
 
 const PAGES: Page[] = [
@@ -15,19 +17,19 @@ const PAGES: Page[] = [
     mascot: 'walking',
     title: 'Sitting is the problem, not fitness.',
     body: 'You don’t need a gym habit. You need to stop being a chair for nine hours straight.',
-    alt: 'Panda walking away from a desk',
+    alt: (coach) => `${coach} walking away from a desk`,
   },
   {
     mascot: 'squats',
     title: '45 seconds. At your desk. In your clothes.',
     body: 'Every move works seated, standing, or in a meeting room nobody booked.',
-    alt: 'Panda doing a desk squat',
+    alt: (coach) => `${coach} doing a desk squat`,
   },
   {
     mascot: 'pullups',
     title: 'We watch your calendar so we never interrupt.',
     body: 'Breaks land in the gaps between meetings, never over the top of your standup.',
-    alt: 'Panda stretching between meetings',
+    alt: (coach) => `${coach} stretching between meetings`,
   },
 ];
 
@@ -35,6 +37,7 @@ const PAGES: Page[] = [
 const SWIPE_THRESHOLD = 48;
 
 export function A2ValueCarousel({ next }: StepProps) {
+  const coach = useCoach();
   const [page, setPage] = useState(0);
   const touchStartX = useRef<number | null>(null);
 
@@ -68,7 +71,7 @@ export function A2ValueCarousel({ next }: StepProps) {
         onTouchEnd={onTouchEnd}
       >
         <div className="a2__halo">
-          <Mascot name={current.mascot} size={250} alt={current.alt} />
+          <Mascot name={current.mascot} size={250} alt={current.alt(COACH_LABEL[coach])} />
         </div>
       </div>
 

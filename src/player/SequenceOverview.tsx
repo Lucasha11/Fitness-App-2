@@ -134,7 +134,7 @@ export function SequenceOverview({
                 className="seq-row__thumb"
                 style={{ background: tintFor(exercise.region) }}
               >
-                <Mascot name={poseFor(exercise.region)} size={42} />
+                <Mascot name={poseFor(exercise)} size={42} />
               </span>
 
               <span className="seq-row__text">

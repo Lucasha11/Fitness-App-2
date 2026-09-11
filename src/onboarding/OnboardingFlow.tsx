@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { CoachProvider } from '../components/CoachProvider';
 import './onboarding.css';
 import {
   type OnboardingState,
@@ -8,6 +9,7 @@ import {
   saveState,
 } from './state';
 import { A1Welcome } from './steps/A1Welcome';
+import { A1bCoach } from './steps/A1bCoach';
 import { A2ValueCarousel } from './steps/A2ValueCarousel';
 import { A3DayType } from './steps/A3DayType';
 import { A5Bothers } from './steps/A5Bothers';
@@ -31,6 +33,7 @@ import {
 
 const SCREENS: Record<StepId, (props: StepProps) => React.ReactElement> = {
   A1: A1Welcome,
+  A1b: A1bCoach,
   A2: A2ValueCarousel,
   A3: A3DayType,
   A5: A5Bothers,
@@ -113,6 +116,12 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
 
   const Screen = SCREENS[step];
 
+  // The live answer sheet is the one here, not the copy App is holding, so
+  // the coach A1 picks takes effect on the very next screen.
   // Re-mount on every step so the entry animation replays and scroll resets.
-  return <Screen key={step} {...props} />;
+  return (
+    <CoachProvider coach={answers.coach}>
+      <Screen key={step} {...props} />
+    </CoachProvider>
+  );
 }

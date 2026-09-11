@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { SwapIcon } from '../components/icons';
 import { Mascot } from '../components/Mascot';
-import type { BodyRegion } from '../onboarding/state';
+import type { Exercise } from '../exercises';
 import { poseFor } from './poses';
 
 /** Seconds the switch-sides overlay holds, per the design. */
@@ -12,10 +12,10 @@ const COUNT_FROM = 3;
  * side at a time. The player stays visible behind it, dimmed.
  */
 export function SwitchSides({
-  region,
+  exercise,
   onDone,
 }: {
-  region: BodyRegion;
+  exercise: Exercise;
   onDone: () => void;
 }) {
   const [count, setCount] = useState(COUNT_FROM);
@@ -38,9 +38,9 @@ export function SwitchSides({
   return (
     <div className="switch-overlay" role="alert">
       <div className="switch-overlay__figures">
-        <Mascot name={poseFor(region)} size={96} alt="Left side" />
+        <Mascot name={poseFor(exercise)} size={96} alt="Left side" />
         <SwapIcon size={34} style={{ color: 'var(--lime)' }} strokeWidth={2.5} />
-        <Mascot name={poseFor(region)} size={96} alt="Right side" />
+        <Mascot name={poseFor(exercise)} size={96} alt="Right side" />
       </div>
 
       <div>
