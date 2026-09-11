@@ -1,0 +1,117 @@
+@import './theme/tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* The mascot's idle bob, straight from the canvas. */
+@keyframes mascot-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(1deg);
+  }
+}
+
+.bob {
+  animation: mascot-bob 3.2s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bob {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/*
+ * Outside the phone artboard the page is a neutral desk surface, so the
+ * device frame reads the way it does on the design canvas.
+ */
+.app-stage {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+}
+
+.device {
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  background: var(--bg);
+  overflow: hidden;
+  position: relative;
+}
+
+@media (min-width: 460px) and (min-height: 900px) {
+  .app-stage {
+    background: oklch(0.955 0.014 128);
+    padding: 28px;
+  }
+
+  .device {
+    width: var(--device-width);
+    height: var(--device-height);
+    border-radius: var(--radius-device);
+    box-shadow: var(--shadow-device);
+  }
+}

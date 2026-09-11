@@ -1,0 +1,107 @@
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { SessionContext, type SessionApi } from './context';
+import {
+  type BodyRegion,
+  type CompletedBreak,
+  type FeedbackEntry,
+  type Meeting,
+  type SessionState,
+  emptySession,
+  loadSession,
+  saveSession,
+  withCompletedBreak,
+  withExcludedExercise,
+  withFeedback,
+  withRestedRegion,
+  withSkippedSlot,
+  withSkippedSlots,
+  withSnoozedSlot,
+  withoutSkippedSlot,
+} from './state';
+
+export function SessionProvider({ children }: { children: ReactNode }) {
+  const [session, setSession] = useState<SessionState>(loadSession);
+
+  useEffect(() => {
+    saveSession(session);
+  }, [session]);
+
+  const completeBreak = useCallback((entry: CompletedBreak) => {
+    setSession((current) => withCompletedBreak(current, entry));
+  }, []);
+
+  const skipSlot = useCallback((slot: number) => {
+    setSession((current) => withSkippedSlot(current, slot));
+  }, []);
+
+  const skipSlots = useCallback((slots: number[]) => {
+    setSession((current) => withSkippedSlots(current, slots));
+  }, []);
+
+  const unskipSlot = useCallback((slot: number) => {
+    setSession((current) => withoutSkippedSlot(current, slot));
+  }, []);
+
+  const snoozeSlot = useCallback((slot: number, minutes: number) => {
+    setSession((current) => withSnoozedSlot(current, slot, minutes));
+  }, []);
+
+  const recordFeedback = useCallback((entry: FeedbackEntry) => {
+    setSession((current) => withFeedback(current, entry));
+  }, []);
+
+  const excludeExercise = useCallback((exerciseId: string) => {
+    setSession((current) => withExcludedExercise(current, exerciseId));
+  }, []);
+
+  const restRegion = useCallback((region: BodyRegion, days: number) => {
+    setSession((current) => withRestedRegion(current, region, days));
+  }, []);
+
+  const setSoundOn = useCallback((on: boolean) => {
+    setSession((current) => ({ ...current, soundOn: on }));
+  }, []);
+
+  const seedMeetings = useCallback((meetings: Meeting[]) => {
+    setSession((current) => ({ ...current, meetings }));
+  }, []);
+
+  const reset = useCallback(() => {
+    setSession(emptySession());
+  }, []);
+
+  const value = useMemo<SessionApi>(
+    () => ({
+      session,
+      completeBreak,
+      skipSlot,
+      skipSlots,
+      unskipSlot,
+      snoozeSlot,
+      recordFeedback,
+      excludeExercise,
+      restRegion,
+      setSoundOn,
+      seedMeetings,
+      reset,
+    }),
+    [
+      session,
+      completeBreak,
+      skipSlot,
+      skipSlots,
+      unskipSlot,
+      snoozeSlot,
+      recordFeedback,
+      excludeExercise,
+      restRegion,
+      setSoundOn,
+      seedMeetings,
+      reset,
+    ],
+  );
+
+  return (
+    <SessionContext.Provider value={value}>{children}</SessionContext.Provider>
+  );
+}

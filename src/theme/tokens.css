@@ -1,0 +1,77 @@
+/*
+ * MoveMate design tokens.
+ *
+ * Values are lifted verbatim from the Claude Design canvas
+ * (Onboarding.dc.html / MoveMate Design System.dc.html) so that colour,
+ * radius, shadow and type decisions live in exactly one place.
+ */
+
+:root {
+  /* Surfaces */
+  --bg: oklch(0.985 0.012 130);
+  --surface: oklch(1 0 0);
+  --fill: oklch(0.94 0.025 130);
+  --line: oklch(0.89 0.025 140);
+
+  /* Ink */
+  --ink: oklch(0.31 0.055 25);
+  --ink-muted: oklch(0.51 0.045 22);
+  --ink-on-accent: oklch(0.99 0.005 100);
+
+  /* Accents */
+  --accent: oklch(0.62 0.18 34);
+  --accent-pressed: oklch(0.52 0.18 34);
+  --accent-deep: oklch(0.48 0.09 20);
+  --mint: oklch(0.88 0.075 151);
+  --mint-deep: oklch(0.76 0.075 155);
+  --lime: oklch(0.88 0.12 128);
+  --lime-ink: oklch(0.35 0.07 130);
+  --violet: oklch(0.68 0.075 282);
+  --danger: oklch(0.577 0.245 27.325);
+
+  /*
+   * "You have been sitting a while" — amber, never red (design brief §2).
+   * The canonical value is the one the design system prescribes; the Today
+   * artboard uses the deeper variant for the indicator dot.
+   */
+  --warning: oklch(0.78 0.16 70);
+  --warning-strong: oklch(0.7 0.16 62);
+  --warning-wash: oklch(0.78 0.16 70 / 22%);
+
+  --warm-gradient: linear-gradient(165deg, var(--accent), var(--accent-deep));
+  --header-gradient: linear-gradient(135deg, var(--accent), var(--accent-deep));
+
+  /* The break player dims the whole screen down to these. */
+  --player-gradient: linear-gradient(
+    165deg,
+    oklch(0.36 0.07 28),
+    oklch(0.29 0.055 25)
+  );
+  --player-discreet: oklch(0.24 0.02 60);
+
+  /* Elevation */
+  --shadow-card: 0 14px 32px oklch(0.48 0.09 20 / 10%);
+  --shadow-card-strong: 0 14px 32px oklch(0.48 0.09 20 / 13%);
+  --shadow-card-soft: 0 14px 32px oklch(0.48 0.09 20 / 8%);
+  --shadow-accent: 0 8px 18px oklch(0.62 0.18 34 / 28%);
+  --shadow-segment: 0 6px 14px oklch(0.48 0.09 20 / 12%);
+  --shadow-device: 0 28px 80px oklch(0.48 0.09 20 / 24%);
+
+  /* Shape */
+  --radius-device: 40px;
+  --radius-sheet: 28px;
+  --radius-card: 24px;
+  --radius-card-sm: 22px;
+  --radius-control: 20px;
+  --radius-inner: 14px;
+  --radius-pill: 999px;
+
+  /* Type */
+  --font: 'Nunito', ui-rounded, system-ui, -apple-system, sans-serif;
+
+  /* The artboard the design was drawn against (iPhone 14/15 logical size). */
+  --device-width: 390px;
+  --device-height: 844px;
+
+  color-scheme: light;
+}

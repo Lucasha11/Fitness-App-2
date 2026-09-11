@@ -1,0 +1,225 @@
+/* C10 · notification, Live Activity and Lock Screen widgets */
+
+.lock {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: max(60px, calc(env(safe-area-inset-top) + 20px)) 16px
+    max(34px, env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  overflow-y: auto;
+  background: linear-gradient(170deg, oklch(0.42 0.08 30), oklch(0.26 0.05 24));
+  color: var(--ink-on-accent);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.lock__clock {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.lock__date {
+  font-size: 15px;
+  font-weight: 800;
+  opacity: 0.7;
+}
+
+.lock__time {
+  font-size: 70px;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+/* ---- Notification --------------------------------------------------- */
+
+.lock__notification {
+  border-radius: var(--radius-card);
+  background: oklch(0.99 0.005 100 / 92%);
+  color: var(--ink);
+  padding: 14px;
+  backdrop-filter: blur(12px);
+}
+
+.lock__notification-head {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.lock__notification-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-inner);
+  background: var(--mint);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.lock__notification-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--ink-muted);
+}
+
+.lock__notification-title {
+  display: block;
+  font-size: 15px;
+  font-weight: 900;
+  margin-top: 3px;
+}
+
+.lock__notification-body {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-muted);
+}
+
+.lock__notification-actions {
+  display: flex;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.lock__action {
+  flex: 1;
+  text-align: center;
+  border-radius: var(--radius-inner);
+  background: var(--fill);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 900;
+  padding: 10px;
+}
+
+.lock__action--primary {
+  background: var(--accent);
+  color: var(--ink-on-accent);
+}
+
+.lock__action--ghost {
+  border-radius: 13px;
+  background: oklch(0.99 0.005 100 / 14%);
+  color: var(--ink-on-accent);
+  padding: 9px;
+}
+
+/* ---- Live Activity --------------------------------------------------- */
+
+.lock__activity {
+  border-radius: var(--radius-card);
+  background: oklch(0.2 0.03 25 / 80%);
+  padding: 16px;
+  backdrop-filter: blur(12px);
+}
+
+.lock__activity-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lock__activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  background: var(--accent);
+  color: var(--ink-on-accent);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.lock__activity-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.lock__activity-sub {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.lock__activity-clock {
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.lock__activity-bar {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: oklch(0.99 0.005 100 / 15%);
+  margin-top: 13px;
+  overflow: hidden;
+}
+
+.lock__activity-fill {
+  height: 100%;
+  background: var(--lime);
+}
+
+.lock__activity-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 13px;
+}
+
+/* ---- Widgets ---------------------------------------------------------- */
+
+.lock__widgets {
+  display: flex;
+  gap: 12px;
+}
+
+.lock__widget {
+  flex: 1;
+  border-radius: var(--radius-control);
+  background: oklch(0.2 0.03 25 / 70%);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.lock__widget--wide {
+  flex: 1.3;
+}
+
+.lock__widget-ring {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-pill);
+  border: 4px solid var(--lime);
+  border-right-color: oklch(0.99 0.005 100 / 20%);
+  flex-shrink: 0;
+}
+
+.lock__widget-unit {
+  font-weight: 700;
+  opacity: 0.65;
+}
+
+.lock__caption {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: oklch(0.99 0.005 100 / 55%);
+  margin: 0;
+}
