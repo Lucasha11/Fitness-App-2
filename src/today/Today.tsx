@@ -13,6 +13,7 @@ import {
 } from '../components/icons';
 import { COACH_LABEL, useCoach, useCoachNoun } from '../components/coach';
 import { GoalRing } from '../components/GoalRing';
+import { ActivityTrend } from './ActivityTrend';
 import { Mascot } from '../components/Mascot';
 import {
   type Exercise,
@@ -111,6 +112,8 @@ export function Today({ answers, onStartBreak }: TodayProps) {
           </section>
 
           <Coverage />
+
+          <ActivityTrend />
         </div>
       </div>
 
