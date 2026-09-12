@@ -1,18 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  BandageIcon,
   ChartIcon,
   CheckIcon,
   ChevronRightIcon,
   DashIcon,
-  DiceIcon,
-  EyeIcon,
   FlameIcon,
   GridIcon,
   PersonIcon,
   PlayIcon,
   ReplyIcon,
-  StopwatchIcon,
   TargetIcon,
 } from '../components/icons';
 import { COACH_LABEL, useCoach, useCoachNoun } from '../components/coach';
@@ -20,7 +16,6 @@ import { GoalRing } from '../components/GoalRing';
 import { Mascot } from '../components/Mascot';
 import {
   type Exercise,
-  exerciseById,
   formatDuration,
 } from '../exercises';
 import {
@@ -112,16 +107,6 @@ export function Today({ answers, onStartBreak }: TodayProps) {
               onStart={(slot) => onStartBreak(slot.exercise, slot.at)}
               onSkip={(slot) => skipSlot(slot.at)}
               onUnskip={(slot) => unskipSlot(slot.at)}
-            />
-          </section>
-
-          <section>
-            <h2 className="today__h2" style={{ marginBottom: 10 }}>
-              Need something else?
-            </h2>
-            <QuickActions
-              answers={answers}
-              onPick={(exercise) => onStartBreak(exercise, null)}
             />
           </section>
 
@@ -489,93 +474,6 @@ function TimelineRow({
         </span>
       </div>
     </li>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Quick actions                                                       */
-/* ------------------------------------------------------------------ */
-
-const QUICK_ACTIONS = [
-  {
-    id: 'hurts',
-    label: 'Something hurts',
-    background: 'var(--lime)',
-    color: 'var(--lime-ink)',
-    icon: <BandageIcon size={20} />,
-  },
-  {
-    id: 'reset',
-    label: '2-minute reset',
-    background: 'var(--mint-deep)',
-    color: 'var(--ink)',
-    icon: <StopwatchIcon size={20} />,
-  },
-  {
-    id: 'eyes',
-    label: 'Eye break',
-    background: 'var(--mint)',
-    color: 'var(--ink)',
-    icon: <EyeIcon size={20} />,
-  },
-  {
-    id: 'surprise',
-    label: 'Surprise me',
-    background: 'var(--violet)',
-    color: 'var(--ink-on-accent)',
-    icon: <DiceIcon size={20} />,
-  },
-] as const;
-
-/**
- * Which exercise a quick action opens on. Lives outside the component because
- * "Surprise me" is deliberately random, and randomness has no business
- * running during render.
- */
-function chooseQuickExercise(
-  id: (typeof QUICK_ACTIONS)[number]['id'],
-  answers: OnboardingState,
-): Exercise {
-  switch (id) {
-    case 'eyes':
-      return exerciseById('twenty-foot-gaze');
-    case 'reset':
-      // The longest thing the user's settings allow.
-      return pickExercises(answers, 4).reduce((longest, exercise) =>
-        exercise.seconds > longest.seconds ? exercise : longest,
-      );
-    case 'hurts':
-      // Start on whatever they told us bothers them most.
-      return pickExercises(answers, 1)[0];
-    case 'surprise': {
-      const options = pickExercises(answers, 6);
-      return options[Math.floor(Math.random() * options.length)];
-    }
-  }
-}
-
-function QuickActions({
-  answers,
-  onPick,
-}: {
-  answers: OnboardingState;
-  onPick: (exercise: Exercise) => void;
-}) {
-  return (
-    <div className="quick">
-      {QUICK_ACTIONS.map((action) => (
-        <button
-          key={action.id}
-          type="button"
-          className="quick__card"
-          style={{ background: action.background, color: action.color }}
-          onClick={() => onPick(chooseQuickExercise(action.id, answers))}
-        >
-          {action.icon}
-          <div className="quick__label">{action.label}</div>
-        </button>
-      ))}
-    </div>
   );
 }
 
