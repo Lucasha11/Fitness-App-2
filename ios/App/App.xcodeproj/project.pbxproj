@@ -17,6 +17,8 @@
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
 		A1B2C3D001AA00AA00AA0002 /* HealthKitPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D001AA00AA00AA0001 /* HealthKitPlugin.swift */; };
+		A1B2C3D001AA00AA00AA0005 /* MotionPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D001AA00AA00AA0004 /* MotionPlugin.swift */; };
+		A1B2C3D001AA00AA00AA0007 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D001AA00AA00AA0006 /* MainViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +35,8 @@
 		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		A1B2C3D001AA00AA00AA0001 /* HealthKitPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitPlugin.swift; sourceTree = "<group>"; };
 		A1B2C3D001AA00AA00AA0003 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
+		A1B2C3D001AA00AA00AA0004 /* MotionPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionPlugin.swift; sourceTree = "<group>"; };
+		A1B2C3D001AA00AA00AA0006 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +75,8 @@
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				A1B2C3D001AA00AA00AA0001 /* HealthKitPlugin.swift */,
+				A1B2C3D001AA00AA00AA0004 /* MotionPlugin.swift */,
+				A1B2C3D001AA00AA00AA0006 /* MainViewController.swift */,
 				A1B2C3D001AA00AA00AA0003 /* App.entitlements */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
@@ -166,6 +172,8 @@
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
 				A1B2C3D001AA00AA00AA0002 /* HealthKitPlugin.swift in Sources */,
+				A1B2C3D001AA00AA00AA0005 /* MotionPlugin.swift in Sources */,
+				A1B2C3D001AA00AA00AA0007 /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

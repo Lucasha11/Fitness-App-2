@@ -12,6 +12,7 @@ import {
   withCompletedBreak,
   withExcludedExercise,
   withFeedback,
+  withMovementAt,
   withRestedRegion,
   withSkippedSlot,
   withSkippedSlots,
@@ -28,6 +29,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   const completeBreak = useCallback((entry: CompletedBreak) => {
     setSession((current) => withCompletedBreak(current, entry));
+  }, []);
+
+  const markMoved = useCallback((at: number) => {
+    setSession((current) => withMovementAt(current, at));
   }, []);
 
   const skipSlot = useCallback((slot: number) => {
@@ -74,6 +79,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     () => ({
       session,
       completeBreak,
+      markMoved,
       skipSlot,
       skipSlots,
       unskipSlot,
@@ -88,6 +94,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     [
       session,
       completeBreak,
+      markMoved,
       skipSlot,
       skipSlots,
       unskipSlot,

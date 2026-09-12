@@ -26,6 +26,8 @@
 	<true/>
 	<key>NSHealthShareUsageDescription</key>
 	<string>MoveMate reads your step, distance and exercise data so your activity trends reflect everything you do, not just the breaks you take in the app.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>MoveMate uses motion activity to notice when you get up, so it only nudges you after you have actually been sitting a while.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

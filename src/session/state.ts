@@ -1,4 +1,4 @@
-import type { BodyRegion } from '../onboarding/state';
+import type { BodyRegion, OnboardingState } from '../onboarding/state';
 
 export type { BodyRegion };
 
@@ -195,9 +195,33 @@ export function currentStreak(session: SessionState): number {
   return streak;
 }
 
+/**
+ * The moment the current sitting stretch began.
+ *
+ * `sittingSince` alone is not enough. It survives in storage overnight, so on
+ * its own it would greet someone at 9am with "you've been sitting for 900
+ * minutes" — time they spent asleep, commuting and making coffee. The start of
+ * the user's own sitting window is therefore a floor: the clock never counts
+ * time from before their day began.
+ */
+export function sittingStart(
+  session: SessionState,
+  answers: OnboardingState,
+  now = Date.now(),
+): number {
+  const windowStart = new Date(now);
+  windowStart.setHours(0, answers.startMinutes, 0, 0);
+
+  return Math.max(session.sittingSince, windowStart.getTime());
+}
+
 /** Whole minutes since the user last got up. */
-export function sittingMinutes(session: SessionState, now = Date.now()): number {
-  return Math.max(0, Math.floor((now - session.sittingSince) / 60000));
+export function sittingMinutes(
+  session: SessionState,
+  answers: OnboardingState,
+  now = Date.now(),
+): number {
+  return Math.max(0, Math.floor((now - sittingStart(session, answers, now)) / 60000));
 }
 
 /** Breaks taken in the last seven days. */
@@ -229,6 +253,17 @@ export function withCompletedBreak(
     },
     sittingSince: Date.now(),
   };
+}
+
+/**
+ * Record that the user got up at `at`, as Core Motion saw it.
+ *
+ * Only ever moves the clock forwards: a stale or out-of-order reading must
+ * never make the user look like they have been sitting longer than they have.
+ */
+export function withMovementAt(session: SessionState, at: number): SessionState {
+  if (at <= session.sittingSince) return session;
+  return { ...session, sittingSince: Math.min(at, Date.now()) };
 }
 
 export function withSkippedSlot(
