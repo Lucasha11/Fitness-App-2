@@ -27,3 +27,7 @@ pnpm-debug.log*
 
 # Claude Code tooling
 .claude/
+
+# iOS / Swift Package Manager build state
+ios/App/CapApp-SPM/.build/
+ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
