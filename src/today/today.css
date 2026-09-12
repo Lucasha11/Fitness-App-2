@@ -427,47 +427,6 @@
   color: var(--ink-muted);
 }
 
-/* ---- Quick actions -------------------------------------------------- */
-
-.quick {
-  display: flex;
-  gap: 9px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding-bottom: 4px;
-  /* Let the cards run to the screen edge the way a shelf should. */
-  margin: 0 -20px;
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-.quick::-webkit-scrollbar {
-  display: none;
-}
-
-.quick__card {
-  flex-shrink: 0;
-  width: 118px;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  text-align: left;
-  border-radius: var(--radius-control);
-  padding: 13px;
-  transition: transform 120ms ease;
-}
-
-.quick__card:active {
-  transform: scale(0.97);
-}
-
-.quick__label {
-  font-size: 13px;
-  font-weight: 900;
-  margin-top: 6px;
-  line-height: 1.2;
-}
-
 /* ---- Coverage ------------------------------------------------------- */
 
 .coverage {
