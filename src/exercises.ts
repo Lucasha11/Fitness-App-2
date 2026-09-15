@@ -12,6 +12,13 @@ import type { BodyRegion } from './onboarding/state';
  * badges and cue pacing all read from this single constant. */
 export const EXERCISE_DURATION_SECONDS = 15;
 
+/** Exercises in one break. Four at fifteen seconds is the one-minute break. */
+export const EXERCISES_PER_BREAK = 4;
+
+/** A whole break, end to end, in seconds. */
+export const BREAK_DURATION_SECONDS =
+  EXERCISES_PER_BREAK * EXERCISE_DURATION_SECONDS;
+
 export interface Exercise {
   id: string;
   name: string;
@@ -157,6 +164,132 @@ export const EXERCISES: Exercise[] = [
     subtle: true,
     cues: ['Hands on the desk edge', 'Slow and controlled', 'Five more'],
   },
+  {
+    id: 'chin-tucks',
+    name: 'Chin tucks',
+    region: 'neck',
+    subtle: true,
+    cues: ['Slide your chin straight back', 'Tall through the crown', 'Hold for three, release'],
+  },
+  {
+    id: 'levator-stretch',
+    name: 'Levator stretch',
+    region: 'neck',
+    subtle: true,
+    sides: true,
+    cues: ['Nose towards your armpit', 'Let that shoulder drop', 'Breathe, then switch'],
+  },
+  {
+    id: 'shoulder-shrugs',
+    name: 'Shoulder shrugs',
+    region: 'shoulders',
+    subtle: true,
+    cues: ['Lift them to your ears', 'Hold at the top', 'Drop and breathe out'],
+  },
+  {
+    id: 'arm-circles',
+    name: 'Arm circles',
+    region: 'shoulders',
+    subtle: true,
+    cues: ['Small circles forward', 'Let them grow', 'Now wind them back'],
+  },
+  {
+    id: 'overhead-reach',
+    name: 'Overhead reach',
+    region: 'shoulders',
+    subtle: true,
+    cues: ['Reach for the ceiling', 'Lengthen one side', 'Keep your ribs down'],
+  },
+  {
+    id: 'triceps-stretch',
+    name: 'Triceps stretch',
+    region: 'shoulders',
+    subtle: true,
+    sides: true,
+    cues: ['Elbow up, hand down your back', 'Ease it over with the other hand', 'Switch when it eases'],
+  },
+  {
+    id: 'wall-angels',
+    name: 'Wall angels',
+    region: 'upperBack',
+    subtle: false,
+    cues: ['Back flat against the wall', 'Slide your arms up', 'Keep the contact'],
+  },
+  {
+    id: 'pelvic-tilts',
+    name: 'Seated pelvic tilts',
+    region: 'lowerBack',
+    subtle: true,
+    cues: ['Roll your hips back', 'Now tip them forward', 'Small and slow'],
+  },
+  {
+    id: 'side-bend',
+    name: 'Standing side bend',
+    region: 'lowerBack',
+    subtle: true,
+    sides: true,
+    cues: ['One arm overhead', 'Reach up and over', 'Switch when it eases'],
+  },
+  {
+    id: 'prayer-stretch',
+    name: 'Prayer stretch',
+    region: 'wrists',
+    subtle: true,
+    cues: ['Palms together at your chest', 'Lower your hands slowly', 'Elbows stay wide'],
+  },
+  {
+    id: 'nerve-glide',
+    name: 'Nerve glide',
+    region: 'wrists',
+    subtle: true,
+    sides: true,
+    cues: ['Arm out, palm up', 'Tip your head away', 'Gently, never forced'],
+  },
+  {
+    id: 'hip-flexor-lunge',
+    name: 'Half-kneeling hip flexor',
+    region: 'hips',
+    subtle: false,
+    sides: true,
+    cues: ['One knee down, one up', 'Tuck your hips under', 'Squeeze the back glute'],
+  },
+  {
+    id: 'quad-stretch',
+    name: 'Standing quad stretch',
+    region: 'hips',
+    subtle: false,
+    sides: true,
+    cues: ['Heel towards your seat', 'Knees stay together', 'Hold the desk if you need'],
+  },
+  {
+    id: 'palming',
+    name: 'Palming',
+    region: 'eyes',
+    subtle: true,
+    cues: ['Rub your palms warm', 'Cup them over your eyes', 'Just darkness, breathe'],
+  },
+  {
+    id: 'ankle-circles',
+    name: 'Ankle circles',
+    region: 'lowEnergy',
+    subtle: true,
+    sides: true,
+    cues: ['Lift one foot', 'Slow circles, both ways', 'Other foot now'],
+  },
+  {
+    id: 'calf-raises',
+    name: 'Calf raises',
+    region: 'lowEnergy',
+    subtle: true,
+    cues: ['Up onto your toes', 'Pause at the top', 'Lower slowly'],
+  },
+  {
+    id: 'arm-swings',
+    name: 'Arm swings',
+    region: 'lowEnergy',
+    subtle: false,
+    cues: ['Swing them wide', 'Cross them over', 'Keep it loose'],
+  },
 ];
 
 const BY_ID = new Map(EXERCISES.map((exercise) => [exercise.id, exercise]));
@@ -165,6 +298,110 @@ export function exerciseById(id: string): Exercise {
   const exercise = BY_ID.get(id);
   if (!exercise) throw new Error(`Unknown exercise: ${id}`);
   return exercise;
+}
+
+/**
+ * A curated break: four exercises that belong together, in the order they
+ * should be performed. The player prefers a set over composing a break from
+ * scratch, and only falls back to `buildSequence`'s dynamic pool when the
+ * user's filters knock members out.
+ */
+export interface ExerciseSet {
+  id: string;
+  name: string;
+  /** One line for the intro screen, in the coach's voice. */
+  blurb: string;
+  /** Exactly `EXERCISES_PER_BREAK` ids, in running order. */
+  exerciseIds: string[];
+}
+
+export const EXERCISE_SETS: ExerciseSet[] = [
+  {
+    id: 'desk-reset',
+    name: 'Desk reset',
+    blurb: 'The everyday one. Nothing here looks like exercising.',
+    exerciseIds: ['neck-rolls', 'shoulder-rolls', 'wrist-circles', 'twenty-foot-gaze'],
+  },
+  {
+    id: 'neck-relief',
+    name: 'Neck relief',
+    blurb: 'For the head that has been craned at a screen all morning.',
+    exerciseIds: ['neck-rolls', 'neck-release', 'chin-tucks', 'levator-stretch'],
+  },
+  {
+    id: 'posture',
+    name: 'Posture & upper back',
+    blurb: 'Undo the hunch. Chest open, shoulders back where they belong.',
+    exerciseIds: ['blade-squeeze', 'cat-cow', 'wall-angels', 'chest-opener'],
+  },
+  {
+    id: 'wrists-hands',
+    name: 'Wrists & hands',
+    blurb: 'The typist\u2019s set. Short, quiet, and worth doing often.',
+    exerciseIds: ['wrist-circles', 'wrist-stretch', 'prayer-stretch', 'nerve-glide'],
+  },
+  {
+    id: 'lower-back',
+    name: 'Lower back',
+    blurb: 'Twist, tilt, extend. The three things a chair never lets you do.',
+    exerciseIds: ['spinal-twist', 'pelvic-tilts', 'back-extension', 'side-bend'],
+  },
+  {
+    id: 'hips-glutes',
+    name: 'Hips & glutes',
+    blurb: 'Where sitting does its quietest damage.',
+    exerciseIds: ['figure-four', 'hip-90-90', 'hip-opener', 'hip-flexor-lunge'],
+  },
+  {
+    id: 'energizer',
+    name: 'Standing energizer',
+    blurb: 'Up and moving. The one for the three o\u2019clock slump.',
+    exerciseIds: ['standing-march', 'desk-squats', 'calf-raises', 'arm-swings'],
+  },
+  {
+    id: 'legs-circulation',
+    name: 'Legs & circulation',
+    blurb: 'Gentle, and exactly what long sits ask for.',
+    exerciseIds: ['ankle-circles', 'calf-raises', 'standing-march', 'quad-stretch'],
+  },
+  {
+    id: 'eyes-reset',
+    name: 'Eyes & reset',
+    blurb: 'Silent and still. Safe with the camera on.',
+    exerciseIds: ['twenty-foot-gaze', 'eye-circles', 'palming', 'shoulder-shrugs'],
+  },
+  {
+    id: 'arms-shoulders',
+    name: 'Arms & shoulders',
+    blurb: 'Seated, subtle, and it wakes the whole upper body up.',
+    exerciseIds: ['arm-circles', 'overhead-reach', 'triceps-stretch', 'desk-push-offs'],
+  },
+];
+
+// A set naming an exercise that does not exist, or running to the wrong
+// length, is a build-time mistake — fail loudly at import rather than halfway
+// through someone's break.
+for (const set of EXERCISE_SETS) {
+  if (set.exerciseIds.length !== EXERCISES_PER_BREAK) {
+    throw new Error(
+      `Exercise set ${set.id} has ${set.exerciseIds.length} exercises, expected ${EXERCISES_PER_BREAK}`,
+    );
+  }
+  for (const id of set.exerciseIds) {
+    if (!BY_ID.has(id)) {
+      throw new Error(`Exercise set ${set.id} names an unknown exercise: ${id}`);
+    }
+  }
+}
+
+/** The set's exercises, resolved and in running order. */
+export function setExercises(set: ExerciseSet): Exercise[] {
+  return set.exerciseIds.map(exerciseById);
+}
+
+/** Every set that contains `id`, in catalogue order. */
+export function setsContaining(id: string): ExerciseSet[] {
+  return EXERCISE_SETS.filter((set) => set.exerciseIds.includes(id));
 }
 
 export function exercisesForRegion(region: BodyRegion): Exercise[] {

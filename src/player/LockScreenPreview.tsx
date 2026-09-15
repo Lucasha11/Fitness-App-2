@@ -44,7 +44,7 @@ export function LockScreenPreview({ onExit }: { onExit: () => void }) {
               <span>now</span>
             </span>
             <span className="lock__notification-title">
-              Shoulder rolls, 45 seconds
+              Shoulder rolls, 1 minute
             </span>
             <span className="lock__notification-body">
               You&rsquo;ve been sitting 58 min. Quick one?

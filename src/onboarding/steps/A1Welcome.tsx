@@ -22,7 +22,7 @@ export function A1Welcome({ state, next, go }: StepProps) {
         hates chairs
       </h1>
       <p className="a1__sub">
-        45-second movement breaks, at your desk, in your clothes. No gym, no
+        One-minute movement breaks, at your desk, in your clothes. No gym, no
         guilt.
       </p>
 

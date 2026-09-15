@@ -13,6 +13,19 @@ const POSE_BY_EXERCISE: Partial<Record<string, MascotName>> = {
   'hip-90-90': '9090',
   'standing-march': 'marching',
   'desk-squats': 'squats',
+  // Added with the curated sets: these read correctly against an existing
+  // drawing, so they do not fall back to the body area's generic pose.
+  'overhead-reach': 'lifting',
+  'triceps-stretch': 'lifting',
+  'arm-swings': 'lifting',
+  'wall-angels': 'lifting',
+  'cat-cow': 'spinaltwist',
+  'hip-opener': 'marching',
+  'calf-raises': 'walking',
+  'ankle-circles': '9090',
+  'quad-stretch': 'figurefour',
+  'side-bend': 'lifting',
+  'pelvic-tilts': '9090',
 };
 
 /** Each body area gets a mascot pose, so the figure matches the movement. */

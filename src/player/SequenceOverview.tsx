@@ -18,7 +18,7 @@ interface SequenceOverviewProps {
 }
 
 /**
- * C9 · the three exercises this break will run through. Rows drag to reorder
+ * C9 · the four exercises this break will run through. Rows drag to reorder
  * and each has its own swap control.
  */
 export function SequenceOverview({
@@ -162,7 +162,7 @@ export function SequenceOverview({
       </ul>
 
       <p className="overview__total">
-        {Math.floor(totalSeconds / 60)} min {totalSeconds % 60} sec total ·{' '}
+        {formatDuration(totalSeconds)} total ·{' '}
         {allSubtle ? 'all seated, all silent' : 'includes standing moves'}
       </p>
     </section>

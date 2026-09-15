@@ -7,6 +7,7 @@
  */
 
 import { COACHES, type Coach } from '../components/coach';
+import { BREAK_DURATION_SECONDS } from '../exercises';
 
 export type DayType = 'desk' | 'hybrid' | 'driver' | 'student' | 'shift' | 'home';
 
@@ -202,9 +203,9 @@ export function breaksPerDay(state: OnboardingState): number {
   return Math.max(1, Math.floor(span / interval));
 }
 
-/** Breaks average 45 seconds, so movement time follows from the count. */
+/** Every break is the same length, so movement time follows from the count. */
 export function movementMinutes(breaks: number): number {
-  return Math.max(1, Math.round((breaks * 45) / 60));
+  return Math.max(1, Math.round((breaks * BREAK_DURATION_SECONDS) / 60));
 }
 
 /**

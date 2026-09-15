@@ -21,7 +21,7 @@ const PAGES: Page[] = [
   },
   {
     mascot: 'squats',
-    title: '45 seconds. At your desk. In your clothes.',
+    title: 'One minute. At your desk. In your clothes.',
     body: 'Every move works seated, standing, or in a meeting room nobody booked.',
     alt: (coach) => `${coach} doing a desk squat`,
   },

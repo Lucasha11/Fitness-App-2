@@ -8,8 +8,12 @@
 
 import {
   type Exercise,
+  type ExerciseSet,
   exercisesForRegion,
   EXERCISES,
+  EXERCISES_PER_BREAK,
+  setExercises,
+  setsContaining,
 } from './exercises';
 import {
   type BodyRegion,
@@ -305,14 +309,21 @@ export function nextBreak(rows: DayRow[]): BreakSlot | null {
 }
 
 /**
- * The three exercises a single break runs through, starting from `lead`.
+ * The four exercises a single break runs through, starting from `lead`.
+ *
+ * A break is a curated set wherever one exists: sets are ordered and themed by
+ * hand, so following one is better than assembling four exercises that merely
+ * pass the filters. The dynamic pool is the fallback — for a lead that belongs
+ * to no set, and to top a set back up to length when privacy, adaptations or a
+ * recent "too much" have removed members.
+ *
  * Quick actions pass their own lead exercise; the scheduled break uses its own.
  */
 export function buildSequence(
   answers: OnboardingState,
   lead: Exercise,
   session?: SessionState,
-  length = 3,
+  length = EXERCISES_PER_BREAK,
 ): Exercise[] {
   const wantsSubtle =
     answers.visibility === 'open' || answers.adaptations.seatedOnly;
@@ -320,29 +331,90 @@ export function buildSequence(
     ? activeExclusions(session)
     : { exerciseIds: new Set<string>(), regions: new Set<BodyRegion>() };
 
-  const pool = EXERCISES.filter((exercise) => {
-    if (exercise.id === lead.id) return false;
+  /** The lead is the user's own choice, so only the rest gets filtered. */
+  const allowed = (exercise: Exercise): boolean => {
     if (wantsSubtle && !exercise.subtle) return false;
     if (excluded.exerciseIds.has(exercise.id)) return false;
     if (excluded.regions.has(exercise.region)) return false;
     return true;
-  });
+  };
 
-  // Prefer the user's focus areas, then anything else, and never repeat a
-  // body area back to back.
+  const sequence: Exercise[] = [lead];
+  const taken = new Set([lead.id]);
+
+  const set = bestSetFor(lead, allowed, answers.bothers);
+  if (set) {
+    // Keep the set's own order; a hand-made set repeats a body area on purpose.
+    for (const exercise of setExercises(set)) {
+      if (sequence.length >= length) break;
+      if (taken.has(exercise.id) || !allowed(exercise)) continue;
+      sequence.push(exercise);
+      taken.add(exercise.id);
+    }
+  }
+
+  if (sequence.length >= length) return sequence;
+
+  // Top up from the wider catalogue: the user's focus areas first, then
+  // anything else, and never the same body area twice in a row.
+  const pool = EXERCISES.filter(
+    (exercise) => !taken.has(exercise.id) && allowed(exercise),
+  );
   const preferred = pool.filter((exercise) =>
     answers.bothers.includes(exercise.region),
   );
   const ordered = [...preferred, ...pool.filter((e) => !preferred.includes(e))];
 
-  const sequence: Exercise[] = [lead];
   for (const exercise of ordered) {
     if (sequence.length >= length) break;
     if (exercise.region === sequence[sequence.length - 1].region) continue;
     sequence.push(exercise);
+    taken.add(exercise.id);
+  }
+
+  // Everything left repeats a body area back to back. A short break beats a
+  // break padded with a move the user has asked not to see, so allow the
+  // repeat but keep the filters.
+  for (const exercise of ordered) {
+    if (sequence.length >= length) break;
+    if (taken.has(exercise.id)) continue;
+    sequence.push(exercise);
+    taken.add(exercise.id);
   }
 
   return sequence;
+}
+
+/**
+ * The set to run for `lead`: the one that survives the user's filters most
+ * intact, breaking ties towards the areas they said bother them. `null` when
+ * the lead belongs to no set at all.
+ */
+function bestSetFor(
+  lead: Exercise,
+  allowed: (exercise: Exercise) => boolean,
+  bothers: BodyRegion[],
+): ExerciseSet | null {
+  let best: ExerciseSet | null = null;
+  let bestScore = -Infinity;
+
+  for (const candidate of setsContaining(lead.id)) {
+    const members = setExercises(candidate);
+    const usable = members.filter(
+      (exercise) => exercise.id === lead.id || allowed(exercise),
+    ).length;
+    const focus = members.filter((exercise) =>
+      bothers.includes(exercise.region),
+    ).length;
+    // Surviving members dominate; focus areas only break ties.
+    const score = usable * 10 + focus;
+    if (score > bestScore) {
+      best = candidate;
+      bestScore = score;
+    }
+  }
+
+  return best;
 }
 
 /**
