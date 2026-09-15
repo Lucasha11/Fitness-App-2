@@ -39,7 +39,7 @@ export function A11Notifications({ set, next }: StepProps) {
         nothing breaks.
       </p>
 
-      <div className="notif" role="img" aria-label="Example MoveMate notification: Shoulder rolls, 45 seconds. You've been sitting 58 minutes. Actions: Start, Snooze 10, Skip.">
+      <div className="notif" role="img" aria-label="Example MoveMate notification: Shoulder rolls, 1 minute. You've been sitting 58 minutes. Actions: Start, Snooze 10, Skip.">
         <div className="notif__head">
           <span className="notif__thumb">
             <Mascot name="pullups" size={38} />
@@ -49,7 +49,7 @@ export function A11Notifications({ set, next }: StepProps) {
               <span>MOVEMATE</span>
               <span>now</span>
             </span>
-            <span className="notif__title">Shoulder rolls, 45 seconds</span>
+            <span className="notif__title">Shoulder rolls, 1 minute</span>
             <span className="notif__body">
               You’ve been sitting 58 min. Quick one?
             </span>

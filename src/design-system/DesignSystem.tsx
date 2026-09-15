@@ -528,7 +528,7 @@ function Chips() {
           <div className="ds__row">
             <span className="chip chip--static">Neck</span>
             <span className="mini-chip mini-chip--area">Shoulders</span>
-            <span className="mini-chip">45 sec</span>
+            <span className="mini-chip">1 min</span>
             <span className="intro__chip" style={{ background: 'var(--violet)', color: 'var(--ink-on-accent)' }}>
               Mobility
             </span>
@@ -604,7 +604,7 @@ function Cards() {
               <h3 className="next-card__name">Shoulder rolls</h3>
               <div className="next-card__chips">
                 <span className="mini-chip mini-chip--area">Shoulders</span>
-                <span className="mini-chip">45 sec</span>
+                <span className="mini-chip">1 min</span>
               </div>
             </div>
             <div className="next-card__art bob">
