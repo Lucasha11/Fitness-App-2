@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { ChevronLeftIcon, SwapIcon } from '../components/icons';
 import { Mascot } from '../components/Mascot';
-import { type Exercise, formatDuration } from '../exercises';
+import { EXERCISE_DURATION_SECONDS, type Exercise, formatDuration } from '../exercises';
 import { BODY_REGION_LABELS } from '../onboarding/state';
 import { poseFor, tintFor } from './poses';
 
@@ -32,7 +32,7 @@ export function SequenceOverview({
   const [offset, setOffset] = useState(0);
   const startY = useRef(0);
 
-  const totalSeconds = sequence.reduce((sum, item) => sum + item.seconds, 0);
+  const totalSeconds = sequence.length * EXERCISE_DURATION_SECONDS;
   const allSubtle = sequence.every((item) => item.subtle);
 
   const onHandleDown = (index: number) => (event: React.PointerEvent) => {
@@ -141,9 +141,9 @@ export function SequenceOverview({
                 <span className="seq-row__name">{exercise.name}</span>
                 <span className="seq-row__meta">
                   {isCurrent
-                    ? `Playing now · ${formatDuration(exercise.seconds)}`
+                    ? `Playing now · ${formatDuration(EXERCISE_DURATION_SECONDS)}`
                     : `${BODY_REGION_LABELS[exercise.region]} · ${formatDuration(
-                        exercise.seconds,
+                        EXERCISE_DURATION_SECONDS,
                       )}`}
                 </span>
               </span>

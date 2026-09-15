@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { type Exercise, formatDuration } from '../exercises';
+import { EXERCISE_DURATION_SECONDS, type Exercise, formatDuration } from '../exercises';
 import { BODY_REGION_LABELS } from '../onboarding/state';
 
 /** Seconds of breathing room between exercises. */
@@ -76,7 +76,7 @@ export function RestBetween({
         <div className="rest__eyebrow">NEXT UP</div>
         <p className="rest__next">{next.name}</p>
         <p className="rest__meta">
-          {BODY_REGION_LABELS[next.region]} · {formatDuration(next.seconds)}
+          {BODY_REGION_LABELS[next.region]} · {formatDuration(EXERCISE_DURATION_SECONDS)}
         </p>
       </div>
 

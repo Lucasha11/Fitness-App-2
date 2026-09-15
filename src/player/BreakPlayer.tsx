@@ -8,7 +8,7 @@ import {
 } from '../components/icons';
 import { COACH_LABEL, useCoach } from '../components/coach';
 import { Mascot } from '../components/Mascot';
-import type { Exercise } from '../exercises';
+import { EXERCISE_DURATION_SECONDS, type Exercise } from '../exercises';
 import {
   BODY_REGION_LABELS,
   type BodyRegion,
@@ -78,7 +78,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
     buildSequence(answers, lead, session),
   );
   const [index, setIndex] = useState(0);
-  const [remaining, setRemaining] = useState(() => sequence[0].seconds);
+  const [remaining, setRemaining] = useState(EXERCISE_DURATION_SECONDS);
   const [stage, setStage] = useState<Stage>('intro');
   const [toast, setToast] = useState<string | null>(null);
 
@@ -106,16 +106,13 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
   /* Stage transitions                                                 */
   /* ---------------------------------------------------------------- */
 
-  const goToExercise = useCallback(
-    (nextIndex: number, items = sequence) => {
-      setIndex(nextIndex);
-      remainingRef.current = items[nextIndex].seconds;
-      setRemaining(remainingRef.current);
-      switchedRef.current = false;
-      setStage('running');
-    },
-    [sequence],
-  );
+  const goToExercise = useCallback((nextIndex: number) => {
+    setIndex(nextIndex);
+    remainingRef.current = EXERCISE_DURATION_SECONDS;
+    setRemaining(remainingRef.current);
+    switchedRef.current = false;
+    setStage('running');
+  }, []);
 
   /** Bank the break and show C6. */
   const finish = useCallback(() => {
@@ -138,7 +135,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
   /** Move on from the current exercise, with or without crediting it. */
   const advance = useCallback(
     (credited: boolean) => {
-      if (credited) movedRef.current += current.seconds;
+      if (credited) movedRef.current += EXERCISE_DURATION_SECONDS;
 
       if (index >= sequence.length - 1) {
         finish();
@@ -147,7 +144,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
       setStage(credited ? 'rest' : 'running');
       if (!credited) goToExercise(index + 1);
     },
-    [current.seconds, index, sequence.length, finish, goToExercise],
+    [index, sequence.length, finish, goToExercise],
   );
 
   /* ---------------------------------------------------------------- */
@@ -169,8 +166,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
   useEffect(() => {
     if (stage !== 'running') return undefined;
 
-    const total = current.seconds;
-    const halfway = Math.floor(total / 2);
+    const halfway = Math.floor(EXERCISE_DURATION_SECONDS / 2);
     let left = remainingRef.current;
 
     const timer = window.setInterval(() => {
@@ -196,7 +192,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
     }, 1000);
 
     return () => window.clearInterval(timer);
-  }, [stage, index, current.seconds, current.sides, cue, advance]);
+  }, [stage, index, current.sides, cue, advance]);
 
   /* ---------------------------------------------------------------- */
   /* Controls                                                          */
@@ -218,8 +214,8 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
 
       // Swapping the exercise that's on screen restarts its clock.
       if (position === index) {
-        remainingRef.current = replacement.seconds;
-        setRemaining(replacement.seconds);
+        remainingRef.current = EXERCISE_DURATION_SECONDS;
+        setRemaining(EXERCISE_DURATION_SECONDS);
         switchedRef.current = false;
       }
     },
@@ -243,8 +239,8 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
   );
 
   const restartExercise = () => {
-    remainingRef.current = current.seconds;
-    setRemaining(current.seconds);
+    remainingRef.current = EXERCISE_DURATION_SECONDS;
+    setRemaining(EXERCISE_DURATION_SECONDS);
     switchedRef.current = false;
     setStage('running');
   };
@@ -386,8 +382,8 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
           setSequence(buildSequence(answers, next, session));
           setIndex(0);
           movedRef.current = 0;
-          remainingRef.current = next.seconds;
-          setRemaining(next.seconds);
+          remainingRef.current = EXERCISE_DURATION_SECONDS;
+          setRemaining(EXERCISE_DURATION_SECONDS);
           switchedRef.current = false;
           setStage('intro');
         }}
@@ -428,7 +424,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
 
   /* stage === 'running' or 'switch' — C2, with C3 layered over it. */
 
-  const progress = 1 - remaining / current.seconds;
+  const progress = 1 - remaining / EXERCISE_DURATION_SECONDS;
   const showingSwitch = stage === 'switch';
 
   return (
@@ -563,8 +559,8 @@ function CueLine({
   exercise: Exercise;
   remaining: number;
 }) {
-  const elapsed = exercise.seconds - remaining;
-  const step = exercise.seconds / exercise.cues.length;
+  const elapsed = EXERCISE_DURATION_SECONDS - remaining;
+  const step = EXERCISE_DURATION_SECONDS / exercise.cues.length;
   const position = Math.min(
     exercise.cues.length - 1,
     Math.floor(elapsed / step),
