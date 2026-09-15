@@ -6,6 +6,8 @@
  * of the app (the scheduler, the exercise picker) can read later.
  */
 
+import { COACHES, type Coach } from '../components/coach';
+
 export type DayType = 'desk' | 'hybrid' | 'driver' | 'student' | 'shift' | 'home';
 
 export type BodyRegion =
@@ -36,6 +38,8 @@ export type AccountChoice = 'apple' | 'email' | 'local';
 
 export interface OnboardingState {
   dayType: DayType | null;
+  /** Which animal coaches the user, picked on A1. */
+  coach: Coach;
   bothers: BodyRegion[];
   visibility: Visibility;
   intensity: Intensity;
@@ -58,6 +62,7 @@ export interface OnboardingState {
 /** Every default here is the value the design shows in its "resting" state. */
 export const initialState: OnboardingState = {
   dayType: null,
+  coach: 'panda',
   bothers: [],
   visibility: 'some',
   intensity: 'moderate',
@@ -148,16 +153,30 @@ export function formatTime(minutes: number): string {
   return `${hour12}:${String(minute).padStart(2, '0')} ${suffix}`;
 }
 
-/** `9 * 60` -> `09:00`, the value an `<input type="time">` expects. */
-export function toTimeInputValue(minutes: number): string {
-  const total = ((minutes % 1440) + 1440) % 1440;
-  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+/** The three columns of the A8 time wheels. */
+export interface ClockParts {
+  /** 12 for both noon and midnight, as the wheel reads it. */
+  hour12: number;
+  minute: number;
+  meridiem: 'AM' | 'PM';
 }
 
-export function fromTimeInputValue(value: string): number | null {
-  const match = /^(\d{2}):(\d{2})$/.exec(value);
-  if (!match) return null;
-  return Number(match[1]) * 60 + Number(match[2]);
+export function timeParts(minutes: number): ClockParts {
+  const total = ((minutes % 1440) + 1440) % 1440;
+  const hour24 = Math.floor(total / 60);
+  return {
+    hour12: hour24 % 12 === 0 ? 12 : hour24 % 12,
+    minute: total % 60,
+    meridiem: hour24 < 12 ? 'AM' : 'PM',
+  };
+}
+
+export function minutesFromParts({
+  hour12,
+  minute,
+  meridiem,
+}: ClockParts): number {
+  return ((hour12 % 12) + (meridiem === 'PM' ? 12 : 0)) * 60 + minute;
 }
 
 /** Splits `9:00 AM` so the meridiem can be set in a smaller type size. */
@@ -250,6 +269,9 @@ export function loadState(): OnboardingState {
       ...initialState,
       ...parsed,
       adaptations: { ...initialState.adaptations, ...parsed.adaptations },
+      coach: COACHES.includes(parsed.coach as Coach)
+        ? (parsed.coach as Coach)
+        : initialState.coach,
       activeDays: Array.isArray(parsed.activeDays) && parsed.activeDays.length === 7
         ? parsed.activeDays
         : initialState.activeDays,

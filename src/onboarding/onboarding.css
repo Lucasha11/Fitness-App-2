@@ -34,6 +34,185 @@
   min-height: 8px;
 }
 
+/* ---- A1b Coach carousel -------------------------------------------- */
+
+/*
+ * The track runs full-bleed so the neighbouring card peeks past the screen
+ * padding — that peek is the only thing telling the user it swipes, so it is
+ * load-bearing rather than decorative.
+ */
+.coach-screen {
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
+}
+
+.coach-screen > .title,
+.coach-screen > .subtitle,
+.coach-screen > .screen__footer {
+  padding-left: 26px;
+  padding-right: 26px;
+}
+
+.coach-track {
+  display: flex;
+  gap: 14px;
+  margin-top: 26px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  /* Enough room either side that the first and last card can sit centred. */
+  padding-inline: calc((100% - 262px) / 2);
+  flex-shrink: 0;
+}
+
+.coach-track::-webkit-scrollbar {
+  display: none;
+}
+
+.coach-card {
+  position: relative;
+  box-sizing: border-box;
+  width: 262px;
+  height: 386px;
+  flex-shrink: 0;
+  scroll-snap-align: center;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 26px 20px 24px;
+  border-radius: 28px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-card-soft);
+  transition: box-shadow 160ms ease;
+}
+
+.coach-card[aria-pressed='true'] {
+  box-shadow: var(--shadow-card-strong);
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+
+.coach-card__check {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--ink-on-accent);
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow-accent);
+}
+
+.coach-card__halo {
+  width: 186px;
+  height: 186px;
+  border-radius: var(--radius-pill);
+  background: var(--fill);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: background 160ms ease;
+}
+
+.coach-card[aria-pressed='true'] .coach-card__halo {
+  background: var(--mint);
+}
+
+.coach-card__name {
+  font-size: 24px;
+  font-weight: 900;
+  margin-top: 18px;
+}
+
+.coach-card__blurb {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  line-height: 1.45;
+  margin-top: 6px;
+}
+
+.coach-card__traits {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: auto;
+}
+
+.coach-card__trait {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 11px;
+  border-radius: var(--radius-pill);
+  background: var(--fill);
+  color: var(--ink-muted);
+}
+
+/* The dots already carry 26px of air; the track above supplies its own. */
+.coach-dots {
+  margin-bottom: 0;
+}
+
+/* Past MAX_DOTS coaches: a readout and a rail of thumbnails instead. */
+.coach-count {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  margin: 20px 0 0;
+}
+
+.coach-rail {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  padding-inline: 26px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.coach-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.coach-rail__item {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  border-radius: var(--radius-pill);
+  background: var(--fill);
+  display: grid;
+  place-items: center;
+}
+
+.coach-rail__item[aria-pressed='true'] {
+  background: var(--mint);
+  outline: 2.5px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.coach-note {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  margin: 0 0 14px;
+}
+
 /* ---- A2 Value carousel -------------------------------------------- */
 
 .a2 {
@@ -223,8 +402,13 @@
   margin-top: 16px;
 }
 
+/*
+ * The whole card is the tap target; it raises the wheel sheet rather than
+ * handing off to the native time picker, which draws nothing we can style.
+ */
 .time-card {
   flex: 1;
+  border: none;
   border-radius: var(--radius-card);
   background: var(--surface);
   padding: 16px;
@@ -232,6 +416,9 @@
   cursor: pointer;
   display: block;
   position: relative;
+  font-family: inherit;
+  color: inherit;
+  text-align: left;
 }
 
 .time-card__value {
@@ -245,24 +432,22 @@
   font-size: 14px;
 }
 
-/*
- * The native time picker sits invisibly over the card so the whole card is
- * the tap target, while the styled value below stays the visible control.
- */
-.time-card__input {
+.time-card__caret {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
+  right: 13px;
+  bottom: 13px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-pill);
+  background: var(--fill);
+  color: var(--ink-muted);
+  transition: transform 200ms ease;
 }
 
-.time-card:focus-within {
-  outline: 3px solid var(--accent);
-  outline-offset: 3px;
+.time-card[aria-expanded='true'] .time-card__caret {
+  transform: rotate(180deg);
 }
 
 .a8__note {

@@ -11,6 +11,7 @@ import {
   ReplyIcon,
   TargetIcon,
 } from '../components/icons';
+import { COACH_LABEL, useCoach, useCoachNoun } from '../components/coach';
 import { GoalRing } from '../components/GoalRing';
 import { ActivityTrend } from './ActivityTrend';
 import { useMotionReset } from '../health/useMotionReset';
@@ -194,6 +195,7 @@ function NextBreakCard({
   onStart: () => void;
   onSnooze: () => void;
 }) {
+  const coach = useCoach();
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
   const minutesAway = slot.showsAt - nowMinutes;
 
@@ -220,7 +222,7 @@ function NextBreakCard({
           </div>
         </div>
         <div className="next-card__art bob">
-          <Mascot name="thumbsup" size={70} alt="Panda coach" />
+          <Mascot name="thumbsup" size={70} alt={`${COACH_LABEL[coach]} coach`} />
         </div>
       </div>
 
@@ -252,6 +254,7 @@ function GoalMetCard({
   answers: OnboardingState;
   onKeepGoing: (exercise: Exercise) => void;
 }) {
+  const coach = useCoach();
   const extra = pickExercises(answers, 1)[0];
 
   return (
@@ -270,7 +273,7 @@ function GoalMetCard({
           </div>
         </div>
         <div className="next-card__art bob">
-          <Mascot name="thumbsup" size={70} alt="Panda coach" />
+          <Mascot name="thumbsup" size={70} alt={`${COACH_LABEL[coach]} coach`} />
         </div>
       </div>
 
@@ -513,6 +516,7 @@ const COVERAGE_GROUPS = [
 ] as const;
 
 function Coverage() {
+  const coach = useCoachNoun();
   const { session } = useSession();
   const week = breaksThisWeek(session);
 
@@ -525,8 +529,8 @@ function Coverage() {
   const untouched = COVERAGE_GROUPS.filter((_, index) => counts[index] === 0);
   const note =
     untouched.length === 0
-      ? 'Every area covered this week. Your panda approves.'
-      : `No ${untouched[0].label.toLowerCase()} work this week — your panda's judging, gently.`;
+      ? `Every area covered this week. Your ${coach} approves.`
+      : `No ${untouched[0].label.toLowerCase()} work this week — your ${coach}'s judging, gently.`;
 
   return (
     <section className="coverage">

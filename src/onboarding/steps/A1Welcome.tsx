@@ -1,16 +1,23 @@
+import { COACH_LABEL, COACH_NOUN } from '../../components/coach';
 import { Mascot } from '../../components/Mascot';
 import { Button, Screen, ScreenFooter, TextButton } from '../../components/ui';
 import type { StepProps } from '../types';
 
-export function A1Welcome({ next, go }: StepProps) {
+export function A1Welcome({ state, next, go }: StepProps) {
+  const coach = state.coach;
+
   return (
     <Screen tone="warm" className="a1" labelledBy="a1-title">
       <div className="a1__art bob">
-        <Mascot name="lifting" size={300} alt="Panda coach stretching at a desk" />
+        <Mascot
+          name="lifting"
+          size={300}
+          alt={`${COACH_LABEL[coach]} coach stretching at a desk`}
+        />
       </div>
 
       <h1 className="a1__title" id="a1-title">
-        Your panda
+        Your {COACH_NOUN[coach]}
         <br />
         hates chairs
       </h1>
