@@ -7,7 +7,7 @@ import {
   ScreenFooter,
   TextButton,
 } from '../../components/ui';
-import { formatDurationShort } from '../../exercises';
+import { EXERCISE_DURATION_SECONDS, formatDurationShort } from '../../exercises';
 import { previewNextBreaks } from '../../schedule';
 import { useSession } from '../../session/context';
 import { BODY_REGION_LABELS, formatTime } from '../state';
@@ -70,7 +70,7 @@ export function A15PlanReady({ state, finish }: StepProps) {
               <span className="plan__time">{railTime(slot.at)}</span>
               <span className="plan__name">{slot.exercise.name}</span>
               <span className="plan__duration">
-                {formatDurationShort(slot.exercise.seconds)}
+                {formatDurationShort(EXERCISE_DURATION_SECONDS)}
               </span>
             </li>
           ))}

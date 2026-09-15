@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ChevronRightIcon, CloseIcon, SwapIcon } from '../components/icons';
 import { Mascot } from '../components/Mascot';
-import { type Exercise, formatDuration } from '../exercises';
+import { EXERCISE_DURATION_SECONDS, type Exercise, formatDuration } from '../exercises';
 import { BODY_REGION_LABELS } from '../onboarding/state';
 import { poseFor } from './poses';
 
@@ -50,7 +50,7 @@ export function BreakIntro({
     return () => window.clearInterval(timer);
   }, [onStart]);
 
-  const totalSeconds = sequence.reduce((sum, item) => sum + item.seconds, 0);
+  const totalSeconds = sequence.length * EXERCISE_DURATION_SECONDS;
 
   return (
     <section className="player" aria-label={`Starting ${exercise.name}`}>
@@ -94,7 +94,7 @@ export function BreakIntro({
               {BODY_REGION_LABELS[exercise.region]}
             </span>
             <span className="intro__chip">
-              {formatDuration(exercise.seconds)}
+              {formatDuration(EXERCISE_DURATION_SECONDS)}
             </span>
             <span className="intro__chip">
               {exercise.subtle ? 'Seated' : 'Standing'}

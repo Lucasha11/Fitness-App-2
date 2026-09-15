@@ -16,6 +16,7 @@ import { ActivityTrend } from './ActivityTrend';
 import { useMotionReset } from '../health/useMotionReset';
 import { Mascot } from '../components/Mascot';
 import {
+  EXERCISE_DURATION_SECONDS,
   type Exercise,
   formatDuration,
 } from '../exercises';
@@ -214,7 +215,7 @@ function NextBreakCard({
               {BODY_REGION_LABELS[slot.exercise.region]}
             </span>
             <span className="mini-chip">
-              {formatDuration(slot.exercise.seconds)}
+              {formatDuration(EXERCISE_DURATION_SECONDS)}
             </span>
           </div>
         </div>
@@ -263,7 +264,9 @@ function GoalMetCard({
             <span className="mini-chip mini-chip--area">
               {BODY_REGION_LABELS[extra.region]}
             </span>
-            <span className="mini-chip">{formatDuration(extra.seconds)}</span>
+            <span className="mini-chip">
+              {formatDuration(EXERCISE_DURATION_SECONDS)}
+            </span>
           </div>
         </div>
         <div className="next-card__art bob">
@@ -406,7 +409,7 @@ function TimelineRow({
       : row.status === 'skipped'
         ? 'Skipped'
         : `${BODY_REGION_LABELS[row.exercise.region]} · ${formatDuration(
-            row.exercise.seconds,
+            EXERCISE_DURATION_SECONDS,
           )}`;
 
   const commit = () => (row.status === 'skipped' ? onUnskip() : onSkip());
