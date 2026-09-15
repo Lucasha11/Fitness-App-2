@@ -328,7 +328,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
     // picked it if they did.
     const area = BODY_REGION_LABELS[current.region].toLowerCase();
     const chosen = answers.bothers.includes(current.region);
-    const sat = sittingMinutes(session);
+    const sat = sittingMinutes(session, answers);
 
     const why = chosen
       ? sat >= 5

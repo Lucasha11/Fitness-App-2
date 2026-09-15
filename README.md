@@ -138,6 +138,11 @@ Nothing on screen is a mock. The onboarding answers drive everything downstream:
   to back.
 - Finishing a break advances the goal ring, marks its timeline row done, resets
   the sitting clock, and feeds the streak chip and weekly coverage.
+- **The sitting clock also resets from Core Motion.** On iOS the app asks the
+  activity log when you last got up and counts from there, so a walk at lunch
+  clears the clock without opening the app. It never counts time from before
+  your sitting window opened either, so an overnight gap can't greet you with
+  "you've been sitting for 900 minutes".
 - Feedback changes what gets scheduled: "Awkward here" drops that exercise for
   good, and "Hurt something" rests that body area for a week — the day's plan
   stops offering it immediately.

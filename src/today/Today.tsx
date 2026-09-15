@@ -14,6 +14,7 @@ import {
 import { COACH_LABEL, useCoach, useCoachNoun } from '../components/coach';
 import { GoalRing } from '../components/GoalRing';
 import { ActivityTrend } from './ActivityTrend';
+import { useMotionReset } from '../health/useMotionReset';
 import { Mascot } from '../components/Mascot';
 import {
   type Exercise,
@@ -54,6 +55,8 @@ export function Today({ answers, onStartBreak }: TodayProps) {
 
   // A minute-resolution clock so "next break in 24 min" stays honest without
   // re-rendering the whole screen every second.
+  useMotionReset(answers.useMotion);
+
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), TICK_MS);
@@ -69,7 +72,7 @@ export function Today({ answers, onStartBreak }: TodayProps) {
   const done = breaksToday(session).length;
   const goal = answers.dailyGoal;
   const streak = currentStreak(session);
-  const sitting = sittingMinutes(session, now.getTime());
+  const sitting = sittingMinutes(session, answers, now.getTime());
 
   return (
     <div className="today">
@@ -288,12 +291,28 @@ function GoalMetCard({
 /* Sitting indicator                                                   */
 /* ------------------------------------------------------------------ */
 
+/**
+ * `95` -> `1 hr 35 min`. Past an hour or so the minute count stops being
+ * something anyone reads at a glance, and a four-digit one reads as a bug.
+ */
+function sittingLabel(minutes: number): string {
+  if (minutes < 90) {
+    return `${minutes} minute${minutes === 1 ? '' : 's'}`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  const hourPart = `${hours} hr${hours === 1 ? '' : 's'}`;
+
+  return rest === 0 ? hourPart : `${hourPart} ${rest} min`;
+}
+
 function SittingIndicator({ minutes }: { minutes: number }) {
   const warning = minutes >= SITTING_THRESHOLD;
   const label =
     minutes < 1
       ? 'You just got up — nice one'
-      : `You've been sitting for ${minutes} minute${minutes === 1 ? '' : 's'}`;
+      : `You've been sitting for ${sittingLabel(minutes)}`;
 
   return (
     <button
