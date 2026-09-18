@@ -13,7 +13,7 @@ import { BreakOptionsSheet } from './BreakOptionsSheet';
 import { poseFor } from './poses';
 
 /** How long the screen waits before starting the break on its own. */
-const AUTO_START_MS = 5000;
+const AUTO_START_MS = 7000;
 
 /** How often the countdown redraws. Fine enough that the ring reads smooth. */
 const TICK_MS = 60;
@@ -41,7 +41,7 @@ interface BreakStartProps {
  * to do, how long it will take, and the two ways forward — start it, or
  * change something about it first.
  *
- * A ring drains around the coach for five seconds and then starts the break on
+ * A ring drains around the coach for seven seconds and then starts the break on
  * its own, so someone who only wanted to move never has to tap anything. The
  * ring stops at the first sign of a person — a tap, a key, focus landing on a
  * control, the app going away — and never resumes: a countdown you have to
@@ -69,7 +69,7 @@ export function BreakStart({
 
   /*
    * Set once, on the first tick rather than on every run of the effect below,
-   * so a re-render can never quietly hand the user another five seconds.
+   * so a re-render can never quietly hand the user another seven seconds.
    */
   const deadline = useRef(0);
 
@@ -127,7 +127,7 @@ export function BreakStart({
       <p className="sr-only" role="status">
         {held
           ? 'Countdown stopped.'
-          : 'Starting in five seconds. Touch the screen to stay here.'}
+          : 'Starting in seven seconds. Touch the screen to stay here.'}
       </p>
 
       <div className="start__top">
