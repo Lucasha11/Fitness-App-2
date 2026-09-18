@@ -57,6 +57,22 @@ img {
   }
 }
 
+/*
+ * Text for screen readers only. Announcements that would be noise on screen —
+ * the break start screen's countdown, for one — live in here.
+ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 @keyframes step-in {
   from {
     opacity: 0;
