@@ -26,7 +26,12 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Claude Code tooling
-.claude/
+# .claude/commands/ is checked in deliberately: the workflow has to travel with
+# the repo so every contributor's Claude session runs the same one, whatever is
+# installed on their own machine.
+.claude/*
+!.claude/commands/
+.claude/settings.local.json
 
 # iOS / Swift Package Manager build state
 ios/App/CapApp-SPM/.build/
