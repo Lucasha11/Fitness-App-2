@@ -1,3 +1,8 @@
+import {
+  EXERCISE_DURATION_SECONDS,
+  isExerciseDuration,
+  type ExerciseDuration,
+} from '../exercises';
 import type { BodyRegion, OnboardingState } from '../onboarding/state';
 
 export type { BodyRegion };
@@ -62,6 +67,18 @@ export interface SessionState {
   /** Epoch ms of the last time the user got up. */
   sittingSince: number;
   soundOn: boolean;
+  /**
+   * Whether a break plays a backing track. Separate from `soundOn`, which
+   * governs the start/halfway/end cues: someone can want the cues without the
+   * music, or the music without being pinged three times an exercise.
+   */
+  musicOn: boolean;
+  /**
+   * How long each exercise in a break runs. The start screen's "reduce total
+   * time" control writes here, so a shortened break stays shortened the next
+   * time rather than springing back to a minute.
+   */
+  exerciseSeconds: ExerciseDuration;
   feedback: FeedbackEntry[];
   exclusions: Exclusions;
   /**
@@ -86,6 +103,8 @@ export function emptySession(): SessionState {
     snoozed: {},
     sittingSince: Date.now(),
     soundOn: true,
+    musicOn: false,
+    exerciseSeconds: EXERCISE_DURATION_SECONDS,
     feedback: [],
     exclusions: { exerciseIds: [], regions: [] },
     meetings: [],
@@ -109,6 +128,14 @@ function normaliseHistory(
   );
 }
 
+/** A stored exercise length, or `fallback` when it is missing or unrunnable. */
+function storedDuration(
+  stored: number | undefined,
+  fallback: ExerciseDuration,
+): ExerciseDuration {
+  return stored !== undefined && isExerciseDuration(stored) ? stored : fallback;
+}
+
 export function loadSession(): SessionState {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -121,6 +148,9 @@ export function loadSession(): SessionState {
       // Nested defaults, so a record written by an earlier version loads.
       exclusions: { ...base.exclusions, ...parsed.exclusions },
       history: normaliseHistory(parsed.history),
+      // A length written by a build that offered different choices must not
+      // put an unrunnable duration into the player.
+      exerciseSeconds: storedDuration(parsed.exerciseSeconds, base.exerciseSeconds),
     };
   } catch {
     return emptySession();

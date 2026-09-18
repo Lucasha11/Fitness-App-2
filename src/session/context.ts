@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react';
+import type { ExerciseDuration } from '../exercises';
 import type {
   BodyRegion,
   CompletedBreak,
@@ -22,6 +23,9 @@ export interface SessionApi {
   excludeExercise: (exerciseId: string) => void;
   restRegion: (region: BodyRegion, days: number) => void;
   setSoundOn: (on: boolean) => void;
+  setMusicOn: (on: boolean) => void;
+  /** Set how long each exercise in a break runs. */
+  setExerciseSeconds: (seconds: ExerciseDuration) => void;
   seedMeetings: (meetings: Meeting[]) => void;
   reset: () => void;
 }
