@@ -25,8 +25,6 @@ const RING_LENGTH = 2 * Math.PI * RING_RADIUS;
 interface BreakStartProps {
   exercise: Exercise;
   sequence: Exercise[];
-  /** Plain-language reason this exercise came up now. */
-  why: string;
   /** How long each exercise in the break will run. */
   exerciseSeconds: ExerciseDuration;
   musicOn: boolean;
@@ -40,7 +38,7 @@ interface BreakStartProps {
 
 /**
  * C1 · the screen between tapping an exercise and moving: what you are about
- * to do, why, how long it will take, and the two ways forward — start it, or
+ * to do, how long it will take, and the two ways forward — start it, or
  * change something about it first.
  *
  * A ring drains around the coach for five seconds and then starts the break on
@@ -54,7 +52,6 @@ interface BreakStartProps {
 export function BreakStart({
   exercise,
   sequence,
-  why,
   exerciseSeconds,
   musicOn,
   onStart,
@@ -213,8 +210,6 @@ export function BreakStart({
             </span>
           </div>
         </div>
-
-        <p className="start__why">{why}</p>
       </div>
 
       <button type="button" className="start__sequence" onClick={onOverview}>

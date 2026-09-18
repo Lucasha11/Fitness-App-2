@@ -421,15 +421,6 @@
   color: var(--ink);
 }
 
-.start__why {
-  font-size: 15px;
-  font-weight: 700;
-  color: oklch(0.99 0.005 100 / 70%);
-  line-height: 1.5;
-  max-width: 280px;
-  margin: 0;
-}
-
 .start__sequence {
   display: flex;
   align-items: center;
