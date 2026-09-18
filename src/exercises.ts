@@ -8,9 +8,23 @@
 
 import type { BodyRegion } from './onboarding/state';
 
-/** Every exercise runs for exactly this long — the break player, timeline
- * badges and cue pacing all read from this single constant. */
+/** How long an exercise runs by default — the length the timeline badges,
+ * the plan preview and a break nobody has shortened are all built around. */
 export const EXERCISE_DURATION_SECONDS = 15;
+
+/**
+ * The per-exercise lengths the start screen's "reduce total time" control
+ * offers, longest first. Four exercises at these lengths make a 1:00, 0:40 or
+ * 0:20 break, so the control reads as a choice of total rather than of pace.
+ */
+export const EXERCISE_DURATION_CHOICES = [15, 10, 5] as const;
+
+export type ExerciseDuration = (typeof EXERCISE_DURATION_CHOICES)[number];
+
+/** Whether `seconds` is one of the lengths a break can actually run at. */
+export function isExerciseDuration(seconds: number): seconds is ExerciseDuration {
+  return (EXERCISE_DURATION_CHOICES as readonly number[]).includes(seconds);
+}
 
 /** Exercises in one break. Four at fifteen seconds is the one-minute break. */
 export const EXERCISES_PER_BREAK = 4;

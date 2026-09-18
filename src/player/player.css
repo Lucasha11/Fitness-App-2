@@ -285,16 +285,16 @@
 }
 
 /* ================================================================== */
-/* C1 · Break intro                                                    */
+/* C1 · Break start (transition)                                       */
 /* ================================================================== */
 
-.intro__top {
+.start__top {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.intro__swap {
+.start__swap {
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -309,22 +309,26 @@
   cursor: pointer;
 }
 
-.intro__body {
+.start__swap:hover {
+  background: oklch(0.99 0.005 100 / 20%);
+}
+
+.start__body {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: 22px;
+  gap: 20px;
   min-height: 0;
 }
 
-.intro__halo {
-  width: 250px;
-  height: 250px;
-  max-width: 64vw;
-  max-height: 64vw;
+.start__halo {
+  width: 232px;
+  height: 232px;
+  max-width: 60vw;
+  max-height: 60vw;
   aspect-ratio: 1;
   border-radius: var(--radius-pill);
   background: oklch(0.88 0.075 151 / 16%);
@@ -332,23 +336,23 @@
   place-items: center;
 }
 
-.intro__name {
-  font-size: 34px;
+.start__name {
+  font-size: 32px;
   font-weight: 900;
   color: var(--ink-on-accent);
   line-height: 1.1;
   margin: 0;
 }
 
-.intro__chips {
+.start__chips {
   display: flex;
   gap: 7px;
   justify-content: center;
-  margin-top: 14px;
+  margin-top: 13px;
   flex-wrap: wrap;
 }
 
-.intro__chip {
+.start__chip {
   border-radius: 12px;
   padding: 6px 12px;
   font-size: 11px;
@@ -357,12 +361,12 @@
   color: oklch(0.99 0.005 100 / 85%);
 }
 
-.intro__chip--area {
+.start__chip--area {
   background: var(--mint);
   color: var(--ink);
 }
 
-.intro__why {
+.start__why {
   font-size: 15px;
   font-weight: 700;
   color: oklch(0.99 0.005 100 / 70%);
@@ -371,7 +375,7 @@
   margin: 0;
 }
 
-.intro__sequence {
+.start__sequence {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -388,18 +392,201 @@
   cursor: pointer;
 }
 
-.intro__bar {
-  height: 4px;
-  border-radius: var(--radius-pill);
-  background: oklch(0.99 0.005 100 / 15%);
-  margin-top: 18px;
-  overflow: hidden;
+.start__sequence:hover {
+  background: oklch(0.99 0.005 100 / 16%);
 }
 
-.intro__bar-fill {
-  height: 100%;
+/* ---- The two ways forward ------------------------------------------ */
+
+.start__go {
+  width: 100%;
+  margin-top: 14px;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-control);
   background: var(--lime);
+  color: var(--lime-ink);
+  font-family: inherit;
+  padding: 13px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  box-shadow: 0 10px 24px oklch(0.88 0.12 128 / 22%);
+  transition: transform 120ms ease, background 140ms ease;
+}
+
+.start__go:active {
+  transform: scale(0.985);
+  background: oklch(0.83 0.12 128);
+}
+
+.start__go-label {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+/* The total the button commits you to, so "start" is never a blank cheque. */
+.start__go-total {
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.72;
+}
+
+.start__more {
+  width: 100%;
+  margin-top: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 900;
+  padding: 10px;
+  color: oklch(0.99 0.005 100 / 78%);
+}
+
+.start__more:hover {
+  color: var(--ink-on-accent);
+}
+
+/* ================================================================== */
+/* C1 · Break options sheet                                            */
+/* ================================================================== */
+
+.opt-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+}
+
+.opt-sheet__scrim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: oklch(0.24 0.04 25 / 52%);
+  animation: opt-sheet-fade 200ms ease-out both;
+}
+
+.opt-sheet__panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  padding: 12px 22px max(22px, env(safe-area-inset-bottom));
+  box-shadow: 0 -12px 36px oklch(0.48 0.09 20 / 22%);
+  animation: opt-sheet-up 260ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+/* A container rather than a control: it only takes focus so Escape lands. */
+.opt-sheet__panel:focus-visible {
+  outline: none;
+}
+
+@keyframes opt-sheet-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes opt-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.opt-sheet__grabber {
+  width: 44px;
+  height: 5px;
   border-radius: var(--radius-pill);
+  background: var(--line);
+  margin: 0 auto 12px;
+}
+
+.opt-sheet__title {
+  margin: 0;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.opt-sheet__rows {
+  margin-top: 4px;
+}
+
+.opt-sheet__block {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 2px;
+}
+
+.opt-sheet__block-head {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 12px;
+}
+
+.opt-sheet__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-inner);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  /* Matches the toggle row above it: the two settings read as one list. */
+  background: var(--mint);
+  color: var(--ink);
+}
+
+.opt-sheet__block-text {
+  flex: 1;
+}
+
+.opt-sheet__block-title {
+  display: block;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.opt-sheet__block-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-muted);
+}
+
+.opt-sheet__done {
+  width: 100%;
+  margin-top: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-control);
+  background: var(--accent);
+  color: var(--ink-on-accent);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 900;
+  padding: 15px;
+  box-shadow: var(--shadow-accent);
+}
+
+.opt-sheet__done:active {
+  background: var(--accent-pressed);
 }
 
 /* ================================================================== */

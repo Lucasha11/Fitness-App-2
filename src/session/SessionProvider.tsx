@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import type { ExerciseDuration } from '../exercises';
 import { SessionContext, type SessionApi } from './context';
 import {
   type BodyRegion,
@@ -67,6 +68,14 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setSession((current) => ({ ...current, soundOn: on }));
   }, []);
 
+  const setMusicOn = useCallback((on: boolean) => {
+    setSession((current) => ({ ...current, musicOn: on }));
+  }, []);
+
+  const setExerciseSeconds = useCallback((seconds: ExerciseDuration) => {
+    setSession((current) => ({ ...current, exerciseSeconds: seconds }));
+  }, []);
+
   const seedMeetings = useCallback((meetings: Meeting[]) => {
     setSession((current) => ({ ...current, meetings }));
   }, []);
@@ -88,6 +97,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       excludeExercise,
       restRegion,
       setSoundOn,
+      setMusicOn,
+      setExerciseSeconds,
       seedMeetings,
       reset,
     }),
@@ -103,6 +114,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       excludeExercise,
       restRegion,
       setSoundOn,
+      setMusicOn,
+      setExerciseSeconds,
       seedMeetings,
       reset,
     ],

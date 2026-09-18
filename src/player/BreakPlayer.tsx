@@ -8,7 +8,7 @@ import {
 } from '../components/icons';
 import { COACH_LABEL, useCoach } from '../components/coach';
 import { Mascot } from '../components/Mascot';
-import { EXERCISE_DURATION_SECONDS, type Exercise } from '../exercises';
+import type { Exercise } from '../exercises';
 import {
   BODY_REGION_LABELS,
   type BodyRegion,
@@ -24,7 +24,7 @@ import {
   type FeedbackVerdict,
 } from '../session/state';
 import { BreakComplete } from './BreakComplete';
-import { BreakIntro } from './BreakIntro';
+import { BreakStart } from './BreakStart';
 import { EndedEarly, REMIND_MINUTES } from './EndedEarly';
 import { FeedbackSheet } from './FeedbackSheet';
 import { PausedView } from './PausedView';
@@ -32,6 +32,7 @@ import { RestBetween } from './RestBetween';
 import { SequenceOverview } from './SequenceOverview';
 import { SwitchSides } from './SwitchSides';
 import { playCue } from './cues';
+import { startMusic, stopMusic } from './music';
 import { LinearTimer, RingTimer } from './timers';
 import { poseFor } from './poses';
 import './player.css';
@@ -71,14 +72,24 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
     excludeExercise,
     restRegion,
     setSoundOn,
+    setMusicOn,
+    setExerciseSeconds,
   } = useSession();
   const coach = useCoach();
+
+  /**
+   * How long each exercise in this break runs. Read once when the break opens
+   * so the start screen's time control can only ever reshape a break that has
+   * not started — a length changing under a running countdown would make the
+   * ring jump and the credited seconds a lie.
+   */
+  const [seconds, setSeconds] = useState(session.exerciseSeconds);
 
   const [sequence, setSequence] = useState<Exercise[]>(() =>
     buildSequence(answers, lead, session),
   );
   const [index, setIndex] = useState(0);
-  const [remaining, setRemaining] = useState(EXERCISE_DURATION_SECONDS);
+  const [remaining, setRemaining] = useState<number>(seconds);
   const [stage, setStage] = useState<Stage>('intro');
   const [toast, setToast] = useState<string | null>(null);
 
@@ -89,7 +100,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
 
   // The countdown is owned by the interval below; this mirror lets a resumed
   // timer pick up exactly where the paused one left off.
-  const remainingRef = useRef(remaining);
+  const remainingRef = useRef<number>(remaining);
   /** Seconds actually moved: exercises that ran down, not ones skipped. */
   const movedRef = useRef(0);
   /** Whether this exercise's switch-sides prompt has already fired. */
@@ -106,13 +117,24 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
   /* Stage transitions                                                 */
   /* ---------------------------------------------------------------- */
 
-  const goToExercise = useCallback((nextIndex: number) => {
-    setIndex(nextIndex);
-    remainingRef.current = EXERCISE_DURATION_SECONDS;
-    setRemaining(remainingRef.current);
+  const goToExercise = useCallback(
+    (nextIndex: number) => {
+      setIndex(nextIndex);
+      remainingRef.current = seconds;
+      setRemaining(remainingRef.current);
+      switchedRef.current = false;
+      setStage('running');
+    },
+    [seconds],
+  );
+
+  /** Leave the start screen for the first exercise. */
+  const begin = useCallback(() => {
+    remainingRef.current = seconds;
+    setRemaining(seconds);
     switchedRef.current = false;
     setStage('running');
-  }, []);
+  }, [seconds]);
 
   /** Bank the break and show C6. */
   const finish = useCallback(() => {
@@ -135,7 +157,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
   /** Move on from the current exercise, with or without crediting it. */
   const advance = useCallback(
     (credited: boolean) => {
-      if (credited) movedRef.current += EXERCISE_DURATION_SECONDS;
+      if (credited) movedRef.current += seconds;
 
       if (index >= sequence.length - 1) {
         finish();
@@ -144,7 +166,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
       setStage(credited ? 'rest' : 'running');
       if (!credited) goToExercise(index + 1);
     },
-    [index, sequence.length, finish, goToExercise],
+    [index, sequence.length, seconds, finish, goToExercise],
   );
 
   /* ---------------------------------------------------------------- */
@@ -166,7 +188,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
   useEffect(() => {
     if (stage !== 'running') return undefined;
 
-    const halfway = Math.floor(EXERCISE_DURATION_SECONDS / 2);
+    const halfway = Math.floor(seconds / 2);
     let left = remainingRef.current;
 
     const timer = window.setInterval(() => {
@@ -192,7 +214,22 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
     }, 1000);
 
     return () => window.clearInterval(timer);
-  }, [stage, index, current.sides, cue, advance]);
+  }, [stage, index, seconds, current.sides, cue, advance]);
+
+  /*
+   * The backing track runs for as long as the user is actually moving, and
+   * stops however the break ends — finished, abandoned, or unmounted out from
+   * under us — because nothing else in the app owns that audio.
+   */
+  const musicOn = session.musicOn && !discreet;
+  const moving = stage === 'running' || stage === 'switch' || stage === 'rest';
+
+  useEffect(() => {
+    if (musicOn && moving) startMusic();
+    else stopMusic();
+  }, [musicOn, moving]);
+
+  useEffect(() => stopMusic, []);
 
   /* ---------------------------------------------------------------- */
   /* Controls                                                          */
@@ -214,12 +251,12 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
 
       // Swapping the exercise that's on screen restarts its clock.
       if (position === index) {
-        remainingRef.current = EXERCISE_DURATION_SECONDS;
-        setRemaining(EXERCISE_DURATION_SECONDS);
+        remainingRef.current = seconds;
+        setRemaining(seconds);
         switchedRef.current = false;
       }
     },
-    [sequence, index, session],
+    [sequence, index, seconds, session],
   );
 
   const reorder = useCallback(
@@ -239,8 +276,8 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
   );
 
   const restartExercise = () => {
-    remainingRef.current = EXERCISE_DURATION_SECONDS;
-    setRemaining(EXERCISE_DURATION_SECONDS);
+    remainingRef.current = seconds;
+    setRemaining(seconds);
     switchedRef.current = false;
     setStage('running');
   };
@@ -311,6 +348,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
     return (
       <SequenceOverview
         sequence={sequence}
+        exerciseSeconds={seconds}
         currentIndex={index}
         onReorder={reorder}
         onSwap={swapAt}
@@ -335,13 +373,20 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
         : `A quick one for your ${area} to break up the sitting.`;
 
     return (
-      <BreakIntro
+      <BreakStart
         exercise={current}
         sequence={sequence}
         why={why}
-        onStart={() => setStage('running')}
+        exerciseSeconds={seconds}
+        musicOn={session.musicOn}
+        onStart={begin}
         onSwap={() => swapAt(index)}
         onOverview={() => setStage('overview')}
+        onMusicChange={setMusicOn}
+        onSecondsChange={(next) => {
+          setSeconds(next);
+          setExerciseSeconds(next);
+        }}
         onClose={onExit}
       />
     );
@@ -365,7 +410,11 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
   if (stage === 'rest') {
     const next = sequence[index + 1];
     return (
-      <RestBetween next={next} onDone={() => goToExercise(index + 1)} />
+      <RestBetween
+        next={next}
+        exerciseSeconds={seconds}
+        onDone={() => goToExercise(index + 1)}
+      />
     );
   }
 
@@ -382,8 +431,8 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
           setSequence(buildSequence(answers, next, session));
           setIndex(0);
           movedRef.current = 0;
-          remainingRef.current = EXERCISE_DURATION_SECONDS;
-          setRemaining(EXERCISE_DURATION_SECONDS);
+          remainingRef.current = seconds;
+          setRemaining(seconds);
           switchedRef.current = false;
           setStage('intro');
         }}
@@ -424,7 +473,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
 
   /* stage === 'running' or 'switch' — C2, with C3 layered over it. */
 
-  const progress = 1 - remaining / EXERCISE_DURATION_SECONDS;
+  const progress = 1 - remaining / seconds;
   const showingSwitch = stage === 'switch';
 
   return (
@@ -494,7 +543,11 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
         <div className="player__caption">
           <h1 className="player__name">{current.name}</h1>
           <p className="player__cue" aria-live="polite">
-            <CueLine exercise={current} remaining={remaining} />
+            <CueLine
+              exercise={current}
+              remaining={remaining}
+              total={seconds}
+            />
           </p>
         </div>
 
@@ -555,12 +608,15 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
 function CueLine({
   exercise,
   remaining,
+  total,
 }: {
   exercise: Exercise;
   remaining: number;
+  /** The exercise's full length, which a shortened break changes. */
+  total: number;
 }) {
-  const elapsed = EXERCISE_DURATION_SECONDS - remaining;
-  const step = EXERCISE_DURATION_SECONDS / exercise.cues.length;
+  const elapsed = total - remaining;
+  const step = total / exercise.cues.length;
   const position = Math.min(
     exercise.cues.length - 1,
     Math.floor(elapsed / step),

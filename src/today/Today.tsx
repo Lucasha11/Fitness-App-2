@@ -17,7 +17,7 @@ import { ActivityTrend } from './ActivityTrend';
 import { useMotionReset } from '../health/useMotionReset';
 import { Mascot } from '../components/Mascot';
 import {
-  BREAK_DURATION_SECONDS,
+  EXERCISES_PER_BREAK,
   type Exercise,
   formatDuration,
 } from '../exercises';
@@ -74,6 +74,13 @@ export function Today({ answers, onStartBreak }: TodayProps) {
   const goal = answers.dailyGoal;
   const streak = currentStreak(session);
   const sitting = sittingMinutes(session, answers, now.getTime());
+  /**
+   * How long a break takes at the length the user last chose on the start
+   * screen. Advertising a flat minute here while every break actually runs
+   * for twenty seconds is the kind of small lie that stops people trusting
+   * the plan.
+   */
+  const breakSeconds = EXERCISES_PER_BREAK * session.exerciseSeconds;
 
   return (
     <div className="today">
@@ -90,12 +97,14 @@ export function Today({ answers, onStartBreak }: TodayProps) {
             <NextBreakCard
               slot={upNext}
               now={now}
+              breakSeconds={breakSeconds}
               onStart={() => onStartBreak(upNext.exercise, upNext.at)}
               onSnooze={() => snoozeSlot(upNext.at, SNOOZE_MINUTES)}
             />
           ) : (
             <GoalMetCard
               answers={answers}
+              breakSeconds={breakSeconds}
               onKeepGoing={(exercise) => onStartBreak(exercise, null)}
             />
           )}
@@ -109,6 +118,7 @@ export function Today({ answers, onStartBreak }: TodayProps) {
             </div>
             <Timeline
               rows={rows}
+              breakSeconds={breakSeconds}
               onStart={(slot) => onStartBreak(slot.exercise, slot.at)}
               onSkip={(slot) => skipSlot(slot.at)}
               onUnskip={(slot) => unskipSlot(slot.at)}
@@ -187,11 +197,14 @@ function Header({
 function NextBreakCard({
   slot,
   now,
+  breakSeconds,
   onStart,
   onSnooze,
 }: {
   slot: BreakSlot;
   now: Date;
+  /** How long a break runs at the length the user last chose. */
+  breakSeconds: number;
   onStart: () => void;
   onSnooze: () => void;
 }) {
@@ -217,7 +230,7 @@ function NextBreakCard({
               {BODY_REGION_LABELS[slot.exercise.region]}
             </span>
             <span className="mini-chip">
-              {formatDuration(BREAK_DURATION_SECONDS)}
+              {formatDuration(breakSeconds)}
             </span>
           </div>
         </div>
@@ -249,9 +262,11 @@ function NextBreakCard({
 /** Shown once every scheduled break is done or skipped (brief §B3). */
 function GoalMetCard({
   answers,
+  breakSeconds,
   onKeepGoing,
 }: {
   answers: OnboardingState;
+  breakSeconds: number;
   onKeepGoing: (exercise: Exercise) => void;
 }) {
   const coach = useCoach();
@@ -268,7 +283,7 @@ function GoalMetCard({
               {BODY_REGION_LABELS[extra.region]}
             </span>
             <span className="mini-chip">
-              {formatDuration(BREAK_DURATION_SECONDS)}
+              {formatDuration(breakSeconds)}
             </span>
           </div>
         </div>
@@ -340,11 +355,13 @@ function railTime(minutes: number): string {
 
 function Timeline({
   rows,
+  breakSeconds,
   onStart,
   onSkip,
   onUnskip,
 }: {
   rows: ReturnType<typeof buildDay>;
+  breakSeconds: number;
   onStart: (slot: BreakSlot) => void;
   onSkip: (slot: BreakSlot) => void;
   onUnskip: (slot: BreakSlot) => void;
@@ -367,6 +384,7 @@ function Timeline({
           <TimelineRow
             key={`b-${row.at}`}
             row={row}
+            breakSeconds={breakSeconds}
             onStart={() => onStart(row)}
             onSkip={() => onSkip(row)}
             onUnskip={() => onUnskip(row)}
@@ -386,11 +404,13 @@ const SWIPE_SLOP = 6;
 
 function TimelineRow({
   row,
+  breakSeconds,
   onStart,
   onSkip,
   onUnskip,
 }: {
   row: BreakSlot;
+  breakSeconds: number;
   onStart: () => void;
   onSkip: () => void;
   onUnskip: () => void;
@@ -412,7 +432,7 @@ function TimelineRow({
       : row.status === 'skipped'
         ? 'Skipped'
         : `${BODY_REGION_LABELS[row.exercise.region]} · ${formatDuration(
-            BREAK_DURATION_SECONDS,
+            breakSeconds,
           )}`;
 
   const commit = () => (row.status === 'skipped' ? onUnskip() : onSkip());
