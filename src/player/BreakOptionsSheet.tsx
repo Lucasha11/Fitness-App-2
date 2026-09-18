@@ -95,7 +95,6 @@ export function BreakOptionsSheet({
 
           <Segmented
             label="Total break time"
-            tight
             value={exerciseSeconds}
             onChange={(seconds) => onSecondsChange(seconds as ExerciseDuration)}
             options={EXERCISE_DURATION_CHOICES.map((seconds) => ({
