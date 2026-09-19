@@ -324,6 +324,17 @@
   min-height: 0;
 }
 
+/* The halo, plus the 8px of margin the countdown ring rides in. */
+.start__halo-wrap {
+  position: relative;
+  width: 248px;
+  height: 248px;
+  max-width: 64vw;
+  max-height: 64vw;
+  display: grid;
+  place-items: center;
+}
+
 .start__halo {
   width: 232px;
   height: 232px;
@@ -334,6 +345,50 @@
   background: oklch(0.88 0.075 151 / 16%);
   display: grid;
   place-items: center;
+}
+
+/* ---- The five-second countdown ------------------------------------- */
+
+.start__countdown {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 240ms ease;
+}
+
+/*
+ * Held: the countdown fades out and the screen becomes the one it would have
+ * been without it. Nothing is left implying a clock is still running.
+ */
+.start__countdown--held {
+  opacity: 0;
+}
+
+.start__ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Twelve o'clock is where a countdown starts. */
+  transform: rotate(-90deg);
+}
+
+.start__badge {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-pill);
+  background: var(--lime);
+  color: var(--lime-ink);
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 6px 16px oklch(0.24 0.04 25 / 45%);
 }
 
 .start__name {
@@ -364,15 +419,6 @@
 .start__chip--area {
   background: var(--mint);
   color: var(--ink);
-}
-
-.start__why {
-  font-size: 15px;
-  font-weight: 700;
-  color: oklch(0.99 0.005 100 / 70%);
-  line-height: 1.5;
-  max-width: 280px;
-  margin: 0;
 }
 
 .start__sequence {

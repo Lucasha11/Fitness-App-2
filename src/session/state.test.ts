@@ -17,9 +17,11 @@ import {
   withCompletedBreak,
   withExcludedExercise,
   withMovementAt,
+  storedDuration,
   withRestedRegion,
   withSnoozedSlot,
 } from './state';
+import { EXERCISE_DURATION_SECONDS } from '../exercises';
 
 /** A date key `days` ago, for building history by hand. */
 function daysAgo(days: number): string {
@@ -147,5 +149,31 @@ describe('snoozing', () => {
     const session = withSnoozedSlot(emptySession(), 10 * 60, 10);
 
     expect(session.snoozed[dateKey()][10 * 60]).toBe(10 * 60 + 10);
+  });
+});
+
+describe('the break length carried between sessions', () => {
+  it('keeps a stored length this build still offers', () => {
+    expect(storedDuration(5, EXERCISE_DURATION_SECONDS)).toBe(5);
+  });
+
+  it('falls back to the default when nothing was ever stored', () => {
+    expect(storedDuration(undefined, EXERCISE_DURATION_SECONDS)).toBe(
+      EXERCISE_DURATION_SECONDS,
+    );
+  });
+
+  it('falls back when the stored length is one the build dropped', () => {
+    // A build that offered 25-second exercises would otherwise leave a length
+    // the start screen cannot select and the player would run anyway.
+    expect(storedDuration(25, EXERCISE_DURATION_SECONDS)).toBe(
+      EXERCISE_DURATION_SECONDS,
+    );
+  });
+
+  it('falls back on a length that is not a number at all', () => {
+    expect(
+      storedDuration(Number.NaN, EXERCISE_DURATION_SECONDS),
+    ).toBe(EXERCISE_DURATION_SECONDS);
   });
 });

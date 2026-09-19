@@ -20,7 +20,6 @@ import {
   breaksToday,
   currentStreak,
   movedSecondsToday,
-  sittingMinutes,
   type FeedbackVerdict,
 } from '../session/state';
 import { BreakComplete } from './BreakComplete';
@@ -358,25 +357,10 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
   }
 
   if (stage === 'intro') {
-    // Name the area this exercise actually works, and only claim the user
-    // picked it if they did.
-    const area = BODY_REGION_LABELS[current.region].toLowerCase();
-    const chosen = answers.bothers.includes(current.region);
-    const sat = sittingMinutes(session, answers);
-
-    const why = chosen
-      ? sat >= 5
-        ? `You picked ${area}, and you've been sitting ${sat} minutes. Seemed like a good moment.`
-        : `You picked ${area}, so this one keeps that ticking over.`
-      : sat >= 5
-        ? `You've been sitting ${sat} minutes, and your ${area} could use it.`
-        : `A quick one for your ${area} to break up the sitting.`;
-
     return (
       <BreakStart
         exercise={current}
         sequence={sequence}
-        why={why}
         exerciseSeconds={seconds}
         musicOn={session.musicOn}
         onStart={begin}

@@ -14,10 +14,12 @@ export const EXERCISE_DURATION_SECONDS = 15;
 
 /**
  * The per-exercise lengths the start screen's "reduce total time" control
- * offers, longest first. Four exercises at these lengths make a 1:00, 0:40 or
- * 0:20 break, so the control reads as a choice of total rather than of pace.
+ * offers, longest first. Four exercises at these lengths make a 3:00, 2:00,
+ * 1:00, 0:40 or 0:20 break, so the control reads as a choice of total rather
+ * than of pace — every one of them divides by `EXERCISES_PER_BREAK` exactly,
+ * which is what keeps the totals round.
  */
-export const EXERCISE_DURATION_CHOICES = [15, 10, 5] as const;
+export const EXERCISE_DURATION_CHOICES = [45, 30, 15, 10, 5] as const;
 
 export type ExerciseDuration = (typeof EXERCISE_DURATION_CHOICES)[number];
 

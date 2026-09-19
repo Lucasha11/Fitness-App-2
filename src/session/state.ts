@@ -128,8 +128,13 @@ function normaliseHistory(
   );
 }
 
-/** A stored exercise length, or `fallback` when it is missing or unrunnable. */
-function storedDuration(
+/**
+ * A stored exercise length, or `fallback` when it is missing or unrunnable.
+ *
+ * Exported for its test: `loadSession` reaches for `window`, and the suite
+ * runs in plain Node, so the rule lives out here where it can be checked.
+ */
+export function storedDuration(
   stored: number | undefined,
   fallback: ExerciseDuration,
 ): ExerciseDuration {
