@@ -10,9 +10,12 @@ import { describe, expect, it } from 'vitest';
 import {
   EXERCISES,
   EXERCISES_PER_BREAK,
+  EXERCISE_DURATION_CHOICES,
+  EXERCISE_DURATION_SECONDS,
   EXERCISE_SETS,
   exerciseById,
   exercisesForRegion,
+  isExerciseDuration,
   setExercises,
 } from './exercises';
 import { BODY_REGION_ORDER } from './onboarding/state';
@@ -66,5 +69,38 @@ describe('curated sets', () => {
 describe('exerciseById', () => {
   it('throws on an unknown id rather than returning undefined', () => {
     expect(() => exerciseById('not-a-real-exercise')).toThrow(/Unknown exercise/);
+  });
+});
+
+describe('the break lengths on offer', () => {
+  it('includes the default, so the start screen opens on a chosen option', () => {
+    // The segmented control marks whichever choice matches the stored length.
+    // A default outside the list would open it with nothing selected at all.
+    expect(EXERCISE_DURATION_CHOICES).toContain(EXERCISE_DURATION_SECONDS);
+  });
+
+  it('lists the lengths longest first, the way the control reads them', () => {
+    const lengths = [...EXERCISE_DURATION_CHOICES];
+    expect(lengths).toEqual([...lengths].sort((a, b) => b - a));
+  });
+
+  it('gives every option a total of its own', () => {
+    // Two choices that came to the same total would draw two identical
+    // buttons, and picking either would look like nothing happened.
+    const totals = EXERCISE_DURATION_CHOICES.map(
+      (seconds) => seconds * EXERCISES_PER_BREAK,
+    );
+    expect(new Set(totals).size).toBe(totals.length);
+  });
+
+  it('turns every option into a whole number of seconds per exercise', () => {
+    for (const seconds of EXERCISE_DURATION_CHOICES) {
+      expect(Number.isInteger(seconds), String(seconds)).toBe(true);
+    }
+  });
+
+  it('refuses a length it does not offer', () => {
+    expect(isExerciseDuration(12)).toBe(false);
+    expect(isExerciseDuration(EXERCISE_DURATION_SECONDS)).toBe(true);
   });
 });
