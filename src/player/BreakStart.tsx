@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronRightIcon, CloseIcon, SwapIcon } from '../components/icons';
 import { COACH_LABEL, useCoach } from '../components/coach';
 import { Mascot } from '../components/Mascot';
@@ -43,11 +43,12 @@ interface BreakStartProps {
  *
  * A ring drains around the coach for seven seconds and then starts the break on
  * its own, so someone who only wanted to move never has to tap anything. The
- * ring stops at the first sign of a person — a tap, a key, focus landing on a
- * control, the app going away — and never resumes: a countdown you have to
- * keep fighting is worse than none, and an earlier two-second version of this
- * screen made the options underneath it unreachable for anyone who paused to
- * read.
+ * ring keeps draining through everything else on this screen — reading it,
+ * scrolling it, swapping the exercise — because the default here is that you
+ * are about to move. Only opening the options sheet stops it, and then it
+ * never resumes: someone who came here to change the break needs the controls
+ * underneath to stay reachable, and a countdown you have to keep fighting is
+ * worse than none.
  */
 export function BreakStart({
   exercise,
@@ -78,8 +79,6 @@ export function BreakStart({
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
 
-  const hold = useCallback(() => setHeld(true), []);
-
   useEffect(() => {
     if (held) return undefined;
     if (deadline.current === 0) deadline.current = Date.now() + AUTO_START_MS;
@@ -97,18 +96,6 @@ export function BreakStart({
     return () => window.clearInterval(timer);
   }, [held, onStart]);
 
-  // Coming back to a screen that started the break while you were away would
-  // be its own kind of rude.
-  useEffect(() => {
-    if (held) return undefined;
-
-    const onHidden = () => {
-      if (document.hidden) setHeld(true);
-    };
-    document.addEventListener('visibilitychange', onHidden);
-    return () => document.removeEventListener('visibilitychange', onHidden);
-  }, [held]);
-
   const secondsLeft = Math.max(
     1,
     Math.ceil((AUTO_START_MS - elapsed) / 1000),
@@ -118,16 +105,11 @@ export function BreakStart({
     <section
       className="player"
       aria-label={`Start ${exercise.name}`}
-      // Capture, so a tap holds the countdown wherever it lands — including on
-      // a control that stops the event before it reaches us.
-      onPointerDownCapture={hold}
-      onKeyDownCapture={hold}
-      onFocusCapture={hold}
     >
       <p className="sr-only" role="status">
         {held
           ? 'Countdown stopped.'
-          : 'Starting in seven seconds. Touch the screen to stay here.'}
+          : 'Starting in seven seconds. Open the options to stay here.'}
       </p>
 
       <div className="start__top">
@@ -229,7 +211,10 @@ export function BreakStart({
         className="start__more"
         aria-haspopup="dialog"
         aria-expanded={optionsOpen}
-        onClick={() => setOptionsOpen(true)}
+        onClick={() => {
+          setHeld(true);
+          setOptionsOpen(true);
+        }}
       >
         See other options
       </button>
