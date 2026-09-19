@@ -18,6 +18,7 @@ import {
   withSkippedSlot,
   withSkippedSlots,
   withSnoozedSlot,
+  withToggledFavouriteSet,
   withoutSkippedSlot,
 } from './state';
 
@@ -60,6 +61,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setSession((current) => withExcludedExercise(current, exerciseId));
   }, []);
 
+  const toggleFavouriteSet = useCallback((setId: string) => {
+    setSession((current) => withToggledFavouriteSet(current, setId));
+  }, []);
+
   const restRegion = useCallback((region: BodyRegion, days: number) => {
     setSession((current) => withRestedRegion(current, region, days));
   }, []);
@@ -95,6 +100,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       snoozeSlot,
       recordFeedback,
       excludeExercise,
+      toggleFavouriteSet,
       restRegion,
       setSoundOn,
       setMusicOn,
@@ -112,6 +118,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       snoozeSlot,
       recordFeedback,
       excludeExercise,
+      toggleFavouriteSet,
       restRegion,
       setSoundOn,
       setMusicOn,

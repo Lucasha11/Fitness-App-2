@@ -21,6 +21,8 @@ export interface SessionApi {
   snoozeSlot: (slot: number, minutes: number) => void;
   recordFeedback: (entry: FeedbackEntry) => void;
   excludeExercise: (exerciseId: string) => void;
+  /** Heart a curated set, or un-heart one already hearted. */
+  toggleFavouriteSet: (setId: string) => void;
   restRegion: (region: BodyRegion, days: number) => void;
   setSoundOn: (on: boolean) => void;
   setMusicOn: (on: boolean) => void;
