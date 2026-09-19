@@ -20,6 +20,8 @@ import {
   storedDuration,
   withRestedRegion,
   withSnoozedSlot,
+  withToggledFavouriteSet,
+  storedFavourites,
 } from './state';
 import { EXERCISE_DURATION_SECONDS } from '../exercises';
 
@@ -175,5 +177,34 @@ describe('the break length carried between sessions', () => {
     expect(
       storedDuration(Number.NaN, EXERCISE_DURATION_SECONDS),
     ).toBe(EXERCISE_DURATION_SECONDS);
+  });
+});
+
+describe('favourited packs', () => {
+  it('hearts a pack, and un-hearts one already hearted', () => {
+    const hearted = withToggledFavouriteSet(emptySession(), 'neck-relief');
+    expect(hearted.favouriteSetIds).toEqual(['neck-relief']);
+
+    const undone = withToggledFavouriteSet(hearted, 'neck-relief');
+    expect(undone.favouriteSetIds).toEqual([]);
+  });
+
+  it('holds favourites in catalogue order, not the order they were hearted', () => {
+    const session = withToggledFavouriteSet(
+      withToggledFavouriteSet(emptySession(), 'hips-glutes'),
+      'neck-relief',
+    );
+
+    expect(session.favouriteSetIds).toEqual(['neck-relief', 'hips-glutes']);
+  });
+
+  it('forgets a favourite the catalogue no longer has', () => {
+    expect(storedFavourites(['neck-relief', 'set-we-dropped'])).toEqual([
+      'neck-relief',
+    ]);
+  });
+
+  it('loads a session saved before favourites existed', () => {
+    expect(storedFavourites(undefined)).toEqual([]);
   });
 });

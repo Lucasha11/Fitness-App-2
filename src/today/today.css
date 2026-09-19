@@ -23,103 +23,109 @@
 
 .today__header {
   background: var(--header-gradient);
-  padding: max(52px, calc(env(safe-area-inset-top) + 12px)) 20px 26px;
-  border-radius: 0 0 32px 32px;
+  padding: max(46px, calc(env(safe-area-inset-top) + 10px)) 20px 22px;
+  border-radius: 0 0 36px 36px;
   color: var(--ink-on-accent);
 }
 
-.today__greeting-row {
+/* The coach leads, its line is the headline, the streak sits out of the way. */
+.today__hero {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  gap: 14px;
+}
+
+.today__hero-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.today__date-row {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
 }
 
 .today__date {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
-  color: oklch(0.99 0.005 100 / 80%);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: oklch(0.99 0.005 100 / 82%);
 }
 
 .today__greeting {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 900;
-  margin: 2px 0 0;
+  line-height: 1.2;
+  margin: 4px 0 0;
 }
 
 .streak {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   background: var(--lime);
   color: var(--lime-ink);
   border: none;
   border-radius: var(--radius-pill);
-  padding: 8px 13px;
+  padding: 7px 11px;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 900;
   flex-shrink: 0;
   cursor: pointer;
 }
 
-.today__ring-wrap {
-  margin-top: 22px;
+/* ---- Goal bar ------------------------------------------------------ */
+
+.goal-bar {
+  margin-top: 16px;
+}
+
+.goal-bar__head {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 7px;
+}
+
+.goal-bar__label {
+  font-size: 12px;
+  font-weight: 900;
+  color: oklch(0.99 0.005 100 / 90%);
+}
+
+.goal-bar__count {
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.goal-bar__track {
+  display: flex;
+  gap: 5px;
+}
+
+/* One segment per break, so the bar doubles as the day's break tracker. */
+.goal-bar__segment {
+  flex: 1;
+  height: 7px;
+  border-radius: var(--radius-pill);
+  background: oklch(0.99 0.005 100 / 32%);
+}
+
+.goal-bar__segment[data-done='true'] {
+  background: var(--lime);
 }
 
 /* ---- Body --------------------------------------------------------- */
 
 .today__body {
-  padding: 18px 20px calc(120px + env(safe-area-inset-bottom));
+  padding: 16px 20px calc(168px + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
-  gap: 18px;
-}
-
-/* ---- Next break card ---------------------------------------------- */
-
-.next-card {
-  border-radius: var(--radius-sheet);
-  background: var(--surface);
-  padding: 18px;
-  box-shadow: var(--shadow-card-strong);
-  position: relative;
-  overflow: hidden;
-}
-
-.next-card__top {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-}
-
-.next-card__text {
-  flex: 1;
-  min-width: 0;
-}
-
-.next-card__eyebrow {
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  color: var(--accent);
-}
-
-.next-card__name {
-  font-size: 21px;
-  font-weight: 900;
-  margin: 5px 0 0;
-  line-height: 1.15;
-}
-
-.next-card__chips {
-  display: flex;
-  gap: 6px;
-  margin-top: 8px;
-  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .mini-chip {
@@ -136,64 +142,214 @@
   color: var(--ink);
 }
 
-.next-card__art {
-  width: 78px;
-  height: 78px;
+/* ---- Next break capsule -------------------------------------------- */
+
+.next-capsule {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
   border-radius: var(--radius-pill);
-  background: oklch(0.88 0.075 151 / 70%);
+  background: var(--surface);
+  padding: 8px 8px 8px 10px;
+  box-shadow: var(--shadow-card);
+}
+
+.next-capsule__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  color: var(--ink);
+  padding: 0;
+  cursor: pointer;
+}
+
+.next-capsule__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.next-capsule__eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+.next-capsule__title {
+  display: block;
+  font-size: 15px;
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.next-capsule__snooze {
   display: grid;
   place-items: center;
-  flex-shrink: 0;
-}
-
-.next-card__actions {
-  display: flex;
-  gap: 9px;
-  margin-top: 14px;
-}
-
-.next-card__start,
-.next-card__snooze {
+  width: 44px;
+  height: 44px;
   border: none;
+  border-radius: var(--radius-pill);
+  background: var(--fill);
+  color: var(--ink-muted);
+  flex-shrink: 0;
   cursor: pointer;
-  border-radius: 16px;
-  font-family: inherit;
-  font-weight: 900;
-  font-size: 15px;
-  padding: 13px;
-  transition: transform 120ms ease;
 }
 
-.next-card__start:active,
-.next-card__snooze:active {
-  transform: scale(0.98);
-}
-
-.next-card__start {
-  flex: 1;
-  background: var(--accent);
-  color: var(--ink-on-accent);
-  box-shadow: var(--shadow-accent);
-}
-
-.next-card__snooze {
-  background: var(--mint-deep);
-  color: var(--ink);
-  padding: 13px 20px;
-}
-
-.next-card__note {
-  margin-top: 11px;
+.next-capsule__note {
+  flex-basis: 100%;
   display: flex;
   align-items: center;
   gap: 6px;
+  margin: 0 8px 6px 10px;
   font-size: 11px;
   font-weight: 800;
   color: var(--ink-muted);
 }
 
-.next-card__note svg {
+.next-capsule__note svg {
   flex-shrink: 0;
+}
+
+/* The dial fills as the break approaches; full means it is due. */
+.dial {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+}
+
+.dial__track {
+  stroke: var(--fill);
+}
+
+.dial__fill {
+  stroke: var(--accent);
+  transition: stroke-dashoffset 400ms ease;
+}
+
+.dial__label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--accent-deep);
+}
+
+/* ---- Pack shelves --------------------------------------------------- */
+
+.shelf__row,
+.shelf__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Shelves run to the edge of the screen: a tile clipped by the bezel is
+   what tells the thumb there is more sideways. */
+.shelf__row {
+  display: flex;
+  gap: 12px;
+  margin-right: -20px;
+  padding-right: 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+
+.shelf__row::-webkit-scrollbar {
+  display: none;
+}
+
+.shelf__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.pack {
+  position: relative;
+  width: 104px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+
+.shelf__grid .pack {
+  width: auto;
+}
+
+.pack__art,
+.pack__add {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border: none;
+  border-radius: var(--radius-card-sm);
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 120ms ease;
+}
+
+.pack__art:active,
+.pack__add:active {
+  transform: scale(0.97);
+}
+
+.pack__add {
+  background: var(--surface);
+  border: 2px dashed var(--line);
+  color: var(--ink-muted);
+}
+
+/* Sits over the art rather than inside it: one tap starts the pack, the
+   other hearts it, and a button inside a button is not a thing. */
+.pack__heart {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: oklch(1 0 0 / 82%);
+  color: var(--ink-muted);
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.pack__heart[aria-pressed='true'] {
+  color: var(--accent);
+}
+
+.pack__heart[aria-pressed='true'] svg {
+  fill: currentColor;
+}
+
+.pack__name {
+  display: block;
+  margin-top: 7px;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.pack__name--muted {
+  color: var(--ink-muted);
 }
 
 /* ---- Sitting indicator -------------------------------------------- */
@@ -470,6 +626,51 @@
   margin: 10px 0 0;
 }
 
+/* ---- Start workout -------------------------------------------------- */
+
+/*
+ * The one primary action. It floats over the shelves, so the fade behind it
+ * keeps a tile from appearing to collide with it mid-scroll.
+ */
+.today__cta {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(66px + max(22px, env(safe-area-inset-bottom)));
+  padding: 44px 20px 10px;
+  background: linear-gradient(
+    to top,
+    var(--bg) 46%,
+    oklch(0.985 0.012 130 / 78%) 72%,
+    oklch(0.985 0.012 130 / 0%)
+  );
+  pointer-events: none;
+}
+
+.start-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--warm-gradient);
+  color: var(--ink-on-accent);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 900;
+  padding: 17px;
+  box-shadow: 0 12px 26px oklch(0.62 0.18 34 / 34%);
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform 120ms ease;
+}
+
+.start-pill:active {
+  transform: scale(0.98);
+}
+
 /* ---- Tab bar --------------------------------------------------------- */
 
 .tabbar {
@@ -513,35 +714,6 @@
 .tab__label {
   font-size: 10px;
   font-weight: 900;
-}
-
-.tab-break {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 6px;
-  border: none;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-}
-
-.tab-break__disc {
-  width: 62px;
-  height: 62px;
-  border-radius: var(--radius-pill);
-  background: var(--accent);
-  color: var(--ink-on-accent);
-  display: grid;
-  place-items: center;
-  box-shadow: 0 8px 18px oklch(0.62 0.18 34 / 45%);
-  border: 4px solid var(--surface);
-  transition: transform 140ms ease;
-}
-
-.tab-break:active .tab-break__disc {
-  transform: scale(0.94);
 }
 
 /* ---- Activity trend (Apple Health) ---------------------------------- */

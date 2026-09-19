@@ -6,26 +6,33 @@ import {
   DashIcon,
   FlameIcon,
   GridIcon,
+  HeartIcon,
   PersonIcon,
   PlayIcon,
+  PlusIcon,
   ReplyIcon,
+  StopwatchIcon,
   TargetIcon,
 } from '../components/icons';
 import { COACH_LABEL, useCoach, useCoachNoun } from '../components/coach';
-import { GoalRing } from '../components/GoalRing';
 import { ActivityTrend } from './ActivityTrend';
 import { useMotionReset } from '../health/useMotionReset';
 import { Mascot } from '../components/Mascot';
 import {
   EXERCISES_PER_BREAK,
+  EXERCISE_SETS,
   type Exercise,
+  type ExerciseSet,
   formatDuration,
+  setExercises,
 } from '../exercises';
 import {
   BODY_REGION_LABELS,
   type OnboardingState,
+  effectiveInterval,
   formatTime,
 } from '../onboarding/state';
+import { poseForSet, tintFor } from '../player/poses';
 import { type BreakSlot, buildDay, nextBreak, pickExercises } from '../schedule';
 import { useSession } from '../session/context';
 import {
@@ -34,6 +41,7 @@ import {
   currentStreak,
   sittingMinutes,
 } from '../session/state';
+import { buildShelves, countdownProgress, type PackShelf } from './shelves';
 import './today.css';
 
 /** Past this many sitting minutes the indicator turns amber (brief §B1.4). */
@@ -69,6 +77,10 @@ export function Today({ answers, onStartBreak }: TodayProps) {
     [answers, session, now],
   );
   const upNext = nextBreak(rows);
+  const shelves = useMemo(
+    () => buildShelves(answers, session, now),
+    [answers, session, now],
+  );
 
   const done = breaksToday(session).length;
   const goal = answers.dailyGoal;
@@ -82,6 +94,17 @@ export function Today({ answers, onStartBreak }: TodayProps) {
    */
   const breakSeconds = EXERCISES_PER_BREAK * session.exerciseSeconds;
 
+  /** The Favourites shelf's empty state sends people here. */
+  const browse = useRef<HTMLElement | null>(null);
+
+  const startPack = (set: ExerciseSet) =>
+    onStartBreak(setExercises(set)[0], null);
+
+  const startNext = () => {
+    const exercise = upNext?.exercise ?? pickExercises(answers, 1, session)[0];
+    onStartBreak(exercise, upNext?.at ?? null);
+  };
+
   return (
     <div className="today">
       <div className="today__scroll">
@@ -93,23 +116,27 @@ export function Today({ answers, onStartBreak }: TodayProps) {
         />
 
         <div className="today__body">
-          {upNext ? (
-            <NextBreakCard
-              slot={upNext}
-              now={now}
-              breakSeconds={breakSeconds}
-              onStart={() => onStartBreak(upNext.exercise, upNext.at)}
-              onSnooze={() => snoozeSlot(upNext.at, SNOOZE_MINUTES)}
-            />
-          ) : (
-            <GoalMetCard
-              answers={answers}
-              breakSeconds={breakSeconds}
-              onKeepGoing={(exercise) => onStartBreak(exercise, null)}
-            />
-          )}
+          <NextCapsule
+            slot={upNext}
+            now={now}
+            interval={effectiveInterval(answers.interval)}
+            breakSeconds={breakSeconds}
+            onStart={startNext}
+            onSnooze={() => upNext && snoozeSlot(upNext.at, SNOOZE_MINUTES)}
+          />
 
           <SittingIndicator minutes={sitting} />
+
+          {shelves.map((shelf) => (
+            <Shelf
+              key={shelf.id}
+              shelf={shelf}
+              onStart={startPack}
+              onBrowse={() => browse.current?.scrollIntoView({ behavior: 'smooth' })}
+            />
+          ))}
+
+          <AllPacks ref={browse} onStart={startPack} />
 
           <section>
             <div className="today__section-head">
@@ -131,10 +158,15 @@ export function Today({ answers, onStartBreak }: TodayProps) {
         </div>
       </div>
 
-      <TabBar onBreak={() => {
-        const exercise = upNext?.exercise ?? pickExercises(answers, 1)[0];
-        onStartBreak(exercise, upNext?.at ?? null);
-      }} />
+      {/* The one primary action, over the shelves and clear of the tab bar. */}
+      <div className="today__cta">
+        <button type="button" className="start-pill" onClick={startNext}>
+          <PlayIcon size={18} />
+          Start workout
+        </button>
+      </div>
+
+      <TabBar />
     </div>
   );
 }
@@ -149,6 +181,40 @@ function greeting(hour: number): string {
   return 'Evening';
 }
 
+/** `3` -> `three`, so the coach's line reads as speech rather than a score. */
+const COUNT_WORDS = [
+  'none',
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+  'six',
+  'seven',
+  'eight',
+  'nine',
+];
+
+function countWord(count: number): string {
+  return COUNT_WORDS[count] ?? String(count);
+}
+
+/**
+ * The coach's line at the top of the screen. It never scolds: a day with
+ * nothing done yet is an invitation, not a telling-off.
+ */
+function coachLine(done: number, goal: number): string {
+  if (done === 0) return 'A good moment to stand up.';
+  if (done >= goal) return 'Goal met. The rest is a bonus.';
+
+  // Sentence-initial, and short: the line sits in a 240px column beside a
+  // 88px coach, so anything longer than this wraps to a third line.
+  const word = countWord(done);
+  return `${word[0].toUpperCase()}${word.slice(1)} down. Make it ${countWord(
+    done + 1,
+  )}?`;
+}
+
 function Header({
   now,
   streak,
@@ -160,33 +226,77 @@ function Header({
   done: number;
   goal: number;
 }) {
-  const dateLabel = now.toLocaleDateString(undefined, {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'short',
-  });
+  const coach = useCoach();
+  const dateLabel = now.toLocaleDateString(undefined, { weekday: 'long' });
 
   return (
     <header className="today__header">
-      <div className="today__greeting-row">
-        <div>
-          <div className="today__date">{dateLabel}</div>
-          <h1 className="today__greeting">{greeting(now.getHours())}</h1>
+      <div className="today__hero">
+        <Mascot
+          name="thumbsup"
+          size={88}
+          alt={`${COACH_LABEL[coach]} coach`}
+          className="bob"
+        />
+        <div className="today__hero-text">
+          {/* The streak shares the date's line rather than the headline's, so
+              the coach's line gets the full column to wrap in. */}
+          <div className="today__date-row">
+            <span className="today__date">
+              {dateLabel} &middot; {greeting(now.getHours())}
+            </span>
+            <button
+              type="button"
+              className="streak"
+              aria-label={`Current streak: ${streak} ${streak === 1 ? 'day' : 'days'}`}
+            >
+              <FlameIcon size={13} />
+              {streak}
+            </button>
+          </div>
+          <h1 className="today__greeting">{coachLine(done, goal)}</h1>
         </div>
-        <button
-          type="button"
-          className="streak"
-          aria-label={`Current streak: ${streak} ${streak === 1 ? 'day' : 'days'}`}
-        >
-          <FlameIcon size={16} />
-          {streak}
-        </button>
       </div>
 
-      <div className="today__ring-wrap">
-        <GoalRing done={done} goal={goal} />
-      </div>
+      <GoalBar done={done} goal={goal} />
     </header>
+  );
+}
+
+/**
+ * The day's goal as one segment per break, rather than as a ring.
+ *
+ * A segment is a break, so the row doubles as the day's break tracker: how
+ * many are done, and how many are still owed, without any arithmetic.
+ */
+function GoalBar({ done, goal }: { done: number; goal: number }) {
+  const filled = Math.min(done, goal);
+
+  return (
+    <div className="goal-bar">
+      <div className="goal-bar__head">
+        <span className="goal-bar__label">Today&rsquo;s goal</span>
+        <span className="goal-bar__count">
+          {filled} of {goal}
+        </span>
+      </div>
+      <div
+        className="goal-bar__track"
+        role="progressbar"
+        aria-label="Breaks taken today"
+        aria-valuemin={0}
+        aria-valuemax={goal}
+        aria-valuenow={filled}
+      >
+        {Array.from({ length: goal }, (_, index) => (
+          <span
+            key={index}
+            className="goal-bar__segment"
+            data-done={index < filled}
+          />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -194,114 +304,226 @@ function Header({
 /* Next break                                                          */
 /* ------------------------------------------------------------------ */
 
-function NextBreakCard({
+/** The dial's circumference, for the stroke-dash countdown. */
+const DIAL_RADIUS = 19;
+const DIAL_LENGTH = 2 * Math.PI * DIAL_RADIUS;
+
+function Dial({ progress, label }: { progress: number; label: string }) {
+  return (
+    <span className="dial">
+      <svg width={46} height={46} viewBox="0 0 46 46" aria-hidden="true">
+        <circle
+          cx={23}
+          cy={23}
+          r={DIAL_RADIUS}
+          className="dial__track"
+          fill="none"
+          strokeWidth={5}
+        />
+        <circle
+          cx={23}
+          cy={23}
+          r={DIAL_RADIUS}
+          className="dial__fill"
+          fill="none"
+          strokeWidth={5}
+          strokeLinecap="round"
+          strokeDasharray={DIAL_LENGTH}
+          strokeDashoffset={DIAL_LENGTH * (1 - progress)}
+          transform="rotate(-90 23 23)"
+        />
+      </svg>
+      <span className="dial__label">{label}</span>
+    </span>
+  );
+}
+
+/**
+ * The next break, as one capsule rather than the card that used to own the
+ * top of the screen. Starting it is the whole row; snoozing is the button.
+ *
+ * `slot` is null once every scheduled break is done or skipped (brief §B3) —
+ * the capsule then says so and the dial sits full.
+ */
+function NextCapsule({
   slot,
   now,
+  interval,
   breakSeconds,
   onStart,
   onSnooze,
 }: {
-  slot: BreakSlot;
+  slot: BreakSlot | null;
   now: Date;
-  /** How long a break runs at the length the user last chose. */
+  /** Minutes between scheduled breaks, which the dial fills over. */
+  interval: number;
   breakSeconds: number;
   onStart: () => void;
   onSnooze: () => void;
 }) {
-  const coach = useCoach();
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
-  const minutesAway = slot.showsAt - nowMinutes;
+  const minutesAway = slot ? slot.showsAt - nowMinutes : 0;
+  const progress = slot ? countdownProgress(minutesAway, interval) : 1;
 
-  const eyebrow =
-    minutesAway <= 0
-      ? 'NEXT BREAK IS DUE'
+  const dialLabel = !slot
+    ? 'Done'
+    : minutesAway <= 0
+      ? 'Now'
       : minutesAway < 60
-        ? `NEXT BREAK IN ${minutesAway} MIN`
-        : `NEXT BREAK AT ${formatTime(slot.showsAt)}`;
+        ? `${minutesAway}′`
+        : `${Math.round(minutesAway / 60)}h`;
+
+  const eyebrow = !slot
+    ? 'THAT’S THE PLAN DONE'
+    : minutesAway <= 0
+      ? 'BREAK DUE'
+      : 'NEXT BREAK';
+
+  const title = slot
+    ? `${slot.exercise.name} at ${formatTime(slot.showsAt)}`
+    : 'Anything extra is a bonus';
 
   return (
-    <article className="next-card">
-      <div className="next-card__top">
-        <div className="next-card__text">
-          <div className="next-card__eyebrow">{eyebrow}</div>
-          <h2 className="next-card__name">{slot.exercise.name}</h2>
-          <div className="next-card__chips">
-            <span className="mini-chip mini-chip--area">
-              {BODY_REGION_LABELS[slot.exercise.region]}
-            </span>
-            <span className="mini-chip">
-              {formatDuration(breakSeconds)}
-            </span>
-          </div>
-        </div>
-        <div className="next-card__art bob">
-          <Mascot name="thumbsup" size={70} alt={`${COACH_LABEL[coach]} coach`} />
-        </div>
-      </div>
+    <article className="next-capsule">
+      <button
+        type="button"
+        className="next-capsule__main"
+        onClick={onStart}
+        aria-label={
+          slot
+            ? `Start ${slot.exercise.name}, ${formatDuration(breakSeconds)}`
+            : `Start an extra break, ${formatDuration(breakSeconds)}`
+        }
+      >
+        <Dial progress={progress} label={dialLabel} />
+        <span className="next-capsule__text">
+          <span className="next-capsule__eyebrow">{eyebrow}</span>
+          <span className="next-capsule__title">{title}</span>
+        </span>
+      </button>
 
-      <div className="next-card__actions">
-        <button type="button" className="next-card__start" onClick={onStart}>
-          Start now
+      {slot ? (
+        <button
+          type="button"
+          className="next-capsule__snooze"
+          onClick={onSnooze}
+          aria-label={`Snooze ${SNOOZE_MINUTES} minutes`}
+        >
+          <StopwatchIcon size={19} />
         </button>
-        <button type="button" className="next-card__snooze" onClick={onSnooze}>
-          Snooze
-        </button>
-      </div>
+      ) : null}
 
-      {slot.movedByMeeting ? (
-        <p className="next-card__note">
+      {slot?.movedByMeeting ? (
+        <p className="next-capsule__note">
           <ReplyIcon size={14} />
-          Moved from {formatTime(slot.at)} to {formatTime(slot.showsAt)} to
-          clear your meeting.
+          Moved from {formatTime(slot.at)} to clear your meeting.
         </p>
       ) : null}
     </article>
   );
 }
 
-/** Shown once every scheduled break is done or skipped (brief §B3). */
-function GoalMetCard({
-  answers,
-  breakSeconds,
-  onKeepGoing,
+/* ------------------------------------------------------------------ */
+/* Pack shelves                                                        */
+/* ------------------------------------------------------------------ */
+
+/** A pack's tile art: its most distinctive drawn pose, tinted by body area. */
+function packArt(set: ExerciseSet) {
+  return { pose: poseForSet(set), tint: tintFor(setExercises(set)[0].region) };
+}
+
+function PackTile({
+  set,
+  onStart,
 }: {
-  answers: OnboardingState;
-  breakSeconds: number;
-  onKeepGoing: (exercise: Exercise) => void;
+  set: ExerciseSet;
+  onStart: (set: ExerciseSet) => void;
 }) {
-  const coach = useCoach();
-  const extra = pickExercises(answers, 1)[0];
+  const { session, toggleFavouriteSet } = useSession();
+  const { pose, tint } = packArt(set);
+  const favourited = session.favouriteSetIds.includes(set.id);
 
   return (
-    <article className="next-card">
-      <div className="next-card__top">
-        <div className="next-card__text">
-          <div className="next-card__eyebrow">THAT&rsquo;S THE PLAN DONE</div>
-          <h2 className="next-card__name">Anything extra is a bonus</h2>
-          <div className="next-card__chips">
-            <span className="mini-chip mini-chip--area">
-              {BODY_REGION_LABELS[extra.region]}
-            </span>
-            <span className="mini-chip">
-              {formatDuration(breakSeconds)}
-            </span>
-          </div>
-        </div>
-        <div className="next-card__art bob">
-          <Mascot name="thumbsup" size={70} alt={`${COACH_LABEL[coach]} coach`} />
-        </div>
-      </div>
+    <li className="pack">
+      <button
+        type="button"
+        className="pack__art"
+        style={{ background: tint }}
+        onClick={() => onStart(set)}
+      >
+        <Mascot name={pose} size={88} />
+      </button>
+      <button
+        type="button"
+        className="pack__heart"
+        aria-pressed={favourited}
+        aria-label={
+          favourited ? `Remove ${set.name} from favourites` : `Add ${set.name} to favourites`
+        }
+        onClick={() => toggleFavouriteSet(set.id)}
+      >
+        <HeartIcon size={14} />
+      </button>
+      <span className="pack__name">{set.name}</span>
+    </li>
+  );
+}
 
-      <div className="next-card__actions">
-        <button
-          type="button"
-          className="next-card__start"
-          onClick={() => onKeepGoing(extra)}
-        >
-          Keep going
-        </button>
+function Shelf({
+  shelf,
+  onStart,
+  onBrowse,
+}: {
+  shelf: PackShelf;
+  onStart: (set: ExerciseSet) => void;
+  onBrowse: () => void;
+}) {
+  return (
+    <section className="shelf">
+      <div className="today__section-head">
+        <h2 className="today__h2">{shelf.title}</h2>
       </div>
-    </article>
+      <ul className="shelf__row">
+        {shelf.sets.map((set) => (
+          <PackTile key={set.id} set={set} onStart={onStart} />
+        ))}
+
+        {/* Favourites is the one shelf that shows empty, so it carries the
+            invitation to fill it. */}
+        {shelf.id === 'favourites' ? (
+          <li className="pack">
+            <button type="button" className="pack__add" onClick={onBrowse}>
+              <PlusIcon size={26} />
+            </button>
+            <span className="pack__name pack__name--muted">
+              {shelf.sets.length === 0 ? 'Heart a pack' : 'Add'}
+            </span>
+          </li>
+        ) : null}
+      </ul>
+    </section>
+  );
+}
+
+function AllPacks({
+  ref,
+  onStart,
+}: {
+  ref: React.Ref<HTMLElement>;
+  onStart: (set: ExerciseSet) => void;
+}) {
+  return (
+    <section className="shelf" ref={ref}>
+      <div className="today__section-head">
+        <h2 className="today__h2">All packs</h2>
+        <span className="today__hint">{EXERCISE_SETS.length} to choose from</span>
+      </div>
+      <ul className="shelf__grid">
+        {EXERCISE_SETS.map((set) => (
+          <PackTile key={set.id} set={set} onStart={onStart} />
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -575,14 +797,19 @@ function Coverage() {
 /* Tab bar                                                             */
 /* ------------------------------------------------------------------ */
 
-/** Only Today and Break are built; the rest are section D, H and I. */
+/** Only Today is built; the rest are sections D, H and I. */
 const OTHER_TABS = [
   { label: 'Library', icon: <GridIcon size={20} /> },
   { label: 'Insights', icon: <ChartIcon size={20} /> },
   { label: 'You', icon: <PersonIcon size={20} /> },
 ] as const;
 
-export function TabBar({ onBreak }: { onBreak: () => void }) {
+/**
+ * Four tabs and no centre disc: the floating Start workout button now owns
+ * "move right now", and two accent-coloured play buttons within 80px of each
+ * other read as two different actions when they are one.
+ */
+export function TabBar() {
   return (
     <nav className="tabbar" aria-label="Main">
       <button type="button" className="tab" aria-current="page">
@@ -590,23 +817,7 @@ export function TabBar({ onBreak }: { onBreak: () => void }) {
         <span className="tab__label">Today</span>
       </button>
 
-      <button type="button" className="tab" aria-disabled="true" disabled>
-        {OTHER_TABS[0].icon}
-        <span className="tab__label">{OTHER_TABS[0].label}</span>
-      </button>
-
-      <button
-        type="button"
-        className="tab-break"
-        aria-label="Start a break now"
-        onClick={onBreak}
-      >
-        <span className="tab-break__disc">
-          <PlayIcon size={26} />
-        </span>
-      </button>
-
-      {OTHER_TABS.slice(1).map((tab) => (
+      {OTHER_TABS.map((tab) => (
         <button
           key={tab.label}
           type="button"

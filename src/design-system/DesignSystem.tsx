@@ -597,28 +597,34 @@ function Cards() {
       intro="28px radius, plum-tinted shadow, white on the warm canvas. Sheets are the same recipe anchored to the bottom of the shell with a drag handle."
     >
       <div className="ds__grid" style={{ gridTemplateColumns: '1.3fr 1fr' }}>
-        <div className="next-card">
-          <div className="next-card__top">
-            <div className="next-card__text">
-              <div className="next-card__eyebrow">NEXT BREAK IN 24 MIN</div>
-              <h3 className="next-card__name">Shoulder rolls</h3>
-              <div className="next-card__chips">
-                <span className="mini-chip mini-chip--area">Shoulders</span>
-                <span className="mini-chip">1 min</span>
-              </div>
-            </div>
-            <div className="next-card__art bob">
-              <Mascot name="thumbsup" size={70} alt="" />
-            </div>
-          </div>
-          <div className="next-card__actions">
-            <button type="button" className="next-card__start">
-              Start now
-            </button>
-            <button type="button" className="next-card__snooze">
-              Snooze
-            </button>
-          </div>
+        <div className="next-capsule" style={{ alignSelf: 'start' }}>
+          <button type="button" className="next-capsule__main">
+            <span className="dial">
+              <svg width={46} height={46} viewBox="0 0 46 46" aria-hidden="true">
+                <circle cx={23} cy={23} r={19} className="dial__track" fill="none" strokeWidth={5} />
+                <circle
+                  cx={23}
+                  cy={23}
+                  r={19}
+                  className="dial__fill"
+                  fill="none"
+                  strokeWidth={5}
+                  strokeLinecap="round"
+                  strokeDasharray={119.4}
+                  strokeDashoffset={46}
+                  transform="rotate(-90 23 23)"
+                />
+              </svg>
+              <span className="dial__label">24&prime;</span>
+            </span>
+            <span className="next-capsule__text">
+              <span className="next-capsule__eyebrow">NEXT BREAK</span>
+              <span className="next-capsule__title">Shoulder rolls at 10:40</span>
+            </span>
+          </button>
+          <button type="button" className="next-capsule__snooze" aria-label="Snooze">
+            <StopwatchIcon size={19} />
+          </button>
         </div>
 
         <div className="card card--strong">
@@ -765,7 +771,7 @@ function Navigation() {
       intro="A bottom tab bar floating over content on blurred white, with the active tab tinted behind a muted pill and the Break button raised out of the bar."
     >
       <div className="ds__tabbar-frame">
-        <TabBar onBreak={() => {}} />
+        <TabBar />
       </div>
       <p className="ds__note">
         The raised centre button is the most important control in the app: one

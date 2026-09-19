@@ -1,5 +1,6 @@
 import type { MascotName } from '../components/Mascot';
-import type { Exercise } from '../exercises';
+import type { Exercise, ExerciseSet } from '../exercises';
+import { setExercises } from '../exercises';
 import type { BodyRegion } from '../onboarding/state';
 
 /**
@@ -54,6 +55,41 @@ const TINT_BY_REGION: Record<BodyRegion, string> = {
 
 export function poseFor(exercise: Exercise): MascotName {
   return POSE_BY_EXERCISE[exercise.id] ?? POSE_BY_REGION[exercise.region];
+}
+
+/**
+ * The pose on a curated set's tile.
+ *
+ * Hand-assigned rather than derived from the set's lead exercise: several
+ * sets open with the same move, and two packs sharing one drawing on the same
+ * shelf reads as a bug. Every set gets its own pose, and the test holds them
+ * to it.
+ */
+const POSE_BY_SET: Record<string, MascotName> = {
+  'desk-reset': 'walking',
+  'neck-relief': 'neckrolls',
+  posture: 'pullups',
+  'wrists-hands': 'thumbsup',
+  'lower-back': 'spinaltwist',
+  'hips-glutes': 'figurefour',
+  energizer: 'squats',
+  'legs-circulation': 'marching',
+  'eyes-reset': 'water',
+  'arms-shoulders': 'lifting',
+};
+
+/**
+ * A set's tile pose: its own if it has been given one, otherwise the first
+ * pose drawn for one of its exercises, so a new set renders before anyone
+ * has chosen its art.
+ */
+export function poseForSet(set: ExerciseSet): MascotName {
+  const assigned = POSE_BY_SET[set.id];
+  if (assigned) return assigned;
+
+  const exercises = setExercises(set);
+  const drawn = exercises.find((exercise) => POSE_BY_EXERCISE[exercise.id]);
+  return poseFor(drawn ?? exercises[0]);
 }
 
 export function tintFor(region: BodyRegion): string {

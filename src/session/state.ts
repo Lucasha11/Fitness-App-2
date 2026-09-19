@@ -1,5 +1,6 @@
 import {
   EXERCISE_DURATION_SECONDS,
+  EXERCISE_SETS,
   isExerciseDuration,
   type ExerciseDuration,
 } from '../exercises';
@@ -82,6 +83,12 @@ export interface SessionState {
   feedback: FeedbackEntry[];
   exclusions: Exclusions;
   /**
+   * Curated sets the user has hearted, as `EXERCISE_SETS` ids. Stored as ids
+   * rather than copies of the sets: a set's contents are the catalogue's to
+   * change, and a favourite should follow it when it does.
+   */
+  favouriteSetIds: string[];
+  /**
    * Today's meetings. Connecting a calendar in onboarding is still a stub, so
    * these stand in for EventKit until the real integration lands.
    */
@@ -107,6 +114,7 @@ export function emptySession(): SessionState {
     exerciseSeconds: EXERCISE_DURATION_SECONDS,
     feedback: [],
     exclusions: { exerciseIds: [], regions: [] },
+    favouriteSetIds: [],
     meetings: [],
   };
 }
@@ -141,6 +149,18 @@ export function storedDuration(
   return stored !== undefined && isExerciseDuration(stored) ? stored : fallback;
 }
 
+/**
+ * The stored favourites, less anything the catalogue no longer has.
+ *
+ * Exported for its test: `loadSession` reaches for `window`, and the suite
+ * runs in plain Node, so the rule lives out here where it can be checked.
+ */
+export function storedFavourites(stored: string[] | undefined): string[] {
+  if (!Array.isArray(stored)) return [];
+  const known = new Set(EXERCISE_SETS.map((set) => set.id));
+  return [...new Set(stored.filter((id) => known.has(id)))];
+}
+
 export function loadSession(): SessionState {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -156,6 +176,9 @@ export function loadSession(): SessionState {
       // A length written by a build that offered different choices must not
       // put an unrunnable duration into the player.
       exerciseSeconds: storedDuration(parsed.exerciseSeconds, base.exerciseSeconds),
+      // Favourites arrived after the first records were written, and a set
+      // since dropped from the catalogue must not leave a hole on the shelf.
+      favouriteSetIds: storedFavourites(parsed.favouriteSetIds),
     };
   } catch {
     return emptySession();
@@ -260,8 +283,11 @@ export function sittingMinutes(
 }
 
 /** Breaks taken in the last seven days. */
-export function breaksThisWeek(session: SessionState): CompletedBreak[] {
-  const cursor = new Date();
+export function breaksThisWeek(
+  session: SessionState,
+  now: Date = new Date(),
+): CompletedBreak[] {
+  const cursor = new Date(now);
   const collected: CompletedBreak[] = [];
   for (let day = 0; day < 7; day += 1) {
     collected.push(...(session.history[dateKey(cursor)] ?? []));
@@ -394,5 +420,28 @@ export function withRestedRegion(
         { region, until: until.toISOString() },
       ],
     },
+  };
+}
+
+/**
+ * Heart a curated set, or un-heart one already hearted.
+ *
+ * Favourites keep catalogue order rather than the order they were added, so
+ * the shelf does not reshuffle under the user's thumb every time they add one.
+ */
+export function withToggledFavouriteSet(
+  session: SessionState,
+  setId: string,
+): SessionState {
+  const favourited = session.favouriteSetIds.includes(setId);
+  const next = favourited
+    ? session.favouriteSetIds.filter((id) => id !== setId)
+    : [...session.favouriteSetIds, setId];
+
+  return {
+    ...session,
+    favouriteSetIds: EXERCISE_SETS.filter((set) => next.includes(set.id)).map(
+      (set) => set.id,
+    ),
   };
 }
