@@ -264,6 +264,11 @@
   margin-right: -20px;
   padding-right: 20px;
   overflow-x: auto;
+  /* A non-visible overflow-x makes overflow-y compute to auto, which lets a
+     shelf drift vertically under a diagonal drag. Only the page scrolls
+     vertically; a shelf is locked to its axis. */
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
   scrollbar-width: none;
   scroll-snap-type: x proximity;
 }
