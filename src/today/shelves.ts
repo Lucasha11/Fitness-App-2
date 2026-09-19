@@ -100,16 +100,3 @@ export function buildShelves(
     ...rest.filter((shelf) => shelf.sets.length >= SHELF_MINIMUM),
   ];
 }
-
-/**
- * How far through the wait for the next break we are, `0` to `1`, for the
- * dial on the next-break capsule.
- *
- * The dial fills as the break approaches and is full once it is due, so a
- * glance at how much colour is on the ring answers "is it nearly time?"
- * without reading the number in the middle.
- */
-export function countdownProgress(minutesAway: number, interval: number): number {
-  if (interval <= 0) return 1;
-  return Math.min(1, Math.max(0, 1 - minutesAway / interval));
-}

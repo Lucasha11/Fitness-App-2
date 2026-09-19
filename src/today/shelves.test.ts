@@ -7,7 +7,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { buildShelves, countdownProgress, regionsOf } from './shelves';
+import { buildShelves, regionsOf } from './shelves';
 import { EXERCISE_SETS, setExercises } from '../exercises';
 import { initialState, type OnboardingState } from '../onboarding/state';
 import {
@@ -143,21 +143,5 @@ describe('the pack shelves on Today', () => {
       .filter((entry) => entry.id !== 'favourites')
       .flatMap((entry) => entry.sets.map((set) => set.id));
     expect(elsewhere).not.toContain('hips-glutes');
-  });
-});
-
-describe('the next-break dial', () => {
-  it('fills as the break approaches and is full once it is due', () => {
-    expect(countdownProgress(45, 45)).toBe(0);
-    expect(countdownProgress(22.5, 45)).toBeCloseTo(0.5);
-    expect(countdownProgress(0, 45)).toBe(1);
-  });
-
-  it('stays full rather than overflowing once a break is overdue', () => {
-    expect(countdownProgress(-30, 45)).toBe(1);
-  });
-
-  it('never reads as more than a whole wait, however far off the break is', () => {
-    expect(countdownProgress(200, 45)).toBe(0);
   });
 });

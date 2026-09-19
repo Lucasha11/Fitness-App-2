@@ -6,7 +6,6 @@ import { Mascot, type MascotName } from '../components/Mascot';
 import {
   BandageIcon,
   CheckIcon,
-  ChevronRightIcon,
   DiceIcon,
   EyeIcon,
   FlameIcon,
@@ -236,8 +235,8 @@ function Colors() {
       <p className="ds__note">
         <code>--warning</code> is the amber the brief asks for in §2 —
         &ldquo;never use red as the primary alert&rdquo;. It ships as a wash
-        behind the sitting indicator with <code>--warning-strong</code> on the
-        dot. <code>--danger</code> stays reserved: no destructive action exists
+        behind a long-sit warning, and in the break player&rsquo;s overrun state.
+        <code>--danger</code> stays reserved: no destructive action exists
         in the app yet.
       </p>
       <p className="ds__note">
@@ -598,33 +597,19 @@ function Cards() {
     >
       <div className="ds__grid" style={{ gridTemplateColumns: '1.3fr 1fr' }}>
         <div className="next-capsule" style={{ alignSelf: 'start' }}>
-          <button type="button" className="next-capsule__main">
-            <span className="dial">
-              <svg width={46} height={46} viewBox="0 0 46 46" aria-hidden="true">
-                <circle cx={23} cy={23} r={19} className="dial__track" fill="none" strokeWidth={5} />
-                <circle
-                  cx={23}
-                  cy={23}
-                  r={19}
-                  className="dial__fill"
-                  fill="none"
-                  strokeWidth={5}
-                  strokeLinecap="round"
-                  strokeDasharray={119.4}
-                  strokeDashoffset={46}
-                  transform="rotate(-90 23 23)"
-                />
-              </svg>
-              <span className="dial__label">24&prime;</span>
-            </span>
-            <span className="next-capsule__text">
-              <span className="next-capsule__eyebrow">NEXT BREAK</span>
-              <span className="next-capsule__title">Shoulder rolls at 10:40</span>
-            </span>
-          </button>
-          <button type="button" className="next-capsule__snooze" aria-label="Snooze">
-            <StopwatchIcon size={19} />
-          </button>
+          <div className="next-capsule__text">
+            <span className="next-capsule__eyebrow">NEXT BREAK IN 24 MIN</span>
+            <span className="next-capsule__title">Neck rolls</span>
+            <span className="next-capsule__length">1 min</span>
+          </div>
+          <div className="next-capsule__actions">
+            <button type="button" className="next-capsule__snooze">
+              Snooze
+            </button>
+            <button type="button" className="next-capsule__start">
+              Start
+            </button>
+          </div>
         </div>
 
         <div className="card card--strong">
@@ -802,13 +787,15 @@ function Banners() {
           <span className="ds__banner-action">Snooze</span>
         </div>
 
-        <button type="button" className="sitting sitting--warning">
-          <span className="sitting__dot" />
-          <span className="sitting__label">
-            You&rsquo;ve been sitting for 52 minutes
-          </span>
-          <ChevronRightIcon size={16} className="sitting__chevron" />
-        </button>
+        <div className="ds__banner ds__banner--warning">
+          <div className="ds__banner-icon">
+            <StopwatchIcon size={20} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div className="ds__banner-title">You&rsquo;ve been sitting a while</div>
+            <div className="ds__banner-body">Amber wash, never red</div>
+          </div>
+        </div>
 
         <div className="ds__banner ds__banner--error">
           <svg
@@ -837,9 +824,9 @@ function Banners() {
       </div>
 
       <p className="ds__note">
-        The amber row is the real sitting indicator, not a copy of it — it turns
-        from muted to amber past the 45-minute threshold. Info and success tones
-        are still open gaps
+        The amber wash is where a long sit would be flagged; the sitting clock
+        itself now leads the Today header rather than sitting in a row of its
+        own. Info and success tones are still open gaps
         <Status built={false}>Open</Status>; the toast used after break feedback
         is the closest thing to a success state today.
       </p>

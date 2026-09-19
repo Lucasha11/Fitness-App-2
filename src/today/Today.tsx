@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ChartIcon,
   CheckIcon,
-  ChevronRightIcon,
   DashIcon,
   FlameIcon,
   GridIcon,
@@ -11,7 +10,6 @@ import {
   PlayIcon,
   PlusIcon,
   ReplyIcon,
-  StopwatchIcon,
   TargetIcon,
 } from '../components/icons';
 import { COACH_LABEL, useCoach, useCoachNoun } from '../components/coach';
@@ -29,7 +27,6 @@ import {
 import {
   BODY_REGION_LABELS,
   type OnboardingState,
-  effectiveInterval,
   formatTime,
 } from '../onboarding/state';
 import { poseForSet, tintFor } from '../player/poses';
@@ -41,11 +38,10 @@ import {
   currentStreak,
   sittingMinutes,
 } from '../session/state';
-import { buildShelves, countdownProgress, type PackShelf } from './shelves';
+import { sittingHeadline } from './sitting';
+import { countdownEyebrow } from './countdown';
+import { buildShelves, type PackShelf } from './shelves';
 import './today.css';
-
-/** Past this many sitting minutes the indicator turns amber (brief §B1.4). */
-const SITTING_THRESHOLD = 45;
 
 /** How far the next-break card's Snooze pushes a break. */
 const SNOOZE_MINUTES = 10;
@@ -113,19 +109,17 @@ export function Today({ answers, onStartBreak }: TodayProps) {
           streak={streak}
           done={done}
           goal={goal}
+          sitting={sitting}
         />
 
         <div className="today__body">
           <NextCapsule
             slot={upNext}
             now={now}
-            interval={effectiveInterval(answers.interval)}
             breakSeconds={breakSeconds}
             onStart={startNext}
             onSnooze={() => upNext && snoozeSlot(upNext.at, SNOOZE_MINUTES)}
           />
-
-          <SittingIndicator minutes={sitting} />
 
           {shelves.map((shelf) => (
             <Shelf
@@ -203,8 +197,10 @@ function countWord(count: number): string {
  * The coach's line at the top of the screen. It never scolds: a day with
  * nothing done yet is an invitation, not a telling-off.
  */
-function coachLine(done: number, goal: number): string {
-  if (done === 0) return 'A good moment to stand up.';
+function coachLine(done: number, goal: number, sitting: number): string {
+  // The day's first break is still owed, so the clock *is* the headline —
+  // there is no separate sitting row under the card any more.
+  if (done === 0) return sittingHeadline(sitting);
   if (done >= goal) return 'Goal met. The rest is a bonus.';
 
   // Sentence-initial, and short: the line sits in a 240px column beside a
@@ -220,11 +216,14 @@ function Header({
   streak,
   done,
   goal,
+  sitting,
 }: {
   now: Date;
   streak: number;
   done: number;
   goal: number;
+  /** Minutes on the sitting clock. */
+  sitting: number;
 }) {
   const coach = useCoach();
   const dateLabel = now.toLocaleDateString(undefined, { weekday: 'long' });
@@ -254,7 +253,7 @@ function Header({
               {streak}
             </button>
           </div>
-          <h1 className="today__greeting">{coachLine(done, goal)}</h1>
+          <h1 className="today__greeting">{coachLine(done, goal, sitting)}</h1>
         </div>
       </div>
 
@@ -304,114 +303,72 @@ function GoalBar({ done, goal }: { done: number; goal: number }) {
 /* Next break                                                          */
 /* ------------------------------------------------------------------ */
 
-/** The dial's circumference, for the stroke-dash countdown. */
-const DIAL_RADIUS = 19;
-const DIAL_LENGTH = 2 * Math.PI * DIAL_RADIUS;
-
-function Dial({ progress, label }: { progress: number; label: string }) {
-  return (
-    <span className="dial">
-      <svg width={46} height={46} viewBox="0 0 46 46" aria-hidden="true">
-        <circle
-          cx={23}
-          cy={23}
-          r={DIAL_RADIUS}
-          className="dial__track"
-          fill="none"
-          strokeWidth={5}
-        />
-        <circle
-          cx={23}
-          cy={23}
-          r={DIAL_RADIUS}
-          className="dial__fill"
-          fill="none"
-          strokeWidth={5}
-          strokeLinecap="round"
-          strokeDasharray={DIAL_LENGTH}
-          strokeDashoffset={DIAL_LENGTH * (1 - progress)}
-          transform="rotate(-90 23 23)"
-        />
-      </svg>
-      <span className="dial__label">{label}</span>
-    </span>
-  );
-}
-
 /**
- * The next break, as one capsule rather than the card that used to own the
- * top of the screen. Starting it is the whole row; snoozing is the button.
+ * The next break, as one capsule: what is coming and how long it takes on
+ * the left, the two things you can do about it on the right.
+ *
+ * The countdown is the eyebrow rather than a dial — one line of text says
+ * the same thing as a ring and leaves the row to the buttons.
  *
  * `slot` is null once every scheduled break is done or skipped (brief §B3) —
- * the capsule then says so and the dial sits full.
+ * the capsule then says so, and Start offers an extra break.
  */
 function NextCapsule({
   slot,
   now,
-  interval,
   breakSeconds,
   onStart,
   onSnooze,
 }: {
   slot: BreakSlot | null;
   now: Date;
-  /** Minutes between scheduled breaks, which the dial fills over. */
-  interval: number;
   breakSeconds: number;
   onStart: () => void;
   onSnooze: () => void;
 }) {
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
   const minutesAway = slot ? slot.showsAt - nowMinutes : 0;
-  const progress = slot ? countdownProgress(minutesAway, interval) : 1;
+  const length = formatDuration(breakSeconds);
 
-  const dialLabel = !slot
-    ? 'Done'
-    : minutesAway <= 0
-      ? 'Now'
-      : minutesAway < 60
-        ? `${minutesAway}′`
-        : `${Math.round(minutesAway / 60)}h`;
+  const eyebrow = slot ? countdownEyebrow(minutesAway) : 'ALL DONE TODAY';
 
-  const eyebrow = !slot
-    ? 'THAT’S THE PLAN DONE'
-    : minutesAway <= 0
-      ? 'BREAK DUE'
-      : 'NEXT BREAK';
-
-  const title = slot
-    ? `${slot.exercise.name} at ${formatTime(slot.showsAt)}`
-    : 'Anything extra is a bonus';
+  const title = slot ? slot.exercise.name : 'Anything extra';
 
   return (
     <article className="next-capsule">
-      <button
-        type="button"
-        className="next-capsule__main"
-        onClick={onStart}
-        aria-label={
-          slot
-            ? `Start ${slot.exercise.name}, ${formatDuration(breakSeconds)}`
-            : `Start an extra break, ${formatDuration(breakSeconds)}`
-        }
-      >
-        <Dial progress={progress} label={dialLabel} />
-        <span className="next-capsule__text">
-          <span className="next-capsule__eyebrow">{eyebrow}</span>
-          <span className="next-capsule__title">{title}</span>
-        </span>
-      </button>
+      {/* Three lines, one thought each: when, what, how long. Running the
+          name and the length together wraps mid-phrase on the longer names. */}
+      <div className="next-capsule__text">
+        <span className="next-capsule__eyebrow">{eyebrow}</span>
+        <span className="next-capsule__title">{title}</span>
+        <span className="next-capsule__length">{length}</span>
+      </div>
 
-      {slot ? (
+      <div className="next-capsule__actions">
+        {slot ? (
+          <button
+            type="button"
+            className="next-capsule__snooze"
+            onClick={onSnooze}
+            aria-label={`Snooze ${SNOOZE_MINUTES} minutes`}
+          >
+            Snooze
+          </button>
+        ) : null}
+
         <button
           type="button"
-          className="next-capsule__snooze"
-          onClick={onSnooze}
-          aria-label={`Snooze ${SNOOZE_MINUTES} minutes`}
+          className="next-capsule__start"
+          onClick={onStart}
+          aria-label={
+            slot
+              ? `Start ${slot.exercise.name}, ${length}`
+              : `Start an extra break, ${length}`
+          }
         >
-          <StopwatchIcon size={19} />
+          Start
         </button>
-      ) : null}
+      </div>
 
       {slot?.movedByMeeting ? (
         <p className="next-capsule__note">
@@ -524,45 +481,6 @@ function AllPacks({
         ))}
       </ul>
     </section>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Sitting indicator                                                   */
-/* ------------------------------------------------------------------ */
-
-/**
- * `95` -> `1 hr 35 min`. Past an hour or so the minute count stops being
- * something anyone reads at a glance, and a four-digit one reads as a bug.
- */
-function sittingLabel(minutes: number): string {
-  if (minutes < 90) {
-    return `${minutes} minute${minutes === 1 ? '' : 's'}`;
-  }
-
-  const hours = Math.floor(minutes / 60);
-  const rest = minutes % 60;
-  const hourPart = `${hours} hr${hours === 1 ? '' : 's'}`;
-
-  return rest === 0 ? hourPart : `${hourPart} ${rest} min`;
-}
-
-function SittingIndicator({ minutes }: { minutes: number }) {
-  const warning = minutes >= SITTING_THRESHOLD;
-  const label =
-    minutes < 1
-      ? 'You just got up — nice one'
-      : `You've been sitting for ${sittingLabel(minutes)}`;
-
-  return (
-    <button
-      type="button"
-      className={`sitting${warning ? ' sitting--warning' : ''}`}
-    >
-      <span className="sitting__dot" />
-      <span className="sitting__label">{label}</span>
-      <ChevronRightIcon size={16} className="sitting__chevron" />
-    </button>
   );
 }
 
