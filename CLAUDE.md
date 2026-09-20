@@ -116,8 +116,10 @@ contributor accept a diff they did not read line by line.
 
 ## Known stubs
 
-- **Calendar is fake.** `DEMO_MEETINGS` in `App.tsx` seeds one meeting to keep
-  the scheduler's move-into-the-gap path exercised. No EventKit access.
+- **No calendar.** `session.meetings` is always empty: no EventKit access, and
+  the A12 setup screen that offered one was removed rather than ship invented
+  meetings. The scheduler's move-into-the-gap path stays covered by
+  `schedule.test.ts`; `seedMeetings` is the seam EventKit will fill.
 - **Notifications are primed but never scheduled.** Breaks come due on the
   timeline only.
 - Library, Insights and You are disabled — no designs exist.

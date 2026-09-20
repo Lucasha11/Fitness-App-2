@@ -690,46 +690,6 @@
   min-height: 0;
 }
 
-/* ---- A12 Calendar before/after ------------------------------------- */
-
-.tl {
-  position: relative;
-  height: 34px;
-  margin-top: 10px;
-}
-
-.tl__track {
-  position: absolute;
-  inset: 8px 0;
-  border-radius: 8px;
-  background: var(--fill);
-}
-
-.tl__meeting {
-  position: absolute;
-  top: 8px;
-  bottom: 8px;
-  border-radius: 8px;
-  background: oklch(0.51 0.045 22 / 25%);
-}
-
-.tl__dot {
-  position: absolute;
-  top: 9px;
-  width: 15px;
-  height: 15px;
-  border-radius: var(--radius-pill);
-  background: var(--accent);
-}
-
-.tl__dot--clash {
-  background: var(--danger);
-}
-
-.tl__label {
-  margin-top: 18px;
-}
-
 /* ---- A14 Building your plan ---------------------------------------- */
 
 .build {

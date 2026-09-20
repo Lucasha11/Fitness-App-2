@@ -70,8 +70,8 @@ The fifteen screens the canvas draws, in
 [`src/onboarding/steps/`](src/onboarding/steps): welcome, a value carousel, what
 your day looks like, what bothers you (a tappable body diagram), how visible you
 can be, movement level and adaptations, your sitting hours, how often to nudge,
-your daily goal, notification and calendar and motion priming, a plan-building
-loading state, your finished plan, and an optional sign-in.
+your daily goal, notification and motion priming, a plan-building loading
+state, your finished plan, and an optional sign-in.
 
 ### Today
 
@@ -155,10 +155,11 @@ Nothing on screen is a mock. The onboarding answers drive everything downstream:
 
 ## Notes and deviations
 
-- **Calendar data is a stub.** Connecting a calendar during setup doesn't reach
-  a real calendar API, so it seeds one meeting (`DEMO_MEETINGS` in
-  [`App.tsx`](src/App.tsx)). That keeps the scheduler's real move-into-the-gap
-  path and the timeline's meeting row exercised rather than drawn.
+- **There is no calendar.** The scheduler still moves a break out of a meeting
+  and the timeline still draws a meeting row, but nothing fills
+  `session.meetings` — EventKit isn't wired up, and the setup screen that used
+  to offer a calendar could only ever seed an invented event, so it was removed
+  rather than shipped. `schedule.test.ts` covers the displacement rules.
 - **Notifications are primed but not scheduled.** The priming screen requests
   the browser permission; no background scheduling exists, so breaks come due on
   the timeline rather than arriving as notifications.

@@ -19,7 +19,6 @@ import { A8Schedule } from './steps/A8Schedule';
 import { A9Frequency } from './steps/A9Frequency';
 import { A10Goal } from './steps/A10Goal';
 import { A11Notifications } from './steps/A11Notifications';
-import { A12Calendar } from './steps/A12Calendar';
 import { A13MotionHealth } from './steps/A13MotionHealth';
 import { A14BuildingPlan } from './steps/A14BuildingPlan';
 import { A15PlanReady } from './steps/A15PlanReady';
@@ -43,7 +42,6 @@ const SCREENS: Record<StepId, (props: StepProps) => React.ReactElement> = {
   A9: A9Frequency,
   A10: A10Goal,
   A11: A11Notifications,
-  A12: A12Calendar,
   A13: A13MotionHealth,
   A14: A14BuildingPlan,
   A15: A15PlanReady,
