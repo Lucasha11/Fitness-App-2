@@ -6,20 +6,8 @@ import { loadState, type OnboardingState } from './onboarding/state';
 import { pickExercises } from './schedule';
 import { BreakPlayer } from './player/BreakPlayer';
 import { LockScreenPreview } from './player/LockScreenPreview';
-import { useSession } from './session/context';
 import { SessionProvider } from './session/SessionProvider';
-import type { Meeting } from './session/state';
 import { Today } from './today/Today';
-
-/**
- * Stand-in for the calendar the A12 screen offers to connect. Real EventKit
- * access isn't wired up yet, so a connected calendar seeds one meeting —
- * enough for the scheduler's "move the break into the gap" path, and for the
- * timeline's meeting row, to be exercised for real.
- */
-const DEMO_MEETINGS: Meeting[] = [
-  { start: 11 * 60, end: 11 * 60 + 45, title: 'Design standup' },
-];
 
 type View =
   | { name: 'onboarding' }
@@ -28,7 +16,6 @@ type View =
   | { name: 'lockScreen' };
 
 function Root() {
-  const { seedMeetings } = useSession();
   const [answers, setAnswers] = useState<OnboardingState>(loadState);
   const [view, setView] = useState<View>(() => {
     // C10 is a reference mockup rather than a screen in the flow, so it lives
@@ -44,7 +31,6 @@ function Root() {
   const handleOnboardingComplete = useCallback(
     (completed: OnboardingState, options: { startBreak: boolean }) => {
       setAnswers(completed);
-      seedMeetings(completed.calendarConnected ? DEMO_MEETINGS : []);
 
       if (options.startBreak) {
         setView({
@@ -56,7 +42,7 @@ function Root() {
       }
       setView({ name: 'today' });
     },
-    [seedMeetings],
+    [],
   );
 
   // One provider over the whole app, so a screen can never mix species.

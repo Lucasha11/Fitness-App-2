@@ -13,7 +13,6 @@ export type StepId =
   | 'A9'
   | 'A10'
   | 'A11'
-  | 'A12'
   | 'A13'
   | 'A14'
   | 'A15'
@@ -32,7 +31,6 @@ export const MAIN_FLOW: StepId[] = [
   'A9',
   'A10',
   'A11',
-  'A12',
   'A13',
   'A14',
   'A15',
@@ -52,7 +50,6 @@ export const PROGRESS: Partial<Record<StepId, number>> = {
   A9: 72,
   A10: 80,
   A11: 86,
-  A12: 90,
   A13: 94,
 };
 

@@ -89,8 +89,9 @@ export interface SessionState {
    */
   favouriteSetIds: string[];
   /**
-   * Today's meetings. Connecting a calendar in onboarding is still a stub, so
-   * these stand in for EventKit until the real integration lands.
+   * Today's meetings, which displace any break that collides with one. Empty
+   * until EventKit is wired up: onboarding no longer offers a calendar, since
+   * the screen it offered it on could only ever seed invented events.
    */
   meetings: Meeting[];
 }

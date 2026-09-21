@@ -53,7 +53,6 @@ export interface OnboardingState {
   interval: Interval;
   dailyGoal: number;
   notificationsEnabled: boolean;
-  calendarConnected: boolean;
   useMotion: boolean;
   saveToHealth: boolean;
   account: AccountChoice | null;
@@ -80,7 +79,6 @@ export const initialState: OnboardingState = {
   interval: 45,
   dailyGoal: 6,
   notificationsEnabled: false,
-  calendarConnected: false,
   useMotion: true,
   saveToHealth: false,
   account: null,

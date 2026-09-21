@@ -28,6 +28,10 @@ export interface SessionApi {
   setMusicOn: (on: boolean) => void;
   /** Set how long each exercise in a break runs. */
   setExerciseSeconds: (seconds: ExerciseDuration) => void;
+  /**
+   * The seam EventKit will fill. No caller yet — the scheduler's displacement
+   * rules stay covered by schedule.test.ts rather than by fake meetings.
+   */
   seedMeetings: (meetings: Meeting[]) => void;
   reset: () => void;
 }
