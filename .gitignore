@@ -36,3 +36,6 @@ pnpm-debug.log*
 # iOS / Swift Package Manager build state
 ios/App/CapApp-SPM/.build/
 ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+
+# Python bytecode from scripts/
+__pycache__/
