@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { SwapIcon } from '../components/icons';
-import { Mascot } from '../components/Mascot';
+import { ExerciseFigure } from '../components/ExerciseFigure';
 import type { Exercise } from '../exercises';
+import { clipFor } from './clips';
 import { poseFor } from './poses';
 
 /** Seconds the switch-sides overlay holds, per the design. */
@@ -38,9 +39,9 @@ export function SwitchSides({
   return (
     <div className="switch-overlay" role="alert">
       <div className="switch-overlay__figures">
-        <Mascot name={poseFor(exercise)} size={96} alt="Left side" />
+        <ExerciseFigure pose={poseFor(exercise)} clip={clipFor(exercise)} size={96} alt="Left side" />
         <SwapIcon size={34} style={{ color: 'var(--lime)' }} strokeWidth={2.5} />
-        <Mascot name={poseFor(exercise)} size={96} alt="Right side" />
+        <ExerciseFigure pose={poseFor(exercise)} clip={clipFor(exercise)} size={96} alt="Right side" />
       </div>
 
       <div>

@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
 import { ChevronLeftIcon, SwapIcon } from '../components/icons';
-import { Mascot } from '../components/Mascot';
+import { ExerciseFigure } from '../components/ExerciseFigure';
 import { type Exercise, formatDuration } from '../exercises';
 import { BODY_REGION_LABELS } from '../onboarding/state';
+import { clipFor } from './clips';
 import { poseFor, tintFor } from './poses';
 
 /** Row height plus the gap between rows, for mapping a drag to an index. */
@@ -137,7 +138,7 @@ export function SequenceOverview({
                 className="seq-row__thumb"
                 style={{ background: tintFor(exercise.region) }}
               >
-                <Mascot name={poseFor(exercise)} size={42} />
+                <ExerciseFigure pose={poseFor(exercise)} clip={clipFor(exercise)} size={42} />
               </span>
 
               <span className="seq-row__text">

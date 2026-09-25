@@ -7,6 +7,7 @@ import {
   SwapIcon,
 } from '../components/icons';
 import { COACH_LABEL, useCoach } from '../components/coach';
+import { ExerciseFigure } from '../components/ExerciseFigure';
 import { Mascot } from '../components/Mascot';
 import type { Exercise } from '../exercises';
 import {
@@ -33,6 +34,7 @@ import { SwitchSides } from './SwitchSides';
 import { playCue } from './cues';
 import { startMusic, stopMusic } from './music';
 import { LinearTimer, RingTimer } from './timers';
+import { clipFor } from './clips';
 import { poseFor } from './poses';
 import './player.css';
 
@@ -514,11 +516,12 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
         className={`player__stage${showingSwitch ? ' player__under' : ''}`}
       >
         <div className="player__halo">
-          <Mascot
-            name={poseFor(current)}
+          <ExerciseFigure
+            pose={poseFor(current)}
+            clip={clipFor(current)}
             size={discreet ? 210 : 270}
             alt={`${COACH_LABEL[coach]} coach demonstrating ${current.name.toLowerCase()}`}
-            className={discreet ? undefined : 'bob'}
+            bob={!discreet}
           />
         </div>
       </div>

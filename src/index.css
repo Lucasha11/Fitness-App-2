@@ -51,6 +51,18 @@ img {
   animation: mascot-bob 3.2s ease-in-out infinite;
 }
 
+/*
+ * ExerciseFigure: a clip and its still side by side, one hidden. The still
+ * only shows under reduced motion, since an animated WebP can't be paused.
+ */
+.figure {
+  display: inline-flex;
+}
+
+.figure__still {
+  display: none;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -87,6 +99,14 @@ img {
 @media (prefers-reduced-motion: reduce) {
   .bob {
     animation: none;
+  }
+
+  .figure__clip {
+    display: none;
+  }
+
+  .figure__still {
+    display: block;
   }
 
   *,

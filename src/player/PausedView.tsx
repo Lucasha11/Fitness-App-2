@@ -1,5 +1,5 @@
 import { CloseIcon } from '../components/icons';
-import { Mascot } from '../components/Mascot';
+import { ExerciseFigure } from '../components/ExerciseFigure';
 import { type Exercise, formatClock } from '../exercises';
 import { poseFor } from './poses';
 
@@ -48,10 +48,13 @@ export function PausedView({
       </div>
 
       <div className="paused__stage">
-        <Mascot
-          name={poseFor(exercise)}
+        {/* Held on the drawn pose: a panda still moving would contradict
+            the word PAUSED under it. */}
+        <ExerciseFigure
+          pose={poseFor(exercise)}
           size={250}
           alt="Paused exercise"
+          still
         />
       </div>
 

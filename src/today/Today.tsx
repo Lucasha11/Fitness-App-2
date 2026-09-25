@@ -15,6 +15,7 @@ import {
 import { COACH_LABEL, useCoach, useCoachNoun } from '../components/coach';
 import { ActivityTrend } from './ActivityTrend';
 import { useMotionReset } from '../health/useMotionReset';
+import { ExerciseFigure } from '../components/ExerciseFigure';
 import { Mascot } from '../components/Mascot';
 import {
   EXERCISES_PER_BREAK,
@@ -29,6 +30,7 @@ import {
   type OnboardingState,
   formatTime,
 } from '../onboarding/state';
+import { clipForSet } from '../player/clips';
 import { poseForSet, tintFor } from '../player/poses';
 import { type BreakSlot, buildDay, nextBreak, pickExercises } from '../schedule';
 import { useSession } from '../session/context';
@@ -389,7 +391,11 @@ function NextCapsule({
 
 /** A pack's tile art: its most distinctive drawn pose, tinted by body area. */
 function packArt(set: ExerciseSet) {
-  return { pose: poseForSet(set), tint: tintFor(setExercises(set)[0].region) };
+  return {
+    pose: poseForSet(set),
+    clip: clipForSet(set),
+    tint: tintFor(setExercises(set)[0].region),
+  };
 }
 
 function PackTile({
@@ -400,7 +406,7 @@ function PackTile({
   onStart: (set: ExerciseSet) => void;
 }) {
   const { session, toggleFavouriteSet } = useSession();
-  const { pose, tint } = packArt(set);
+  const { pose, clip, tint } = packArt(set);
   const favourited = session.favouriteSetIds.includes(set.id);
 
   return (
@@ -411,7 +417,7 @@ function PackTile({
         style={{ background: tint }}
         onClick={() => onStart(set)}
       >
-        <Mascot name={pose} size={88} />
+        <ExerciseFigure pose={pose} clip={clip} size={88} />
       </button>
       <button
         type="button"

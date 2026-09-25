@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronRightIcon, CloseIcon, SwapIcon } from '../components/icons';
 import { COACH_LABEL, useCoach } from '../components/coach';
-import { Mascot } from '../components/Mascot';
+import { ExerciseFigure } from '../components/ExerciseFigure';
 import {
   formatClock,
   formatDuration,
@@ -10,6 +10,7 @@ import {
 } from '../exercises';
 import { BODY_REGION_LABELS } from '../onboarding/state';
 import { BreakOptionsSheet } from './BreakOptionsSheet';
+import { clipFor } from './clips';
 import { poseFor } from './poses';
 
 /** How long the screen waits before starting the break on its own. */
@@ -135,11 +136,12 @@ export function BreakStart({
             and a circle drifting in and out of a static ring reads as a bug.
           */}
           <div className="start__halo">
-            <Mascot
-              name={poseFor(exercise)}
+            <ExerciseFigure
+              pose={poseFor(exercise)}
+              clip={clipFor(exercise)}
               size={200}
               alt={`${COACH_LABEL[coach]} coach`}
-              className="bob"
+              bob
             />
           </div>
 
