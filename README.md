@@ -75,8 +75,9 @@ state, your finished plan, and an optional sign-in.
 
 ### Today
 
-[`src/today/Today.tsx`](src/today/Today.tsx) — a gradient header with a
-segmented goal ring and streak chip, the next-break card, a sitting indicator
+[`src/today/Today.tsx`](src/today/Today.tsx) — the coach standing in a sunlit
+bamboo clearing beside a lotus pond, with its line in a speech bubble and the
+date and streak as pills, then a cream sheet holding the segmented goal bar, the next-break card, a sitting indicator
 that turns amber past 45 minutes, the day's timeline (swipe a row to skip, swipe
 back to restore), a quick-action shelf, weekly body coverage, and a tab bar with
 a raised Break button that starts a break from anywhere.
@@ -188,5 +189,6 @@ stops, and an empty-state block.
 
 The panda mascots live in [`src/assets/`](src/assets) and are imported as
 modules, so Vite fingerprints them. [`poses.ts`](src/player/poses.ts) maps each
-body area to a pose and a thumbnail tint. A parallel squirrel set is included
-for an alternate coach.
+body area to a pose and a thumbnail tint. A parallel squirrel set is kept for an
+alternate coach, but the squirrel is retired for now: onboarding no longer
+offers it and a saved squirrel comes back as the panda.

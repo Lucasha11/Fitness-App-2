@@ -6,7 +6,7 @@
  * of the app (the scheduler, the exercise picker) can read later.
  */
 
-import { COACHES, type Coach } from '../components/coach';
+import { availableCoach, type Coach } from '../components/coach';
 import { BREAK_DURATION_SECONDS } from '../exercises';
 
 export type DayType = 'desk' | 'hybrid' | 'driver' | 'student' | 'shift' | 'home';
@@ -268,9 +268,7 @@ export function loadState(): OnboardingState {
       ...initialState,
       ...parsed,
       adaptations: { ...initialState.adaptations, ...parsed.adaptations },
-      coach: COACHES.includes(parsed.coach as Coach)
-        ? (parsed.coach as Coach)
-        : initialState.coach,
+      coach: availableCoach(parsed.coach),
       activeDays: Array.isArray(parsed.activeDays) && parsed.activeDays.length === 7
         ? parsed.activeDays
         : initialState.activeDays,

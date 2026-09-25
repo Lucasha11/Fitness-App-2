@@ -9,7 +9,20 @@ import type { MascotName } from './Mascot';
  */
 export type Coach = 'panda' | 'squirrel';
 
-export const COACHES: Coach[] = ['panda', 'squirrel'];
+/**
+ * The coaches a user can have. The squirrel is retired for now: its art and
+ * profile stay so it can come back by rejoining this list, but no screen
+ * offers it and a saved squirrel wakes up as the panda.
+ */
+export const COACHES: Coach[] = ['panda'];
+
+/**
+ * The coach a saved answer sheet actually gets: its own pick while that coach
+ * is offered, the panda otherwise.
+ */
+export function availableCoach(saved: unknown): Coach {
+  return COACHES.includes(saved as Coach) ? (saved as Coach) : 'panda';
+}
 
 /** The noun the copy uses, so a line reads "Your squirrel hates chairs". */
 export const COACH_NOUN: Record<Coach, string> = {
@@ -25,8 +38,8 @@ export const COACH_LABEL: Record<Coach, string> = {
 
 /**
  * What the picker shows for each coach. Adding an animal here (with its art
- * in `Mascot`) is the whole job — A1b's carousel, its pager and its jump rail
- * all size themselves off this list.
+ * in `Mascot`) and to COACHES is the whole job — A1b's carousel, its pager
+ * and its jump rail all size themselves off COACH_PROFILES.
  */
 export interface CoachProfile {
   value: Coach;
@@ -39,7 +52,7 @@ export interface CoachProfile {
   pose: MascotName;
 }
 
-export const COACH_PROFILES: CoachProfile[] = [
+const ALL_PROFILES: CoachProfile[] = [
   {
     value: 'panda',
     name: 'Panda',
@@ -55,6 +68,11 @@ export const COACH_PROFILES: CoachProfile[] = [
     pose: 'thumbsup',
   },
 ];
+
+/** Only the coaches on offer; a retired coach keeps its profile above. */
+export const COACH_PROFILES: CoachProfile[] = ALL_PROFILES.filter((profile) =>
+  COACHES.includes(profile.value),
+);
 
 /** The panda is the default coach, as shipped with the design. */
 export const CoachContext = createContext<Coach>('panda');

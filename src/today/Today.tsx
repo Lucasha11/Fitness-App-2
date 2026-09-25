@@ -112,7 +112,11 @@ export function Today({ answers, onStartBreak }: TodayProps) {
           sitting={sitting}
         />
 
+        {/* The day's content sits on a cream sheet that curves up over the
+            bottom of the clearing, goal first. */}
         <div className="today__body">
+          <GoalBar done={done} goal={goal} />
+
           <NextCapsule
             slot={upNext}
             now={now}
@@ -203,8 +207,8 @@ function coachLine(done: number, goal: number, sitting: number): string {
   if (done === 0) return sittingHeadline(sitting);
   if (done >= goal) return 'Goal met. The rest is a bonus.';
 
-  // Sentence-initial, and short: the line sits in a 240px column beside a
-  // 88px coach, so anything longer than this wraps to a third line.
+  // Sentence-initial, and short: the bubble beside the coach's head is a
+  // narrow column, and a line much longer than this crowds the scene.
   const word = countWord(done);
   return `${word[0].toUpperCase()}${word.slice(1)} down. Make it ${countWord(
     done + 1,
@@ -230,34 +234,31 @@ function Header({
 
   return (
     <header className="today__header">
-      <div className="today__hero">
-        <Mascot
-          name="thumbsup"
-          size={88}
-          alt={`${COACH_LABEL[coach]} coach`}
-          className="bob"
-        />
-        <div className="today__hero-text">
-          {/* The streak shares the date's line rather than the headline's, so
-              the coach's line gets the full column to wrap in. */}
-          <div className="today__date-row">
-            <span className="today__date">
-              {dateLabel} &middot; {greeting(now.getHours())}
-            </span>
-            <button
-              type="button"
-              className="streak"
-              aria-label={`Current streak: ${streak} ${streak === 1 ? 'day' : 'days'}`}
-            >
-              <FlameIcon size={13} />
-              {streak}
-            </button>
-          </div>
-          <h1 className="today__greeting">{coachLine(done, goal, sitting)}</h1>
-        </div>
+      {/* Date and streak sit on the sky as two frosted pills, out of the
+          coach's way. */}
+      <div className="today__date-row">
+        <span className="today__date">
+          {dateLabel} &middot; {greeting(now.getHours())}
+        </span>
+        <button
+          type="button"
+          className="streak"
+          aria-label={`Current streak: ${streak} ${streak === 1 ? 'day' : 'days'}`}
+        >
+          <FlameIcon size={16} />
+          {streak}
+        </button>
       </div>
 
-      <GoalBar done={done} goal={goal} />
+      {/* The coach stands in the clearing and speaks from beside its head,
+          so its line is the screen's headline without covering the scene. */}
+      <Mascot
+        name="wave"
+        size={186}
+        alt={`${COACH_LABEL[coach]} coach`}
+        className="today__coach bob"
+      />
+      <h1 className="today__bubble">{coachLine(done, goal, sitting)}</h1>
     </header>
   );
 }
