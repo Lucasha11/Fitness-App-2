@@ -473,6 +473,15 @@
 /* ---- Tab bar specimen ------------------------------------------------------ */
 
 /* The real tab bar is pinned to the bottom of the phone; unpin it to show it. */
+/* Today's clearing at its drawn proportions, coach on the patch. */
+.ds__scene {
+  max-width: 390px;
+  margin-top: 20px;
+  border-radius: var(--radius-sheet);
+  overflow: hidden;
+  box-shadow: var(--shadow-card-strong);
+}
+
 .ds__tabbar-frame {
   position: relative;
   max-width: 390px;

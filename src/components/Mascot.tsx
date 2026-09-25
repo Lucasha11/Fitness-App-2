@@ -9,6 +9,19 @@ import pandaSquats from '../assets/panda-squats.png';
 import pandaThumbsup from '../assets/panda-thumbsup.png';
 import pandaWalking from '../assets/panda-walking.png';
 import pandaWater from '../assets/panda-water.png';
+/*
+ * The keyframes panda, cut from panda-keyframes-poses.png: the look the home
+ * screen mockup is drawn in. Lossy WebP with alpha, at a tenth of the PNGs'
+ * weight.
+ */
+import pandaStand from '../assets/panda-stand.webp';
+import pandaWave from '../assets/panda-wave.webp';
+import pandaArmsout from '../assets/panda-armsout.webp';
+import pandaHips from '../assets/panda-hips.webp';
+import pandaSit from '../assets/panda-sit.webp';
+import pandaStride from '../assets/panda-stride.webp';
+import pandaJog from '../assets/panda-jog.webp';
+import pandaCrouch from '../assets/panda-crouch.webp';
 import squirrelNineNinety from '../assets/squirrel-9090.png';
 import squirrelFigurefour from '../assets/squirrel-figurefour.png';
 import squirrelLifting from '../assets/squirrel-lifting.png';
@@ -33,7 +46,16 @@ export type MascotName =
   | 'squats'
   | 'thumbsup'
   | 'walking'
-  | 'water';
+  | 'water'
+  // The keyframes panda's poses.
+  | 'stand'
+  | 'wave'
+  | 'armsout'
+  | 'hips'
+  | 'sit'
+  | 'stride'
+  | 'jog'
+  | 'crouch';
 
 /**
  * Bundled so the hashed, cache-busted URL is resolved at build time. Both
@@ -53,6 +75,14 @@ const SOURCES: Record<Coach, Record<MascotName, string>> = {
     thumbsup: pandaThumbsup,
     walking: pandaWalking,
     water: pandaWater,
+    stand: pandaStand,
+    wave: pandaWave,
+    armsout: pandaArmsout,
+    hips: pandaHips,
+    sit: pandaSit,
+    stride: pandaStride,
+    jog: pandaJog,
+    crouch: pandaCrouch,
   },
   squirrel: {
     '9090': squirrelNineNinety,
@@ -66,6 +96,17 @@ const SOURCES: Record<Coach, Record<MascotName, string>> = {
     thumbsup: squirrelThumbsup,
     walking: squirrelWalking,
     water: squirrelWater,
+    // The squirrel is retired and was never drawn in these poses. A retired
+    // coach can't reach a screen (see COACHES), so these borrow the panda's
+    // art rather than a blank; draw them before the squirrel returns.
+    stand: pandaStand,
+    wave: pandaWave,
+    armsout: pandaArmsout,
+    hips: pandaHips,
+    sit: pandaSit,
+    stride: pandaStride,
+    jog: pandaJog,
+    crouch: pandaCrouch,
   },
 };
 

@@ -18,10 +18,14 @@ export type StepId =
   | 'A15'
   | 'A17';
 
-/** The linear spine of onboarding. A17 hangs off A1 and is not part of it. */
+/**
+ * The linear spine of onboarding. A17 hangs off A1 and is not part of it.
+ * A1b, the coach picker, is out while the panda is the only coach: a carousel
+ * of one card is a screen with nothing to pick. Put it back after A1 when a
+ * second coach rejoins COACHES.
+ */
 export const MAIN_FLOW: StepId[] = [
   'A1',
-  'A1b',
   'A2',
   'A3',
   'A5',

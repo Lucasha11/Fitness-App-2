@@ -350,6 +350,14 @@ const MASCOTS: MascotName[] = [
   'figurefour',
   '9090',
   'marching',
+  'stand',
+  'wave',
+  'armsout',
+  'hips',
+  'sit',
+  'stride',
+  'jog',
+  'crouch',
 ];
 
 const ICON_SAMPLES = [
@@ -374,7 +382,7 @@ function Iconography() {
     <Section
       id="icon"
       title="Iconography & mascot"
-      intro="Line icons at 14–22px with a 2px stroke and no fill, drawn in one place so they inherit currentColor. The animal coach is the only illustrated element — never mix in another illustration style."
+      intro="Line icons at 14–22px with a 2px stroke and no fill, drawn in one place so they inherit currentColor. The animal coach and Today's bamboo clearing are the only illustrated elements — never mix in another illustration style."
     >
       <div className="ds__row" style={{ marginBottom: 20 }}>
         {ICON_SAMPLES.map(({ Icon, name }) => (
@@ -387,18 +395,22 @@ function Iconography() {
         ))}
       </div>
 
+      {/* A switch with one position is not a control: the picker comes back
+          when a second coach rejoins COACHES. */}
+      {COACHES.length > 1 ? (
       <div className="ds__coach-picker">
-        <Segmented
-          label="Coach"
-          value={coach}
-          onChange={setCoach}
-          options={COACHES.map((option) => ({
-            value: option,
-            label: COACH_LABEL[option],
-          }))}
-          tight
-        />
-      </div>
+          <Segmented
+            label="Coach"
+            value={coach}
+            onChange={setCoach}
+            options={COACHES.map((option) => ({
+              value: option,
+              label: COACH_LABEL[option],
+            }))}
+            tight
+          />
+        </div>
+      ) : null}
 
       <CoachProvider coach={coach}>
         <div className="ds__mascots">
@@ -412,16 +424,28 @@ function Iconography() {
             </div>
           ))}
         </div>
+
+        <div className="ds__scene today__header">
+          <Mascot name="wave" size={186} alt="" className="today__coach" />
+        </div>
       </CoachProvider>
+
+      <p className="ds__note">
+        Today&rsquo;s bamboo clearing is the home screen mockup&rsquo;s own
+        painting (<code>today-grove.webp</code>), with the panda, pills and
+        bubble painted out and put back as live elements placed in
+        percentages of the scene. The day&rsquo;s content sits on a{' '}
+        <code>--sheet</code> that curves up over its bottom edge.
+      </p>
 
       <p className="ds__note">
         Pattern: the mascot sits on a soft mint circle with a gentle 3.2s bob
         (skipped under reduced motion). The break player picks the pose from the
         exercise itself wherever one is drawn, and falls back to the
         exercise&rsquo;s body area otherwise, so the figure always matches the
-        movement. The coach is picked on A1b&rsquo;s carousel and held in one
-        context, so a screen can never mix species — both sets carry every
-        pose, and <code>Mascot</code> will not compile until a new pose is
+        movement. The coach is held in one context, so a screen can never
+        mix species. The squirrel is retired for now, and A1b&rsquo;s picker
+        with it, but both sets still carry every pose, and <code>Mascot</code> will not compile until a new pose is
         drawn for each. Adding an animal means an entry in
         <code>COACH_PROFILES</code> and its art; the carousel, its pager and
         its jump rail size themselves off that list.

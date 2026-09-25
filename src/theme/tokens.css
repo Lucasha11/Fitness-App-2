@@ -41,6 +41,14 @@
   --warm-gradient: linear-gradient(165deg, var(--accent), var(--accent-deep));
   --header-gradient: linear-gradient(135deg, var(--accent), var(--accent-deep));
 
+  /* Labels and the coach's speech bubble, sitting straight on Today's scene. */
+  --scene-frost: oklch(1 0 0 / 92%);
+  --shadow-bubble: 0 6px 16px oklch(0.45 0.08 140 / 18%);
+  /* The cream sheet the day's content sits on, curving up over the scene.
+     Sampled from the home screen mockup, as is the goal bar's empty track. */
+  --sheet: oklch(0.974 0.02 105);
+  --goal-track: oklch(0.8 0.035 135);
+
   /* The break player dims the whole screen down to these. */
   --player-gradient: linear-gradient(
     165deg,
