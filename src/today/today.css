@@ -243,12 +243,6 @@
   font-size: 14px;
   font-weight: 900;
   cursor: pointer;
-  transition: transform 120ms ease, background 120ms ease;
-}
-
-.next-capsule__snooze:active,
-.next-capsule__start:active {
-  transform: scale(0.97);
 }
 
 /* Outlined in the accent: the quieter half of the same pair. */
@@ -341,12 +335,6 @@
   padding: 0;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 120ms ease;
-}
-
-.pack__art:active,
-.pack__add:active {
-  transform: scale(0.97);
 }
 
 .pack__add {
@@ -470,13 +458,10 @@
   padding: 12px 14px;
   box-shadow: var(--shadow-card-soft);
   cursor: pointer;
-  /* The row tracks the finger exactly while dragging, and springs back on
-     release — hence the transition only on the settled state. */
+  /* The row tracks the finger exactly while dragging and settles back at
+     once on release: Today carries no animation until the new ones are
+     designed. */
   transition: none;
-}
-
-.tl-row[data-swiping='false'] {
-  transition: transform 180ms ease-out;
 }
 
 .tl-row__time {
@@ -665,11 +650,6 @@
   box-shadow: 0 12px 26px oklch(0.62 0.18 34 / 34%);
   pointer-events: auto;
   cursor: pointer;
-  transition: transform 120ms ease;
-}
-
-.start-pill:active {
-  transform: scale(0.98);
 }
 
 /* ---- Tab bar --------------------------------------------------------- */
