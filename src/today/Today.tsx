@@ -251,12 +251,14 @@ function Header({
       </div>
 
       {/* The coach stands in the clearing and speaks from beside its head,
-          so its line is the screen's headline without covering the scene. */}
+          so its line is the screen's headline without covering the scene.
+          It stands still: Today carries no animation until the new ones
+          are designed, so no idle bob. */}
       <Mascot
         name="wave"
         size={186}
         alt={`${COACH_LABEL[coach]} coach`}
-        className="today__coach bob"
+        className="today__coach"
       />
       <h1 className="today__bubble">{coachLine(done, goal, sitting)}</h1>
     </header>
