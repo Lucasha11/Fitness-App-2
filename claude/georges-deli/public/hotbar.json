@@ -1,0 +1,11 @@
+{
+  "date": "2026-09-26",
+  "items": [
+    "Pollo guisado",
+    { "es": "Carne en salsa", "en": "Beef in tomato sauce" },
+    { "es": "Arroz", "en": "Rice" },
+    { "es": "Frijoles fritos", "en": "Refried beans" },
+    { "es": "Tajadas", "en": "Fried plantain chips" },
+    { "es": "Ensalada de repollo", "en": "Cabbage salad" }
+  ]
+}

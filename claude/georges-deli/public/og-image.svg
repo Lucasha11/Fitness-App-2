@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#1D3F66"/>
+  <rect x="24" y="24" width="1152" height="582" rx="28" fill="none" stroke="#fff" stroke-width="6"/>
+  <text x="600" y="330" text-anchor="middle" font-family="Allura, cursive" font-size="170" fill="#fff">George's Deli</text>
+  <text x="600" y="430" text-anchor="middle" font-family="Nunito, sans-serif" font-size="44" fill="#2AA7E1">A taste of Honduras, made fresh every day</text>
+  <text x="600" y="500" text-anchor="middle" font-family="Nunito, sans-serif" font-size="30" fill="#C9A24A">Morristown, NJ · (973) 285-0950</text>
+</svg>
