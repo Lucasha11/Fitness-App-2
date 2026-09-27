@@ -20,10 +20,10 @@ const PAGES: Page[] = [
     alt: (coach) => `${coach} walking away from a desk`,
   },
   {
-    mascot: 'squats',
+    mascot: 'armsout',
     title: 'One minute. At your desk. In your clothes.',
     body: 'Every move works seated, standing, or in a meeting room nobody booked.',
-    alt: (coach) => `${coach} doing a desk squat`,
+    alt: (coach) => `${coach} stretching at a desk`,
   },
   {
     mascot: 'pullups',

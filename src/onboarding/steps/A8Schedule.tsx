@@ -133,7 +133,7 @@ export function A8Schedule({ state, set, next }: StepProps) {
         </div>
 
         <p className="note a8__note" aria-live="polite">
-          <Mascot name="water" size={44} />
+          <Mascot name="sit" size={44} />
           <span>{scheduleSentence(state)}</span>
         </p>
 

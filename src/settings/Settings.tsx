@@ -53,7 +53,7 @@ export function Settings({ answers, onChangeAnswers, onSelectTab }: SettingsProp
           <h1 className="settings__title" id="settings-title">
             Settings
           </h1>
-          <Mascot name="thumbsup" size={92} alt="" className="settings__coach" />
+          <Mascot name="wave" size={92} alt="" className="settings__coach" />
         </header>
 
         <div className="settings__body">

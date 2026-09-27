@@ -77,7 +77,7 @@ export function A15PlanReady({ state, finish }: StepProps) {
         </ul>
 
         <div className="art-fill bob">
-          <Mascot name="thumbsup" size={160} />
+          <Mascot name="wave" size={160} />
         </div>
       </ScreenBody>
 

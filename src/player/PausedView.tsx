@@ -52,6 +52,7 @@ export function PausedView({
           name={poseFor(exercise)}
           size={250}
           alt="Paused exercise"
+          demo="paused"
         />
       </div>
 

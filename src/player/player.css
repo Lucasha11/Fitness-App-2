@@ -115,7 +115,9 @@
   background: oklch(0.99 0.005 100 / 5%);
 }
 
-.player--discreet .player__halo img {
+/* The mascot as a whole, not just an <img>, so the rule holds whatever
+   element Mascot renders. */
+.player--discreet .player__halo > * {
   opacity: 0.72;
 }
 
@@ -802,7 +804,7 @@
   min-height: 0;
 }
 
-.paused__stage img {
+.paused__stage > * {
   opacity: 0.28;
 }
 

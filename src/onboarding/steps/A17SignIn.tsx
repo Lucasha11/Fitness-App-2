@@ -33,7 +33,7 @@ export function A17SignIn({ set, back }: StepProps) {
       </p>
 
       <div className="art-fill bob">
-        <Mascot name="water" size={200} />
+        <Mascot name="stand" size={200} />
       </div>
 
       <div className="auth">

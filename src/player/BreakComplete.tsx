@@ -58,7 +58,7 @@ export function BreakComplete({
   return (
     <section className="complete" aria-label="Break complete">
       <div className="complete__halo bob">
-        <Mascot name="thumbsup" size={165} alt={`Your ${coach} celebrating`} />
+        <Mascot name="armsout" size={165} alt={`Your ${coach} celebrating`} />
       </div>
 
       <div>

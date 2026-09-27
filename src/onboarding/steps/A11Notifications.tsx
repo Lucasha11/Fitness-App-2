@@ -60,7 +60,7 @@ export function A11Notifications({ set, next }: StepProps) {
       </div>
 
       <div className="art-fill bob">
-        <Mascot name="water" size={180} />
+        <Mascot name="sit" size={180} />
       </div>
 
       <ScreenFooter>

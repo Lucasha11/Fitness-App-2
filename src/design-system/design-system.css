@@ -314,6 +314,17 @@
   flex-wrap: wrap;
 }
 
+.ds__keyposes {
+  max-width: 720px;
+  margin: 0 0 20px;
+}
+
+.ds__keyposes img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .ds__mascot {
   width: 120px;
   height: 120px;
