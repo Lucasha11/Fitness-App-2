@@ -25,6 +25,7 @@ import {
   type SessionState,
   activeExclusions,
   breaksToday,
+  dateKey,
   skippedToday,
   snoozedToday,
 } from './session/state';
@@ -297,6 +298,132 @@ export function previewNextBreaks(
   if (remaining.length >= count) return remaining.slice(0, count);
 
   return [...remaining, ...breaks].slice(0, count);
+}
+
+/* ------------------------------------------------------------------ */
+/* Reminders                                                           */
+/* ------------------------------------------------------------------ */
+
+/**
+ * iOS keeps at most 64 pending local notifications per app and silently drops
+ * the rest, so the plan never asks for more than that.
+ */
+export const MAX_PENDING_REMINDERS = 64;
+
+/** How far ahead reminders are laid down. Opening the app rolls it forward. */
+const REMINDER_HORIZON_DAYS = 7;
+
+/** A break the phone should announce, even with the app closed. */
+export interface Reminder {
+  /**
+   * Stable across reschedules: derived from the day and the slot's identity
+   * `at`, never its display time, so a snooze replaces the reminder rather
+   * than adding a second one.
+   */
+  id: number;
+  /** `YYYY-MM-DD` of the day the slot belongs to. */
+  day: string;
+  /** The slot's identity, as `done` and `skipped` records key it. */
+  at: number;
+  /** When the notification fires: the slot's `showsAt` on its day. */
+  fireAt: Date;
+  exercise: Exercise;
+}
+
+/** Local midnight of `date`, `offset` days later. */
+function midnight(date: Date, offset = 0): Date {
+  const day = new Date(date);
+  day.setDate(day.getDate() + offset);
+  day.setHours(0, 0, 0, 0);
+  return day;
+}
+
+/** Monday is 0, matching `activeDays`. */
+function weekdayIndex(date: Date): number {
+  return (date.getDay() + 6) % 7;
+}
+
+/**
+ * An id that fits the 32-bit integer both iOS and Android expect: whole local
+ * days since the epoch, times the minutes in a day, plus the slot.
+ */
+export function reminderId(day: Date, at: number): number {
+  const epochDay = Math.round(
+    Date.UTC(day.getFullYear(), day.getMonth(), day.getDate()) / 86_400_000,
+  );
+  return epochDay * 1440 + at;
+}
+
+function fireTime(day: Date, minutes: number): Date {
+  const fire = new Date(day);
+  fire.setHours(0, minutes, 0, 0);
+  return fire;
+}
+
+/**
+ * The breaks still to come, today's first, as the notifications that should
+ * be pending right now.
+ *
+ * Today comes from `buildDay`, so a break already taken, skipped or missed is
+ * never announced, and a snoozed one fires at its new time. Later days are
+ * the plain plan. Days the user switched off in setup get nothing.
+ */
+export function upcomingReminders(
+  answers: OnboardingState,
+  session: SessionState,
+  now: Date = new Date(),
+): Reminder[] {
+  const reminders: Reminder[] = [];
+
+  for (let offset = 0; offset < REMINDER_HORIZON_DAYS; offset += 1) {
+    const day = midnight(now, offset);
+    if (!answers.activeDays[weekdayIndex(day)]) continue;
+
+    const slots =
+      offset === 0
+        ? buildDay(answers, session, now)
+            .filter(
+              (row): row is BreakSlot =>
+                row.kind === 'break' &&
+                (row.status === 'active' || row.status === 'upcoming'),
+            )
+            .map((slot) => ({
+              at: slot.at,
+              showsAt: slot.showsAt,
+              exercise: slot.exercise,
+            }))
+        : futureSlots(answers, session, day);
+
+    for (const slot of slots) {
+      const fireAt = fireTime(day, slot.showsAt);
+      if (fireAt.getTime() <= now.getTime()) continue;
+
+      reminders.push({
+        id: reminderId(day, slot.at),
+        day: dateKey(day),
+        at: slot.at,
+        fireAt,
+        exercise: slot.exercise,
+      });
+      if (reminders.length === MAX_PENDING_REMINDERS) return reminders;
+    }
+  }
+
+  return reminders;
+}
+
+/**
+ * A later day's slots, before anything has happened on it. Meetings are only
+ * ever known for today, so there is nothing to displace.
+ */
+function futureSlots(
+  answers: OnboardingState,
+  session: SessionState,
+  day: Date,
+): { at: number; showsAt: number; exercise: Exercise }[] {
+  const times = slotTimes(answers, day);
+  const exercises = pickExercises(answers, times.length, session);
+  return times.map((at, index) => ({ at, showsAt: at, exercise: exercises[index] }));
 }
 
 /** The next break due, or `null` once the day's plan is exhausted. */

@@ -371,11 +371,15 @@ export function withSnoozedSlot(
   session: SessionState,
   slot: number,
   minutes: number,
+  now: Date = new Date(),
 ): SessionState {
-  const key = dateKey();
+  const key = dateKey(now);
   const today = session.snoozed[key] ?? {};
-  // Snoozing an already-snoozed slot moves it on from where it now sits.
-  const from = today[slot] ?? slot;
+  // Snoozing an already-snoozed slot moves it on from where it now sits. A
+  // break that is already due moves on from now instead: "remind me in 10"
+  // promises a time, and a reminder set for a minute gone by never fires.
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  const from = Math.max(today[slot] ?? slot, nowMinutes);
   return {
     ...session,
     snoozed: { ...session.snoozed, [key]: { ...today, [slot]: from + minutes } },

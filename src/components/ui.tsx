@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { ChevronRightIcon, ExternalIcon } from './icons';
 import './ui.css';
 
 /* ------------------------------------------------------------------ */
@@ -233,6 +234,52 @@ export function ToggleRow({
         {subtitle ? <span className="row__sub">{subtitle}</span> : null}
       </span>
       <Switch on={on} />
+    </button>
+  );
+}
+
+/**
+ * A settings-style row that goes somewhere. `external` swaps the chevron for
+ * an arrow so a row that opens Safari or Mail says so before it is tapped.
+ */
+export function LinkRow({
+  title,
+  subtitle,
+  icon,
+  iconBackground,
+  iconColor,
+  external = false,
+  onClick,
+}: {
+  title: string;
+  subtitle?: string;
+  icon?: ReactNode;
+  iconBackground?: string;
+  iconColor?: string;
+  external?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={`row${subtitle ? ' row--tall' : ''}`}
+      onClick={onClick}
+    >
+      {icon ? (
+        <span
+          className="row__icon"
+          style={{ background: iconBackground, color: iconColor }}
+        >
+          {icon}
+        </span>
+      ) : null}
+      <span className="row__text">
+        <span className="row__title">{title}</span>
+        {subtitle ? <span className="row__sub">{subtitle}</span> : null}
+      </span>
+      <span className="row__trail">
+        {external ? <ExternalIcon size={16} /> : <ChevronRightIcon size={18} />}
+      </span>
     </button>
   );
 }

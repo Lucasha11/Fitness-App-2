@@ -29,8 +29,22 @@ public class MotionPlugin: CAPPlugin, CAPBridgedPlugin {
     @objc func isAvailable(_ call: CAPPluginCall) {
         call.resolve([
             "available": CMMotionActivityManager.isActivityAvailable(),
-            "authorized": CMMotionActivityManager.authorizationStatus() == .authorized
+            "authorized": CMMotionActivityManager.authorizationStatus() == .authorized,
+            "permission": Self.permission()
         ])
+    }
+
+    /**
+     * "Not asked yet" and "said no" are both unauthorized, but only the second
+     * is worth telling the user about: Settings points them to iOS for it.
+     */
+    private static func permission() -> String {
+        switch CMMotionActivityManager.authorizationStatus() {
+        case .authorized: return "granted"
+        case .denied, .restricted: return "denied"
+        case .notDetermined: return "prompt"
+        @unknown default: return "prompt"
+        }
     }
 
     /**

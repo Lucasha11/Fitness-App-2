@@ -12,6 +12,7 @@ import {
   FootprintsIcon,
   HeartIcon,
   LockIcon,
+  MailIcon,
   PauseIcon,
   PlayIcon,
   StopwatchIcon,
@@ -21,6 +22,7 @@ import {
 import {
   Button,
   Chip,
+  LinkRow,
   ProgressBar,
   Segmented,
   TextButton,
@@ -28,7 +30,8 @@ import {
 } from '../components/ui';
 import '../onboarding/onboarding.css';
 import { LinearTimer, RingTimer } from '../player/timers';
-import { TabBar } from '../today/Today';
+import { TabBar } from '../components/TabBar';
+import '../today/today.css';
 import './design-system.css';
 import {
   COLOR_TOKENS,
@@ -607,6 +610,25 @@ function Chips() {
             <ToggleRow title="Seated only" lightTitle on={false} onToggle={() => {}} />
           </div>
         </div>
+
+        <div>
+          <div className="ds__label">Link row</div>
+          <div className="rows" style={{ maxWidth: 340 }}>
+            <LinkRow
+              title="Contact us"
+              subtitle="Questions, bugs or ideas"
+              icon={<MailIcon size={19} />}
+              iconBackground="var(--fill)"
+              external
+              onClick={() => {}}
+            />
+            <LinkRow title="Break schedule" onClick={() => {}} />
+          </div>
+          <p className="ds__note">
+            The arrow marks a row that leaves the app for Safari, Mail or iOS
+            Settings; the chevron stays inside it.
+          </p>
+        </div>
       </div>
     </Section>
   );
@@ -780,13 +802,13 @@ function Navigation() {
       intro="A bottom tab bar floating over content on blurred white, with the active tab tinted behind a muted pill and the Break button raised out of the bar."
     >
       <div className="ds__tabbar-frame">
-        <TabBar />
+        <TabBar current="today" onSelect={() => {}} />
       </div>
       <p className="ds__note">
         The raised centre button is the most important control in the app: one
-        tap starts a break from anywhere, with no intermediate screen. Library,
-        Insights and You are disabled until those sections exist
-        <Status built={false}>Sections D, H, I</Status>.
+        tap starts a break from anywhere, with no intermediate screen. Library and
+        Insights are disabled until those sections exist
+        <Status built={false}>Sections D, H</Status>. You opens Settings.
       </p>
     </Section>
   );

@@ -1,0 +1,160 @@
+/* I1 · Settings */
+
+.settings {
+  position: absolute;
+  inset: 0;
+  background: var(--sheet);
+  overflow: hidden;
+  animation: step-in 240ms ease-out both;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Content scrolls up under the clock; a strip of the page's own colour keeps
+   the status bar legible over it. */
+.settings::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  height: env(safe-area-inset-top);
+  background: color-mix(in oklch, var(--sheet) 92%, transparent);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.settings__scroll {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.settings__scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* The coach stands on the title's baseline, the way Today's stands in the
+   clearing: company for the page, not decoration beside it. */
+.settings__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: max(44px, calc(env(safe-area-inset-top) + 8px)) 22px 0;
+}
+
+.settings__title {
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1.15;
+  margin: 0 0 14px;
+}
+
+.settings__coach {
+  flex-shrink: 0;
+  margin-right: -4px;
+}
+
+.settings__body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  /* Clear of the tab bar, which floats over the last group. */
+  padding: 6px 20px calc(96px + max(22px, env(safe-area-inset-bottom)));
+}
+
+.settings__label {
+  margin: 0 0 8px 6px;
+}
+
+.settings__footnote {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--ink-muted);
+  margin: 10px 6px 0;
+}
+
+/* ---- Blocked by iOS -------------------------------------------------- */
+
+/* Amber, never red: nothing is wrong, something is just switched off. */
+.settings__blocked {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-inner);
+  background: var(--warning-wash);
+}
+
+.settings__blocked-text {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.settings__blocked-action {
+  border: none;
+  background: none;
+  padding: 2px 0;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--accent-deep);
+  cursor: pointer;
+}
+
+/* The note sits between two rows, so it takes the divider with it. */
+.settings__blocked + .row {
+  border-top: 1px solid var(--line);
+}
+
+/* A support address someone may need to copy by hand. */
+.settings__selectable {
+  font-weight: 900;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* ---- About ---------------------------------------------------------- */
+
+.settings__disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: var(--radius-card);
+  background: color-mix(in oklch, var(--mint) 55%, transparent);
+}
+
+.settings__disclaimer-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-inner);
+  background: var(--surface);
+  color: var(--accent-deep);
+}
+
+.settings__disclaimer-text {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.settings__version {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink-muted);
+  margin: 16px 0 0;
+}

@@ -506,6 +506,13 @@
   font-weight: 900;
 }
 
+.row__trail {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: var(--ink-muted);
+}
+
 .row__title--light {
   font-weight: 800;
 }

@@ -1,19 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ChartIcon,
   CheckIcon,
   DashIcon,
   FlameIcon,
-  GridIcon,
   HeartIcon,
-  PersonIcon,
   PlayIcon,
   PlusIcon,
   ReplyIcon,
-  TargetIcon,
 } from '../components/icons';
 import { COACH_LABEL, useCoach, useCoachNoun } from '../components/coach';
 import { ActivityTrend } from './ActivityTrend';
+import { type Tab, TabBar } from '../components/TabBar';
 import { useMotionReset } from '../health/useMotionReset';
 import { Mascot } from '../components/Mascot';
 import {
@@ -53,9 +50,10 @@ interface TodayProps {
   answers: OnboardingState;
   /** Opens the break player on the given exercise. */
   onStartBreak: (exercise: Exercise, slot: number | null) => void;
+  onSelectTab: (tab: Tab) => void;
 }
 
-export function Today({ answers, onStartBreak }: TodayProps) {
+export function Today({ answers, onStartBreak, onSelectTab }: TodayProps) {
   const { session, skipSlot, unskipSlot, snoozeSlot } = useSession();
 
   // A minute-resolution clock so "next break in 24 min" stays honest without
@@ -152,7 +150,7 @@ export function Today({ answers, onStartBreak }: TodayProps) {
 
           <Coverage />
 
-          <ActivityTrend />
+          <ActivityTrend consented={answers.useMotion} />
         </div>
       </div>
 
@@ -164,7 +162,7 @@ export function Today({ answers, onStartBreak }: TodayProps) {
         </button>
       </div>
 
-      <TabBar />
+      <TabBar current="today" onSelect={onSelectTab} />
     </div>
   );
 }
@@ -711,45 +709,5 @@ function Coverage() {
       </div>
       <p className="coverage__note">{note}</p>
     </section>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Tab bar                                                             */
-/* ------------------------------------------------------------------ */
-
-/** Only Today is built; the rest are sections D, H and I. */
-const OTHER_TABS = [
-  { label: 'Library', icon: <GridIcon size={20} /> },
-  { label: 'Insights', icon: <ChartIcon size={20} /> },
-  { label: 'You', icon: <PersonIcon size={20} /> },
-] as const;
-
-/**
- * Four tabs and no centre disc: the floating Start workout button now owns
- * "move right now", and two accent-coloured play buttons within 80px of each
- * other read as two different actions when they are one.
- */
-export function TabBar() {
-  return (
-    <nav className="tabbar" aria-label="Main">
-      <button type="button" className="tab" aria-current="page">
-        <TargetIcon size={20} />
-        <span className="tab__label">Today</span>
-      </button>
-
-      {OTHER_TABS.map((tab) => (
-        <button
-          key={tab.label}
-          type="button"
-          className="tab"
-          aria-disabled="true"
-          disabled
-        >
-          {tab.icon}
-          <span className="tab__label">{tab.label}</span>
-        </button>
-      ))}
-    </nav>
   );
 }

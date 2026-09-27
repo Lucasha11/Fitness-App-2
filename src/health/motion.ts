@@ -6,6 +6,11 @@ export interface MotionStatus {
   authorized: boolean;
 }
 
+export interface MotionAvailability extends MotionStatus {
+  /** `prompt` until Core Motion has asked; `denied` covers restricted too. */
+  permission: 'granted' | 'denied' | 'prompt';
+}
+
 export interface LastMovement extends MotionStatus {
   /**
    * ISO timestamp of when the user's most recent movement ended — the moment
@@ -17,7 +22,7 @@ export interface LastMovement extends MotionStatus {
 }
 
 export interface MotionPlugin {
-  isAvailable(): Promise<MotionStatus>;
+  isAvailable(): Promise<MotionAvailability>;
   requestAuthorization(): Promise<MotionStatus>;
   lastMovedAt(options: { since?: string }): Promise<LastMovement>;
 }
@@ -31,7 +36,11 @@ export interface MotionPlugin {
  */
 export const Motion = registerPlugin<MotionPlugin>('Motion', {
   web: async () => ({
-    isAvailable: async () => ({ available: false, authorized: false }),
+    isAvailable: async () => ({
+      available: false,
+      authorized: false,
+      permission: 'prompt' as const,
+    }),
     requestAuthorization: async () => ({ available: false, authorized: false }),
     lastMovedAt: async () => ({
       available: false,
@@ -44,12 +53,18 @@ export const Motion = registerPlugin<MotionPlugin>('Motion', {
 /**
  * When the user last got up, as epoch ms, or `null` when motion can't say.
  *
- * `since` keeps the query small: there is no point scanning back past the
- * moment the clock already started from.
+ * `consented` is the user's movement-data preference. `since` keeps the
+ * query small: there is no point scanning back past the moment the clock
+ * already started from.
  */
 export async function readLastMovement(
+  consented: boolean,
   since: number,
 ): Promise<number | null> {
+  // Checked here rather than only by the caller: this is the one door to Core
+  // Motion, so a switched-off preference can never be read past.
+  if (!consented) return null;
+
   try {
     const { available } = await Motion.isAvailable();
     if (!available) return null;
@@ -67,5 +82,29 @@ export async function readLastMovement(
     // A motion read failing should never take the Today screen down with it;
     // the clock just falls back to what the session already knows.
     return null;
+  }
+}
+
+/**
+ * Whether iOS is refusing MoveMate motion access. `false` on hardware without
+ * Core Motion and before anyone has been asked, since neither is something the
+ * user can fix in Settings.
+ */
+export async function motionDenied(): Promise<boolean> {
+  try {
+    const { available, permission } = await Motion.isAvailable();
+    return available && permission === 'denied';
+  } catch {
+    return false;
+  }
+}
+
+/** Shows Core Motion's prompt if it has never been shown. */
+export async function requestMotion(): Promise<void> {
+  try {
+    const { available } = await Motion.isAvailable();
+    if (available) await Motion.requestAuthorization();
+  } catch {
+    // The read path copes with no access; so does the toggle.
   }
 }

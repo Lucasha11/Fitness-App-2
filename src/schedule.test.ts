@@ -6,20 +6,25 @@
  * and the invariants the code comments call out.
  */
 
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   type BreakSlot,
   buildDay,
+  MAX_PENDING_REMINDERS,
   buildSequence,
   pickExercises,
+  upcomingReminders,
 } from './schedule';
 import { EXERCISES, exerciseById, setsContaining } from './exercises';
 import { type OnboardingState, initialState } from './onboarding/state';
 import {
   type SessionState,
   emptySession,
+  withCompletedBreak,
   withExcludedExercise,
   withRestedRegion,
+  withSkippedSlot,
+  withSnoozedSlot,
 } from './session/state';
 
 /** Onboarding answers for someone whose day runs 9:00 to 17:30. */
@@ -201,5 +206,112 @@ describe('a single break', () => {
     const ids = buildSequence(answers(), lead(), emptySession()).map((e) => e.id);
 
     expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
+describe('break reminders', () => {
+  // Monday 28 September 2026, 8am. Session records key on the real clock's
+  // date, so the clock itself is pinned rather than just the `now` argument.
+  const monday = new Date(2026, 8, 28, 8, 0);
+
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(monday);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  const weekdaysOnly = [true, true, true, true, true, false, false];
+
+  it('never reminds on a day the user switched off', () => {
+    const reminders = upcomingReminders(
+      answers({ activeDays: weekdaysOnly }),
+      emptySession(),
+      monday,
+    );
+
+    const weekends = reminders.filter((reminder) =>
+      [0, 6].includes(reminder.fireAt.getDay()),
+    );
+    expect(reminders.length).toBeGreaterThan(0);
+    expect(weekends).toEqual([]);
+  });
+
+  it('never announces a break that has already been taken or skipped', () => {
+    const [first, second] = upcomingReminders(answers(), emptySession(), monday);
+
+    let session = withCompletedBreak(emptySession(), {
+      exerciseId: first.exercise.id,
+      region: first.exercise.region,
+      at: first.at,
+      slot: first.at,
+      seconds: 60,
+    });
+    session = withSkippedSlot(session, second.at);
+
+    const ids = upcomingReminders(answers(), session, monday).map((r) => r.id);
+    expect(ids).not.toContain(first.id);
+    expect(ids).not.toContain(second.id);
+  });
+
+  it('moves a snoozed break’s reminder to its new time instead of adding a second one', () => {
+    const [first] = upcomingReminders(answers(), emptySession(), monday);
+    const snoozed = withSnoozedSlot(emptySession(), first.at, 10);
+
+    const matching = upcomingReminders(answers(), snoozed, monday).filter(
+      (reminder) => reminder.id === first.id,
+    );
+
+    expect(matching).toHaveLength(1);
+    expect(matching[0].at).toBe(first.at);
+    expect(matching[0].fireAt.getTime() - first.fireAt.getTime()).toBe(10 * 60_000);
+  });
+
+  it('never schedules a reminder for a time that has already passed', () => {
+    const midday = new Date(2026, 8, 28, 12, 20);
+    vi.setSystemTime(midday);
+
+    const reminders = upcomingReminders(answers(), emptySession(), midday);
+
+    expect(reminders.length).toBeGreaterThan(0);
+    for (const reminder of reminders) {
+      expect(reminder.fireAt.getTime()).toBeGreaterThan(midday.getTime());
+    }
+  });
+
+  it('stays within the 64 pending reminders iOS will keep', () => {
+    const everyHalfHour = answers({
+      interval: 30,
+      startMinutes: 6 * 60,
+      endMinutes: 22 * 60,
+      activeDays: [true, true, true, true, true, true, true],
+    });
+
+    const reminders = upcomingReminders(everyHalfHour, emptySession(), monday);
+
+    expect(reminders).toHaveLength(MAX_PENDING_REMINDERS);
+    // The cap drops the far end of the week, never today.
+    expect(reminders[0].day).toBe('2026-09-28');
+  });
+
+  it('gives every reminder its own id that fits in a 32-bit integer', () => {
+    const reminders = upcomingReminders(answers(), emptySession(), monday);
+    const ids = reminders.map((reminder) => reminder.id);
+
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const id of ids) {
+      expect(Number.isInteger(id)).toBe(true);
+      expect(id).toBeLessThanOrEqual(2 ** 31 - 1);
+    }
+  });
+
+  it('reminds on the same break the timeline shows for today', () => {
+    const [first] = upcomingReminders(answers(), emptySession(), monday);
+    const today = breaksOf(buildDay(answers(), emptySession(), monday));
+    const slot = today.find((row) => row.at === first.at);
+
+    expect(slot?.exercise.id).toBe(first.exercise.id);
   });
 });
