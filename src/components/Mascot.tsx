@@ -14,23 +14,13 @@ import pandaSit from '../assets/panda-sit.webp';
 import pandaStride from '../assets/panda-stride.webp';
 import pandaJog from '../assets/panda-jog.webp';
 import pandaCrouch from '../assets/panda-crouch.webp';
-/*
- * The neck rolls demonstration: panda-stand.webp driven through a filmed neck
- * roll by motion transfer, keyed off green and looped as an animated WebP
- * (216 frames, 28 ms each, about six seconds). Animated WebP rather than video
- * because it keeps its alpha in WKWebView, Safari and Chrome from one file;
- * a transparent video needs HEVC for Apple and VP9 for Chrome, and Chrome on
- * a Mac will take the HEVC and paint it on black. The still is the loop's
- * first frame, so pausing and resuming never jump between two drawings.
- */
-import pandaNeckroll from '../assets/panda-neckroll.webp';
-import pandaNeckrollStill from '../assets/panda-neckroll-still.webp';
 import squirrelLifting from '../assets/squirrel-lifting.png';
 import squirrelNeckrolls from '../assets/squirrel-neckrolls.png';
 import squirrelPullups from '../assets/squirrel-pullups.png';
 import squirrelWalking from '../assets/squirrel-walking.png';
 import { useState } from 'react';
 import { useCoach, type Coach } from './coach';
+import { DEMOS } from './demos';
 
 export type MascotName =
   | 'lifting'
@@ -85,24 +75,6 @@ const SOURCES: Record<Coach, Record<MascotName, string>> = {
     stride: pandaStride,
     jog: pandaJog,
     crouch: pandaCrouch,
-  },
-};
-
-interface Demo {
-  /** The looping animation, on the same square canvas as the stills. */
-  playing: string;
-  /** Its first frame, held while paused or when motion is reduced. */
-  still: string;
-}
-
-/**
- * Poses that can demonstrate their movement rather than just show it. Only
- * the panda has any: the squirrel is retired, and a coach without a demo
- * falls back to its still.
- */
-const DEMOS: Partial<Record<Coach, Partial<Record<MascotName, Demo>>>> = {
-  panda: {
-    neckrolls: { playing: pandaNeckroll, still: pandaNeckrollStill },
   },
 };
 

@@ -30,7 +30,7 @@ import {
   ToggleRow,
 } from '../components/ui';
 import '../onboarding/onboarding.css';
-import { LinearTimer, RingTimer } from '../player/timers';
+import { ClockTimer, LinearTimer } from '../player/timers';
 import { TabBar } from '../components/TabBar';
 import '../today/today.css';
 import './design-system.css';
@@ -712,16 +712,19 @@ function Progress() {
     <Section
       id="progress"
       title="Progress & rings"
-      intro="Three shapes, each with a job: the segmented goal ring counts breaks, the timer ring drains through an exercise, and a flat bar carries anything nested in a row."
+      intro="Three shapes, each with a job: the segmented goal ring counts breaks, the clock timer counts an exercise down on the grove, and a flat bar carries anything nested in a row."
     >
       <div className="ds__on-gradient" style={{ marginBottom: 16 }}>
         <GoalRing done={3} goal={6} />
       </div>
 
-      <div className="ds__on-dark" style={{ marginBottom: 16 }}>
-        <div style={{ width: 200 }}>
-          <RingTimer remaining={28} progress={0.38} />
+      <div className="ds__on-grove" style={{ marginBottom: 16 }}>
+        <div className="player__card" style={{ width: 300 }}>
+          <ClockTimer name="Neck rolls" remaining={24} progress={0.6} />
         </div>
+      </div>
+
+      <div className="ds__on-dark" style={{ marginBottom: 16 }}>
         <div style={{ flex: 1, minWidth: 240 }}>
           <LinearTimer name="Shoulder rolls" remaining={28} progress={0.38} />
         </div>
