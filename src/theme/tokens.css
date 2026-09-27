@@ -57,6 +57,24 @@
   );
   --player-discreet: oklch(0.24 0.02 60);
 
+  /*
+   * The exercise screen's bamboo grove: frosted glass over a sunlit painting,
+   * so the ink is a deep forest green rather than the app's warm brown, which
+   * reads muddy against that much green.
+   */
+  --grove-sky: oklch(0.93 0.09 120);
+  --grove-ink: oklch(0.3 0.07 150);
+  --grove-ink-muted: oklch(0.43 0.045 145);
+  --grove-glass: oklch(1 0 0 / 68%);
+  --grove-glass-edge: oklch(1 0 0 / 75%);
+  --grove-control: oklch(1 0 0 / 62%);
+  --grove-track: oklch(0.3 0.07 150 / 12%);
+  --grove-progress: oklch(0.7 0.15 145);
+  --grove-outline: oklch(0.3 0.07 150 / 24%);
+  --grove-scrim: oklch(0.27 0.05 150 / 80%);
+  --shadow-grove: 0 14px 34px oklch(0.34 0.08 150 / 20%);
+  --shadow-grove-play: 0 8px 18px oklch(0.55 0.13 135 / 40%);
+
   /* Elevation */
   --shadow-card: 0 14px 32px oklch(0.48 0.09 20 / 10%);
   --shadow-card-strong: 0 14px 32px oklch(0.48 0.09 20 / 13%);

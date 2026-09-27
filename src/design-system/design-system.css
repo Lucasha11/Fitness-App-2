@@ -392,6 +392,17 @@
   flex-wrap: wrap;
 }
 
+/* The exercise screen's clearing, for the specimens that sit on its glass. */
+.ds__on-grove {
+  background: url('../assets/exercise-grove.jpg') center 62% / cover
+    no-repeat,
+    var(--grove-sky);
+  border-radius: var(--radius-sheet);
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+}
+
 .ds__on-gradient {
   background: var(--header-gradient);
   border-radius: var(--radius-sheet);

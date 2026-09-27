@@ -152,58 +152,6 @@
   color: oklch(0.99 0.005 100 / 55%);
 }
 
-/* ---- Timer ring ------------------------------------------------------ */
-
-.player__timer {
-  display: flex;
-  justify-content: center;
-  margin: 22px 0 18px;
-}
-
-.timer-ring {
-  position: relative;
-  width: 168px;
-  height: 168px;
-}
-
-.timer-ring svg {
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.timer-ring__fill {
-  transition: stroke-dashoffset 1s linear;
-}
-
-.timer-ring--paused .timer-ring__fill {
-  transition: none;
-}
-
-.timer-ring__readout {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.timer-ring__seconds {
-  font-size: 52px;
-  font-weight: 900;
-  line-height: 1;
-  color: var(--ink-on-accent);
-}
-
-.timer-ring__unit {
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.1em;
-  color: oklch(0.99 0.005 100 / 60%);
-  margin-top: 3px;
-}
-
 /* ---- Linear timer (discreet) ------------------------------------------ */
 
 .player__bar-block {
@@ -284,6 +232,148 @@
   background: oklch(0.99 0.005 100 / 14%);
   color: oklch(0.99 0.005 100 / 85%);
   box-shadow: none;
+}
+
+/* ================================================================== */
+/* C2 · The grove                                                      */
+/* ================================================================== */
+
+/*
+ * Outside discreet mode the exercise plays out in a sunlit bamboo clearing:
+ * the painting fills the screen, the demonstration stands on the grass, and
+ * everything the user can touch sits on frosted glass so the scene carries
+ * through it.
+ *
+ * The painting's pond starts two thirds of the way down, and the card covers
+ * roughly the bottom 300px. Anchored at the bottom and never shorter than
+ * 920px (300 / (1 - 0.67)), the pond's edge lands on the card's top on any
+ * phone height, so the clearing is always the open stage above it. Plain
+ * `cover` hides the clearing behind the card on a short phone.
+ */
+.player--grove {
+  background: url('../assets/exercise-grove.jpg') center bottom / auto
+      max(100%, 920px) no-repeat,
+    var(--grove-sky);
+  color: var(--grove-ink);
+}
+
+.player--grove .player__icon-btn,
+.player--grove .player__counter {
+  background: var(--grove-control);
+  color: var(--grove-ink);
+  box-shadow: inset 0 0 0 1px var(--grove-glass-edge);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  backdrop-filter: blur(12px) saturate(1.4);
+}
+
+.player--grove .player__icon-btn:hover {
+  background: var(--grove-glass-edge);
+}
+
+.player--grove .player__icon-btn:disabled {
+  cursor: default;
+}
+
+.player--grove .player__counter {
+  border-radius: var(--radius-pill);
+  padding: 9px 15px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- The clearing ---------------------------------------------------- */
+
+.player__demo {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  /* Lifts the clip's feet off the card and onto the grass. */
+  padding-bottom: 6px;
+}
+
+.player__demo-clip {
+  max-width: 76vw;
+  max-height: 100%;
+  animation: step-in 320ms ease-out both;
+}
+
+/* ---- The card ---------------------------------------------------------- */
+
+.player__card {
+  border-radius: var(--radius-sheet);
+  padding: 22px 20px 18px;
+  background: var(--grove-glass);
+  box-shadow:
+    inset 0 0 0 1px var(--grove-glass-edge),
+    var(--shadow-grove);
+  -webkit-backdrop-filter: blur(22px) saturate(1.5);
+  backdrop-filter: blur(22px) saturate(1.5);
+  transition: opacity 200ms ease;
+}
+
+.player--grove .player__name {
+  color: var(--grove-ink);
+}
+
+.player--grove .player__cue {
+  font-size: 15px;
+  color: var(--grove-ink-muted);
+  margin-top: 6px;
+}
+
+.player__clock {
+  margin: 12px 4px 16px;
+}
+
+.player__clock-readout {
+  text-align: center;
+  font-size: 46px;
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--grove-ink);
+}
+
+.player__clock-bar {
+  height: 6px;
+  margin-top: 14px;
+  border-radius: var(--radius-pill);
+  background: var(--grove-track);
+  overflow: hidden;
+}
+
+.player__clock-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--grove-progress);
+  transition: width 1s linear;
+}
+
+.player--grove .player__side {
+  min-width: 88px;
+  padding: 11px 20px;
+  border-radius: var(--radius-pill);
+  background: var(--grove-control);
+  box-shadow: inset 0 0 0 1.5px var(--grove-outline);
+  color: var(--grove-ink);
+}
+
+.player--grove .player__side:hover {
+  background: var(--grove-glass-edge);
+}
+
+.player--grove .player__play {
+  width: 68px;
+  height: 68px;
+  background: var(--lime);
+  color: var(--lime-ink);
+  box-shadow: var(--shadow-grove-play);
+}
+
+.player--grove .switch-overlay {
+  background: var(--grove-scrim);
 }
 
 /* ================================================================== */

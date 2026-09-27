@@ -7,6 +7,7 @@ import {
   SwapIcon,
 } from '../components/icons';
 import { COACH_LABEL, useCoach } from '../components/coach';
+import { hasDemo } from '../components/demos';
 import { Mascot } from '../components/Mascot';
 import type { Exercise } from '../exercises';
 import {
@@ -32,7 +33,7 @@ import { SequenceOverview } from './SequenceOverview';
 import { SwitchSides } from './SwitchSides';
 import { playCue } from './cues';
 import { startMusic, stopMusic } from './music';
-import { LinearTimer, RingTimer } from './timers';
+import { ClockTimer, LinearTimer } from './timers';
 import { poseFor } from './poses';
 import './player.css';
 
@@ -459,10 +460,50 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
 
   const progress = 1 - remaining / seconds;
   const showingSwitch = stage === 'switch';
+  const pose = poseFor(current);
+  const demoAlt = `${COACH_LABEL[coach]} coach demonstrating ${current.name.toLowerCase()}`;
+
+  const transport = (
+    <div className="player__transport">
+      <button
+        type="button"
+        className="player__side"
+        onClick={() => advance(false)}
+      >
+        Skip
+      </button>
+
+      <button
+        type="button"
+        className="player__play"
+        aria-label="Pause"
+        onClick={() => setStage('paused')}
+      >
+        <PauseIcon size={discreet ? 30 : 28} />
+      </button>
+
+      <button
+        type="button"
+        className="player__side"
+        onClick={() => advance(false)}
+      >
+        Next
+      </button>
+    </div>
+  );
+
+  const caption = (
+    <div className="player__caption">
+      <h1 className="player__name">{current.name}</h1>
+      <p className="player__cue" aria-live="polite">
+        <CueLine exercise={current} remaining={remaining} total={seconds} />
+      </p>
+    </div>
+  );
 
   return (
     <section
-      className={`player${discreet ? ' player--discreet' : ''}`}
+      className={`player ${discreet ? 'player--discreet' : 'player--grove'}`}
       aria-label={`Break in progress: ${current.name}`}
       style={{ position: 'absolute' }}
     >
@@ -510,69 +551,62 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
         ) : null}
       </div>
 
-      <div
-        className={`player__stage${showingSwitch ? ' player__under' : ''}`}
-      >
-        <div className="player__halo">
-          <Mascot
-            name={poseFor(current)}
-            size={discreet ? 210 : 270}
-            alt={`${COACH_LABEL[coach]} coach demonstrating ${current.name.toLowerCase()}`}
-            className={discreet ? undefined : 'bob'}
-            demo="playing"
-          />
-        </div>
-      </div>
+      {discreet ? (
+        <>
+          <div
+            className={`player__stage${showingSwitch ? ' player__under' : ''}`}
+          >
+            <div className="player__halo">
+              <Mascot name={pose} size={210} alt={demoAlt} demo="playing" />
+            </div>
+          </div>
 
-      <div className={showingSwitch ? 'player__under' : undefined}>
-        <div className="player__caption">
-          <h1 className="player__name">{current.name}</h1>
-          <p className="player__cue" aria-live="polite">
-            <CueLine
-              exercise={current}
+          <div className={showingSwitch ? 'player__under' : undefined}>
+            {caption}
+            <LinearTimer
+              name={current.name}
               remaining={remaining}
-              total={seconds}
+              progress={progress}
             />
-          </p>
-        </div>
-
-        {discreet ? (
-          <LinearTimer
-            name={current.name}
-            remaining={remaining}
-            progress={progress}
-          />
-        ) : (
-          <RingTimer remaining={remaining} progress={progress} />
-        )}
-
-        <div className="player__transport">
-          <button
-            type="button"
-            className="player__side"
-            onClick={() => advance(false)}
+            {transport}
+          </div>
+        </>
+      ) : (
+        <>
+          {/*
+           * The clearing is the stage. An exercise shows its demonstration
+           * clip standing on the grass, or nothing: a still would read as the
+           * coach frozen mid-break, and the empty grove is the honest
+           * placeholder until that exercise's clip is made.
+           */}
+          <div
+            className={`player__demo${showingSwitch ? ' player__under' : ''}`}
           >
-            Skip
-          </button>
+            {hasDemo(coach, pose) ? (
+              <Mascot
+                key={current.id}
+                name={pose}
+                size={280}
+                alt={demoAlt}
+                className="player__demo-clip"
+                demo="playing"
+              />
+            ) : null}
+          </div>
 
-          <button
-            type="button"
-            className="player__play"
-            aria-label="Pause"
-            onClick={() => setStage('paused')}
+          <div
+            className={`player__card${showingSwitch ? ' player__under' : ''}`}
           >
-            <PauseIcon size={30} />
-          </button>
-
-          <button
-            type="button"
-            className="player__side"
-            onClick={() => advance(false)}
-          >
-            Next
-          </button>
-        </div>
-      </div>
+            {caption}
+            <ClockTimer
+              name={current.name}
+              remaining={remaining}
+              progress={progress}
+            />
+            {transport}
+          </div>
+        </>
+      )}
 
       {showingSwitch ? (
         <SwitchSides
