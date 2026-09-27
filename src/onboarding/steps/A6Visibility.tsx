@@ -32,14 +32,14 @@ const LEVELS: Level[] = [
     value: 'some',
     title: 'Some people around',
     sub: 'Standing moves, nothing theatrical',
-    mascot: 'squats',
+    mascot: 'stand',
     thumb: 'var(--fill)',
   },
   {
     value: 'open',
     title: 'Open office, keep it subtle',
     sub: 'Seated only, nobody will clock it',
-    mascot: 'thumbsup',
+    mascot: 'sit',
     thumb: 'var(--fill)',
   },
 ];

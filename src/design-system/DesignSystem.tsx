@@ -3,6 +3,7 @@ import { COACHES, COACH_LABEL, type Coach } from '../components/coach';
 import { CoachProvider } from '../components/CoachProvider';
 import { GoalRing } from '../components/GoalRing';
 import { Mascot, type MascotName } from '../components/Mascot';
+import pandaKeyPoses from '../assets/panda-keyframes-poses.webp';
 import {
   BandageIcon,
   CheckIcon,
@@ -345,14 +346,6 @@ const MASCOTS: MascotName[] = [
   'lifting',
   'walking',
   'pullups',
-  'squats',
-  'thumbsup',
-  'water',
-  'neckrolls',
-  'spinaltwist',
-  'figurefour',
-  '9090',
-  'marching',
   'stand',
   'wave',
   'armsout',
@@ -415,6 +408,20 @@ function Iconography() {
         </div>
       ) : null}
 
+      {/* The source sheet the keyframes poses are cut from, kept beside
+          them so a new pose is drawn against the same model. */}
+      <figure className="ds__card ds__keyposes">
+        <img
+          src={pandaKeyPoses}
+          alt="Panda key poses: stand, wave, arms out, hands on hips, sit, stride, jog and crouch"
+          width={1600}
+          height={1289}
+        />
+        <figcaption className="ds__swatch-use">
+          panda-keyframes-poses.png · the model sheet
+        </figcaption>
+      </figure>
+
       <CoachProvider coach={coach}>
         <div className="ds__mascots">
           {MASCOTS.map((name) => (
@@ -426,6 +433,21 @@ function Iconography() {
               />
             </div>
           ))}
+        </div>
+
+        {/* Demonstrated poses, playing as the break player shows them. */}
+        <div className="ds__row" style={{ marginTop: 14 }}>
+          <div style={{ textAlign: 'center' }}>
+            <div className="ds__mascot">
+              <Mascot
+                name="neckrolls"
+                size={100}
+                demo="playing"
+                alt={`${COACH_LABEL[coach]} coach demonstrating neck rolls`}
+              />
+            </div>
+            <div className="ds__swatch-use">neckrolls · demo</div>
+          </div>
         </div>
 
         <div className="ds__scene today__header">
@@ -446,7 +468,10 @@ function Iconography() {
         (skipped under reduced motion). The break player picks the pose from the
         exercise itself wherever one is drawn, and falls back to the
         exercise&rsquo;s body area otherwise, so the figure always matches the
-        movement. The coach is held in one context, so a screen can never
+        movement. Where a pose has a demo (so far the panda&rsquo;s neck
+        rolls), the player plays it instead: a looping animated WebP driven
+        from the pose&rsquo;s own drawing, held on its first frame while
+        paused. The coach is held in one context, so a screen can never
         mix species. The squirrel is retired for now, and A1b&rsquo;s picker
         with it, but both sets still carry every pose, and <code>Mascot</code> will not compile until a new pose is
         drawn for each. Adding an animal means an entry in

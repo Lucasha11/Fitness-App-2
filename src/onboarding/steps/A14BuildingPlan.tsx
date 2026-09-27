@@ -61,7 +61,7 @@ export function A14BuildingPlan({ state, next }: StepProps) {
     <Screen tone="warm" className="build" labelledBy="a14-title">
       <div className="bob">
         <Mascot
-          name="squats"
+          name="armsout"
           size={250}
           alt={`Your ${coach} stretching while your plan builds`}
         />

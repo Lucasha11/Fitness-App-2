@@ -70,7 +70,7 @@ export function FeedbackSheet({
         aria-label="Close"
         onClick={onDismiss}
       >
-        <Mascot name="thumbsup" size={220} />
+        <Mascot name="wave" size={220} />
       </button>
 
       <div className="sheet" role="dialog" aria-label="How was that?">

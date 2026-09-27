@@ -1,14 +1,6 @@
-import pandaNineNinety from '../assets/panda-9090.png';
-import pandaFigurefour from '../assets/panda-figurefour.png';
 import pandaLifting from '../assets/panda-lifting.png';
-import pandaMarching from '../assets/panda-marching.png';
-import pandaNeckrolls from '../assets/panda-neckrolls.png';
 import pandaPullups from '../assets/panda-pullups.png';
-import pandaSpinaltwist from '../assets/panda-spinaltwist.png';
-import pandaSquats from '../assets/panda-squats.png';
-import pandaThumbsup from '../assets/panda-thumbsup.png';
 import pandaWalking from '../assets/panda-walking.png';
-import pandaWater from '../assets/panda-water.png';
 /*
  * The keyframes panda, cut from panda-keyframes-poses.png: the look the home
  * screen mockup is drawn in. Lossy WebP with alpha, at a tenth of the PNGs'
@@ -22,31 +14,29 @@ import pandaSit from '../assets/panda-sit.webp';
 import pandaStride from '../assets/panda-stride.webp';
 import pandaJog from '../assets/panda-jog.webp';
 import pandaCrouch from '../assets/panda-crouch.webp';
-import squirrelNineNinety from '../assets/squirrel-9090.png';
-import squirrelFigurefour from '../assets/squirrel-figurefour.png';
+/*
+ * The neck rolls demonstration: panda-stand.webp driven through a filmed neck
+ * roll by motion transfer, keyed off green and looped as an animated WebP
+ * (216 frames, 28 ms each, about six seconds). Animated WebP rather than video
+ * because it keeps its alpha in WKWebView, Safari and Chrome from one file;
+ * a transparent video needs HEVC for Apple and VP9 for Chrome, and Chrome on
+ * a Mac will take the HEVC and paint it on black. The still is the loop's
+ * first frame, so pausing and resuming never jump between two drawings.
+ */
+import pandaNeckroll from '../assets/panda-neckroll.webp';
+import pandaNeckrollStill from '../assets/panda-neckroll-still.webp';
 import squirrelLifting from '../assets/squirrel-lifting.png';
-import squirrelMarching from '../assets/squirrel-marching.png';
 import squirrelNeckrolls from '../assets/squirrel-neckrolls.png';
 import squirrelPullups from '../assets/squirrel-pullups.png';
-import squirrelSpinaltwist from '../assets/squirrel-spinaltwist.png';
-import squirrelSquats from '../assets/squirrel-squats.png';
-import squirrelThumbsup from '../assets/squirrel-thumbsup.png';
 import squirrelWalking from '../assets/squirrel-walking.png';
-import squirrelWater from '../assets/squirrel-water.png';
+import { useState } from 'react';
 import { useCoach, type Coach } from './coach';
 
 export type MascotName =
-  | '9090'
-  | 'figurefour'
   | 'lifting'
-  | 'marching'
   | 'neckrolls'
   | 'pullups'
-  | 'spinaltwist'
-  | 'squats'
-  | 'thumbsup'
   | 'walking'
-  | 'water'
   // The keyframes panda's poses.
   | 'stand'
   | 'wave'
@@ -64,17 +54,12 @@ export type MascotName =
  */
 const SOURCES: Record<Coach, Record<MascotName, string>> = {
   panda: {
-    '9090': pandaNineNinety,
-    figurefour: pandaFigurefour,
     lifting: pandaLifting,
-    marching: pandaMarching,
-    neckrolls: pandaNeckrolls,
+    // The demo was driven from panda-stand.webp and its first frame lands on
+    // the same pixels, so the tile and the demo read as one drawing.
+    neckrolls: pandaStand,
     pullups: pandaPullups,
-    spinaltwist: pandaSpinaltwist,
-    squats: pandaSquats,
-    thumbsup: pandaThumbsup,
     walking: pandaWalking,
-    water: pandaWater,
     stand: pandaStand,
     wave: pandaWave,
     armsout: pandaArmsout,
@@ -85,17 +70,10 @@ const SOURCES: Record<Coach, Record<MascotName, string>> = {
     crouch: pandaCrouch,
   },
   squirrel: {
-    '9090': squirrelNineNinety,
-    figurefour: squirrelFigurefour,
     lifting: squirrelLifting,
-    marching: squirrelMarching,
     neckrolls: squirrelNeckrolls,
     pullups: squirrelPullups,
-    spinaltwist: squirrelSpinaltwist,
-    squats: squirrelSquats,
-    thumbsup: squirrelThumbsup,
     walking: squirrelWalking,
-    water: squirrelWater,
     // The squirrel is retired and was never drawn in these poses. A retired
     // coach can't reach a screen (see COACHES), so these borrow the panda's
     // art rather than a blank; draw them before the squirrel returns.
@@ -107,6 +85,24 @@ const SOURCES: Record<Coach, Record<MascotName, string>> = {
     stride: pandaStride,
     jog: pandaJog,
     crouch: pandaCrouch,
+  },
+};
+
+interface Demo {
+  /** The looping animation, on the same square canvas as the stills. */
+  playing: string;
+  /** Its first frame, held while paused or when motion is reduced. */
+  still: string;
+}
+
+/**
+ * Poses that can demonstrate their movement rather than just show it. Only
+ * the panda has any: the squirrel is retired, and a coach without a demo
+ * falls back to its still.
+ */
+const DEMOS: Partial<Record<Coach, Partial<Record<MascotName, Demo>>>> = {
+  panda: {
+    neckrolls: { playing: pandaNeckroll, still: pandaNeckrollStill },
   },
 };
 
@@ -123,6 +119,11 @@ interface MascotProps {
    * Everywhere else, leave it alone and let the context decide.
    */
   coach?: Coach;
+  /**
+   * Plays the pose's demonstration where one exists. `paused` holds it at
+   * its first frame, for a screen that stands in for a paused exercise.
+   */
+  demo?: 'playing' | 'paused';
 }
 
 /** The MoveMate coach, in whichever species the surrounding screen picked. */
@@ -132,13 +133,27 @@ export function Mascot({
   alt = '',
   className,
   coach: override,
+  demo,
 }: MascotProps) {
   const contextCoach = useCoach();
   const coach = override ?? contextCoach;
+  /*
+   * An animated WebP ignores CSS animation rules, so the global
+   * reduced-motion override can't stop it; hold the still instead.
+   */
+  const [reducedMotion] = useState(
+    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
+  const clip = demo ? DEMOS[coach]?.[name] : undefined;
+  const src = clip
+    ? demo === 'playing' && !reducedMotion
+      ? clip.playing
+      : clip.still
+    : SOURCES[coach][name];
 
   return (
     <img
-      src={SOURCES[coach][name]}
+      src={src}
       alt={alt}
       width={size}
       height={size}

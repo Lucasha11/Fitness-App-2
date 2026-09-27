@@ -58,14 +58,14 @@ const ALL_PROFILES: CoachProfile[] = [
     name: 'Panda',
     blurb: 'Calm, a bit smug about posture. Will wait all day for you to stand up.',
     traits: ['Gentle', 'Deadpan'],
-    pose: 'thumbsup',
+    pose: 'wave',
   },
   {
     value: 'squirrel',
     name: 'Squirrel',
     blurb: 'Caffeinated. Will not sit down, and does not believe you can either.',
     traits: ['Restless', 'Loud'],
-    pose: 'thumbsup',
+    pose: 'wave',
   },
 ];
 

@@ -334,7 +334,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
     return (
       <div className="sheet-screen">
         <div className="sheet-screen__backdrop sheet-screen__backdrop--dim">
-          <Mascot name="thumbsup" size={220} />
+          <Mascot name="wave" size={220} />
         </div>
         <div className="toast" role="status">
           {toast}
@@ -519,6 +519,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
             size={discreet ? 210 : 270}
             alt={`${COACH_LABEL[coach]} coach demonstrating ${current.name.toLowerCase()}`}
             className={discreet ? undefined : 'bob'}
+            demo="playing"
           />
         </div>
       </div>

@@ -9,35 +9,35 @@ import type { BodyRegion } from '../onboarding/state';
  */
 const POSE_BY_EXERCISE: Partial<Record<string, MascotName>> = {
   'neck-rolls': 'neckrolls',
-  'spinal-twist': 'spinaltwist',
-  'figure-four': 'figurefour',
-  'hip-90-90': '9090',
-  'standing-march': 'marching',
-  'desk-squats': 'squats',
+  'spinal-twist': 'hips',
+  'figure-four': 'sit',
+  'hip-90-90': 'sit',
+  'standing-march': 'stride',
+  'desk-squats': 'crouch',
   // Added with the curated sets: these read correctly against an existing
   // drawing, so they do not fall back to the body area's generic pose.
   'overhead-reach': 'lifting',
   'triceps-stretch': 'lifting',
   'arm-swings': 'lifting',
   'wall-angels': 'lifting',
-  'cat-cow': 'spinaltwist',
-  'hip-opener': 'marching',
+  'cat-cow': 'crouch',
+  'hip-opener': 'stride',
   'calf-raises': 'walking',
-  'ankle-circles': '9090',
-  'quad-stretch': 'figurefour',
+  'ankle-circles': 'sit',
+  'quad-stretch': 'stand',
   'side-bend': 'lifting',
-  'pelvic-tilts': '9090',
+  'pelvic-tilts': 'hips',
 };
 
 /** Each body area gets a mascot pose, so the figure matches the movement. */
 const POSE_BY_REGION: Record<BodyRegion, MascotName> = {
-  neck: 'thumbsup',
+  neck: 'stand',
   shoulders: 'pullups',
   upperBack: 'pullups',
-  lowerBack: 'squats',
-  wrists: 'thumbsup',
-  hips: 'squats',
-  eyes: 'water',
+  lowerBack: 'hips',
+  wrists: 'armsout',
+  hips: 'crouch',
+  eyes: 'sit',
   lowEnergy: 'walking',
 };
 
@@ -69,12 +69,12 @@ const POSE_BY_SET: Record<string, MascotName> = {
   'desk-reset': 'walking',
   'neck-relief': 'neckrolls',
   posture: 'pullups',
-  'wrists-hands': 'thumbsup',
-  'lower-back': 'spinaltwist',
-  'hips-glutes': 'figurefour',
-  energizer: 'squats',
-  'legs-circulation': 'marching',
-  'eyes-reset': 'water',
+  'wrists-hands': 'armsout',
+  'lower-back': 'hips',
+  'hips-glutes': 'crouch',
+  energizer: 'jog',
+  'legs-circulation': 'stride',
+  'eyes-reset': 'sit',
   'arms-shoulders': 'lifting',
 };
 

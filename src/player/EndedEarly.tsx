@@ -34,7 +34,7 @@ export function EndedEarly({
         aria-label="Close"
         onClick={onDismiss}
       >
-        <Mascot name="water" size={220} />
+        <Mascot name="sit" size={220} />
       </button>
 
       <div className="sheet" role="dialog" aria-label="Break ended early">

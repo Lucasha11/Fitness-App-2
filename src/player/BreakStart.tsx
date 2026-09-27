@@ -140,6 +140,7 @@ export function BreakStart({
               size={200}
               alt={`${COACH_LABEL[coach]} coach`}
               className="bob"
+              demo="playing"
             />
           </div>
 
