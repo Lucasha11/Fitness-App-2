@@ -2,12 +2,12 @@ import { ChartIcon, GridIcon, PersonIcon, TargetIcon } from './icons';
 import './tab-bar.css';
 
 /** The tabs that have a screen behind them. */
-export type Tab = 'today' | 'you';
+export type Tab = 'today' | 'library' | 'you';
 
 const TABS = [
   { id: 'today', label: 'Today', icon: <TargetIcon size={20} /> },
-  // Sections D and H: no designs exist yet, so these stay visibly off.
-  { id: null, label: 'Library', icon: <GridIcon size={20} /> },
+  { id: 'library', label: 'Library', icon: <GridIcon size={20} /> },
+  // Section H: no designs exist yet, so this one stays visibly off.
   { id: null, label: 'Insights', icon: <ChartIcon size={20} /> },
   { id: 'you', label: 'You', icon: <PersonIcon size={20} /> },
 ] as const;

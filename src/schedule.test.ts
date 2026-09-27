@@ -162,6 +162,15 @@ describe('choosing exercises', () => {
 describe('a single break', () => {
   const lead = () => exerciseById('neck-rolls');
 
+  it('runs only the move you picked when the library asks for one', () => {
+    // Tapping a card in the library is a choice of that move, not a request
+    // for a break built around it.
+    const sequence = buildSequence(answers(), lead(), emptySession(), 1);
+
+    expect(sequence).toHaveLength(1);
+    expect(sequence[0].id).toBe(lead().id);
+  });
+
   it('keeps a curated set’s own order, even where it repeats a body area', () => {
     // "Neck relief" is four neck exercises on purpose. The back-to-back rule
     // governs the dynamic top-up below, not a hand-made set.

@@ -315,6 +315,15 @@ export function TargetIcon(props: IconProps) {
   );
 }
 
+export function SearchIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.6-3.6" />
+    </Svg>
+  );
+}
+
 export function GridIcon(props: IconProps) {
   return (
     <Svg {...props}>
