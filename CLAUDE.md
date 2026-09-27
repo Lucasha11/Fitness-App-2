@@ -120,9 +120,14 @@ contributor accept a diff they did not read line by line.
   the A12 setup screen that offered one was removed rather than ship invented
   meetings. The scheduler's move-into-the-gap path stays covered by
   `schedule.test.ts`; `seedMeetings` is the seam EventKit will fill.
-- **Notifications are primed but never scheduled.** Breaks come due on the
-  timeline only.
-- Library, Insights and You are disabled — no designs exist.
+- **Reminders are laid down ahead, not live.** `upcomingReminders` in
+  `schedule.ts` plans up to 64 local notifications (the iOS cap) and
+  `useReminders` rewrites them when the plan changes or the app returns. So
+  "if you've already moved, we shut up" only applies once the app is opened:
+  a reminder already pending still fires.
+- **Support links are placeholders.** `src/settings/links.ts` points at
+  example.com until the real inbox, help site and privacy policy exist.
+- Library and Insights are disabled - no designs exist. You opens Settings.
 
 ## Conventions
 

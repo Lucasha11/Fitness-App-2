@@ -19,6 +19,8 @@ export interface DailyActivity {
 }
 
 export type ActivityStatus =
+  /** The user turned movement data off, so nothing was asked of HealthKit. */
+  | 'off'
   | 'unavailable'
   | 'loading'
   | 'ready'
@@ -77,6 +79,24 @@ function startOfDayAgo(days: number, from: Date): Date {
   return start;
 }
 
+/** What Today's movement section reads, and so what Settings asks for. */
+export const TREND_METRICS: MetricName[] = ['steps', 'exerciseMinutes'];
+
+/**
+ * Shows HealthKit's sheet for `metrics` if it has never been shown, so turning
+ * movement data on in Settings asks right there rather than on Today later.
+ */
+export async function requestHealthAccess(
+  metrics: MetricName[] = TREND_METRICS,
+): Promise<void> {
+  try {
+    const { available } = await HealthKit.isAvailable();
+    if (available) await HealthKit.requestAuthorization({ metrics });
+  } catch {
+    // Today's section reports a failed read; the toggle has nothing to add.
+  }
+}
+
 export interface ActivityWindow {
   status: ActivityStatus;
   days: DailyActivity[];
@@ -90,13 +110,20 @@ export interface ActivityWindow {
  * Authorization is requested on every call: HealthKit shows its sheet once and
  * returns silently afterwards, so there is nothing to cache and no way to ask
  * whether a read was granted.
+ *
+ * `consented` comes first so no caller can forget it. Turning movement data
+ * off in setup or Settings must stop the reads outright, since HealthKit
+ * offers no way for the app to hand its access back.
  */
 export async function readActivityWindow(
+  consented: boolean,
   dayCount: number,
   metrics: MetricName[],
   now: Date = new Date(),
   strategy: Reconciliation = DEFAULT_RECONCILIATION,
 ): Promise<ActivityWindow> {
+  if (!consented) return { status: 'off', days: [] };
+
   try {
     const { available } = await HealthKit.isAvailable();
     if (!available) return { status: 'unavailable', days: [] };

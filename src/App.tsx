@@ -1,17 +1,21 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CoachProvider } from './components/CoachProvider';
+import type { Tab } from './components/TabBar';
 import type { Exercise } from './exercises';
 import { OnboardingFlow } from './onboarding/OnboardingFlow';
-import { loadState, type OnboardingState } from './onboarding/state';
+import { loadState, saveState, type OnboardingState } from './onboarding/state';
 import { pickExercises } from './schedule';
 import { BreakPlayer } from './player/BreakPlayer';
 import { LockScreenPreview } from './player/LockScreenPreview';
+import { useReminders } from './reminders/useReminders';
 import { SessionProvider } from './session/SessionProvider';
+import { Settings } from './settings/Settings';
 import { Today } from './today/Today';
 
 type View =
   | { name: 'onboarding' }
   | { name: 'today' }
+  | { name: 'settings' }
   | { name: 'player'; lead: Exercise; slot: number | null }
   | { name: 'lockScreen' };
 
@@ -27,6 +31,22 @@ function Root() {
   const startBreak = useCallback((lead: Exercise, slot: number | null) => {
     setView({ name: 'player', lead, slot });
   }, []);
+
+  // Onboarding keeps its own copy while it runs and saves it on the way out,
+  // so only a finished answer sheet is written back from here.
+  useEffect(() => {
+    if (answers.completedAt) saveState(answers);
+  }, [answers]);
+
+  const changeAnswers = useCallback((patch: Partial<OnboardingState>) => {
+    setAnswers((current) => ({ ...current, ...patch }));
+  }, []);
+
+  const selectTab = useCallback((tab: Tab) => {
+    setView(tab === 'you' ? { name: 'settings' } : { name: 'today' });
+  }, []);
+
+  useReminders(answers, startBreak);
 
   const handleOnboardingComplete = useCallback(
     (completed: OnboardingState, options: { startBreak: boolean }) => {
@@ -82,7 +102,23 @@ function Root() {
       );
     }
 
-    return <Today answers={answers} onStartBreak={startBreak} />;
+    if (view.name === 'settings') {
+      return (
+        <Settings
+          answers={answers}
+          onChangeAnswers={changeAnswers}
+          onSelectTab={selectTab}
+        />
+      );
+    }
+
+    return (
+      <Today
+        answers={answers}
+        onStartBreak={startBreak}
+        onSelectTab={selectTab}
+      />
+    );
   }
 }
 

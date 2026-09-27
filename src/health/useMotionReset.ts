@@ -27,7 +27,7 @@ export function useMotionReset(enabled: boolean): void {
     let cancelled = false;
 
     const check = async () => {
-      const movedAt = await readLastMovement(sittingSince);
+      const movedAt = await readLastMovement(enabled, sittingSince);
       if (!cancelled && movedAt !== null) markMoved(movedAt);
     };
 

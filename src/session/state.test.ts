@@ -144,13 +144,34 @@ describe('the streak', () => {
   });
 });
 
+/** Today at `hours:minutes`, the clock the snooze rules read. */
+function at(hours: number, minutes: number): Date {
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  return date;
+}
+
 describe('snoozing', () => {
   it('moves when a break shows without changing which slot it is', () => {
     // The slot's identity is what done and skipped records point at, so a
     // snooze must leave it alone.
-    const session = withSnoozedSlot(emptySession(), 10 * 60, 10);
+    const session = withSnoozedSlot(emptySession(), 10 * 60, 10, at(9, 0));
 
     expect(session.snoozed[dateKey()][10 * 60]).toBe(10 * 60 + 10);
+  });
+
+  it('brings a break that is already due back ten minutes from now, never in the past', () => {
+    // Opened fifteen minutes late: "remind me in 10" means 10:25, not 10:10.
+    const session = withSnoozedSlot(emptySession(), 10 * 60, 10, at(10, 15));
+
+    expect(session.snoozed[dateKey()][10 * 60]).toBe(10 * 60 + 25);
+  });
+
+  it('moves a break snoozed twice on from where the first snooze left it', () => {
+    let session = withSnoozedSlot(emptySession(), 10 * 60, 10, at(9, 0));
+    session = withSnoozedSlot(session, 10 * 60, 10, at(9, 5));
+
+    expect(session.snoozed[dateKey()][10 * 60]).toBe(10 * 60 + 20);
   });
 });
 

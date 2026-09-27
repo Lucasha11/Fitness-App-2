@@ -161,9 +161,12 @@ Nothing on screen is a mock. The onboarding answers drive everything downstream:
   `session.meetings` — EventKit isn't wired up, and the setup screen that used
   to offer a calendar could only ever seed an invented event, so it was removed
   rather than shipped. `schedule.test.ts` covers the displacement rules.
-- **Notifications are primed but not scheduled.** The priming screen requests
-  the browser permission; no background scheduling exists, so breaks come due on
-  the timeline rather than arriving as notifications.
+- **Reminders are scheduled ahead of time.** Each break becomes a local
+  notification, up to the 64 iOS will hold, and the set is rewritten whenever
+  the plan changes. A reminder already pending still fires if you moved in the
+  meantime; the timeline catches up when the app opens.
+- **Help and privacy links are placeholders** (`src/settings/links.ts`) until
+  the real support inbox, help site and privacy policy exist.
 - **The Lock Screen page is a reference mockup, not a screen.** A web build has
   no Lock Screen, so it lives behind `#lock-screen` rather than in the
   navigation.
@@ -180,8 +183,8 @@ Nothing on screen is a mock. The onboarding answers drive everything downstream:
 
 ## Not built yet
 
-Library, Insights and You are disabled in the tab bar — they have no designs in
-this canvas. Also open, and marked as such on the design system page: dark mode,
+Library and Insights are disabled in the tab bar - they have no designs in
+this canvas. You opens Settings. Also open, and marked as such on the design system page: dark mode,
 the Insights calendar, info and success banner tones, a slider with labelled
 stops, and an empty-state block.
 

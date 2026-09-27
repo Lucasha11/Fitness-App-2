@@ -18,6 +18,7 @@
 		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
 		A1B2C3D001AA00AA00AA0002 /* HealthKitPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D001AA00AA00AA0001 /* HealthKitPlugin.swift */; };
 		A1B2C3D001AA00AA00AA0005 /* MotionPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D001AA00AA00AA0004 /* MotionPlugin.swift */; };
+		5E7711A0B2C3D4E5F6A7B802 /* SystemSettingsPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7711A0B2C3D4E5F6A7B801 /* SystemSettingsPlugin.swift */; };
 		A1B2C3D001AA00AA00AA0007 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D001AA00AA00AA0006 /* MainViewController.swift */; };
 		A1B2C3D001AA00AA00AA0009 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D001AA00AA00AA0008 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
@@ -37,6 +38,7 @@
 		A1B2C3D001AA00AA00AA0001 /* HealthKitPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitPlugin.swift; sourceTree = "<group>"; };
 		A1B2C3D001AA00AA00AA0003 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 		A1B2C3D001AA00AA00AA0004 /* MotionPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionPlugin.swift; sourceTree = "<group>"; };
+		5E7711A0B2C3D4E5F6A7B801 /* SystemSettingsPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingsPlugin.swift; sourceTree = "<group>"; };
 		A1B2C3D001AA00AA00AA0006 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		A1B2C3D001AA00AA00AA0008 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -78,6 +80,7 @@
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				A1B2C3D001AA00AA00AA0001 /* HealthKitPlugin.swift */,
 				A1B2C3D001AA00AA00AA0004 /* MotionPlugin.swift */,
+				5E7711A0B2C3D4E5F6A7B801 /* SystemSettingsPlugin.swift */,
 				A1B2C3D001AA00AA00AA0006 /* MainViewController.swift */,
 				A1B2C3D001AA00AA00AA0003 /* App.entitlements */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
@@ -177,6 +180,7 @@
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
 				A1B2C3D001AA00AA00AA0002 /* HealthKitPlugin.swift in Sources */,
 				A1B2C3D001AA00AA00AA0005 /* MotionPlugin.swift in Sources */,
+				5E7711A0B2C3D4E5F6A7B802 /* SystemSettingsPlugin.swift in Sources */,
 				A1B2C3D001AA00AA00AA0007 /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

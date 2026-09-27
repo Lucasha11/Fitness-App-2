@@ -13,6 +13,7 @@ const PENDING: ActivityWindow = { status: 'loading', days: [] };
  * re-read when that stops being true.
  */
 export function useActivity(
+  consented: boolean,
   dayCount: number,
   metrics: MetricName[],
 ): ActivityWindow {
@@ -25,14 +26,18 @@ export function useActivity(
   useEffect(() => {
     let cancelled = false;
 
-    readActivityWindow(dayCount, key.split(',') as MetricName[]).then((result) => {
+    readActivityWindow(
+      consented,
+      dayCount,
+      key.split(',') as MetricName[],
+    ).then((result) => {
       if (!cancelled) setWindow(result);
     });
 
     return () => {
       cancelled = true;
     };
-  }, [dayCount, key]);
+  }, [consented, dayCount, key]);
 
   return window;
 }

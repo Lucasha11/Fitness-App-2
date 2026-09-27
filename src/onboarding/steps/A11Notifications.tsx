@@ -6,6 +6,7 @@ import {
   ScreenFooter,
   TextButton,
 } from '../../components/ui';
+import { requestReminderPermission } from '../../reminders/notifications';
 import { PROGRESS, type StepProps } from '../types';
 
 /**
@@ -14,16 +15,11 @@ import { PROGRESS, type StepProps } from '../types';
  */
 export function A11Notifications({ set, next }: StepProps) {
   const enable = async () => {
-    if (typeof Notification !== 'undefined') {
-      try {
-        const permission = await Notification.requestPermission();
-        set({ notificationsEnabled: permission === 'granted' });
-      } catch {
-        // Browsers that reject the promise (or block it in an iframe) still
-        // let the user through; the setting is re-offered in Today later.
-        set({ notificationsEnabled: false });
-      }
-    }
+    // Through the notifications plugin rather than the browser's own API,
+    // which the iOS web view does not have: there, asking that way was a
+    // silent no and the real prompt never appeared.
+    const permission = await requestReminderPermission();
+    set({ notificationsEnabled: permission === 'granted' });
     next();
   };
 

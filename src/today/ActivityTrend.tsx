@@ -1,17 +1,15 @@
 import {
+  TREND_METRICS,
   average,
   observed,
   trend,
   type DailyActivity,
 } from '../health/activity';
-import type { MetricName } from '../health/plugin';
 import { useActivity } from '../health/useActivity';
 
 /** Two weeks, so the second week has something to be compared against. */
 const WINDOW_DAYS = 14;
 const TREND_DAYS = 7;
-
-const METRICS: MetricName[] = ['steps', 'exerciseMinutes'];
 
 /**
  * Movement read from HealthKit, next to the breaks MoveMate logged itself.
@@ -20,12 +18,13 @@ const METRICS: MetricName[] = ['steps', 'exerciseMinutes'];
  * real days, and the app renders nothing at all rather than a flat zero line
  * when there is no data to show.
  */
-export function ActivityTrend() {
-  const { status, days, message } = useActivity(WINDOW_DAYS, METRICS);
+export function ActivityTrend({ consented }: { consented: boolean }) {
+  const { status, days, message } = useActivity(consented, WINDOW_DAYS, TREND_METRICS);
 
   // Nothing to say on a platform without HealthKit, and saying it would only
-  // clutter the web build.
-  if (status === 'unavailable') return null;
+  // clutter the web build. Someone who turned movement data off made a
+  // choice, so the section steps aside rather than asking them to reconsider.
+  if (status === 'unavailable' || status === 'off') return null;
 
   return (
     <section className="activity">
