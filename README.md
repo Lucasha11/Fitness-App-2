@@ -82,6 +82,18 @@ that turns amber past 45 minutes, the day's timeline (swipe a row to skip, swipe
 back to restore), a quick-action shelf, weekly body coverage, and a tab bar with
 a raised Break button that starts a break from anywhere.
 
+### Insights
+
+[`src/insights/Insights.tsx`](src/insights/Insights.tsx) — two views behind
+one switch. **Today** is *You vs. The Chair*: the hours of your day scored to
+you (a break landed in it) or the chair (it finished without one), a line of
+breaks climbing towards the goal, and the hour strip beneath it on the same
+clock; then your current streak, best streak and weeks on target. **Progress**
+is a month calendar shaded by how much of each day's goal you reached (tap a
+day for its hours and the areas you moved) and six milestones, each dated to
+the day it was earned. All of it is derived from the session history in
+[`progress.ts`](src/insights/progress.ts); nothing is stored twice.
+
 ### The break
 
 Every stage lives in [`src/player/`](src/player), orchestrated by
@@ -120,6 +132,7 @@ src/
   onboarding/     the setup flow, its answer sheet and persistence
   today/          the home screen
   player/         the break, stage by stage
+  insights/       the chair score, streaks, calendar and milestones
   session/        what happens after setup — history, streaks, exclusions
   components/     shared primitives, icons, the mascot
   design-system/  the documentation page
@@ -138,7 +151,7 @@ Nothing on screen is a mock. The onboarding answers drive everything downstream:
   only" adaptation and any active exclusions, and never repeats a body area back
   to back.
 - Finishing a break advances the goal ring, marks its timeline row done, resets
-  the sitting clock, and feeds the streak chip and weekly coverage.
+  the sitting clock, and feeds the streak chip, weekly coverage and Insights.
 - **The sitting clock also resets from Core Motion.** On iOS the app asks the
   activity log when you last got up and counts from there, so a walk at lunch
   clears the clock without opening the app. It never counts time from before
@@ -183,10 +196,9 @@ Nothing on screen is a mock. The onboarding answers drive everything downstream:
 
 ## Not built yet
 
-Library and Insights are disabled in the tab bar - they have no designs in
-this canvas. You opens Settings. Also open, and marked as such on the design system page: dark mode,
-the Insights calendar, info and success banner tones, a slider with labelled
-stops, and an empty-state block.
+You opens Settings. Also open, and marked as such on the design system page:
+dark mode, info and success banner tones, a slider with labelled stops, and an
+empty-state block.
 
 ## Assets
 

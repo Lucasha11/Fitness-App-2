@@ -424,3 +424,35 @@ export function ExternalIcon(props: IconProps) {
     </Svg>
   );
 }
+
+/** The opponent in Insights' "You vs. The Chair". */
+export function ChairIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3" />
+      <path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z" />
+      <path d="M5 18v2" />
+      <path d="M19 18v2" />
+    </Svg>
+  );
+}
+
+export function TrophyIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M8 21h8" />
+      <path d="M12 17v4" />
+      <path d="M7 4h10v5a5 5 0 0 1-10 0z" />
+      <path d="M17 6h3v2a3 3 0 0 1-3 3" />
+      <path d="M7 6H4v2a3 3 0 0 0 3 3" />
+    </Svg>
+  );
+}
+
+export function StarIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.7 5.8 21 7 14 2 9.3 9 8.5z" />
+    </Svg>
+  );
+}

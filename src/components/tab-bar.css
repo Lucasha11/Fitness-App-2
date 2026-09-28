@@ -33,11 +33,6 @@
   color: var(--accent);
 }
 
-.tab[aria-disabled='true'] {
-  cursor: default;
-  opacity: 0.55;
-}
-
 .tab__label {
   font-size: 10px;
   font-weight: 900;
