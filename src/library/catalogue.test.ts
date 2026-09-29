@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { EXERCISES } from '../exercises';
+import { BODY_PART_LABELS, BODY_PART_ORDER, EXERCISES } from '../exercises';
 import { LIBRARY_AXES, searchExercises, shelvesFor } from './catalogue';
 
 describe('the library shelves', () => {
@@ -10,6 +10,30 @@ describe('the library shelves', () => {
 
     expect(new Set(shelved).size).toBe(shelved.length);
     expect(shelved.sort()).toEqual(EXERCISES.map((e) => e.id).sort());
+  });
+
+  it('files every move under exactly one body part', () => {
+    const shelved = shelvesFor('part').flatMap((shelf) =>
+      shelf.exercises.map((exercise) => exercise.id),
+    );
+
+    expect(new Set(shelved).size).toBe(shelved.length);
+    expect(shelved.sort()).toEqual(EXERCISES.map((e) => e.id).sort());
+  });
+
+  it('gives every body part a shelf, head to feet', () => {
+    expect(shelvesFor('part').map((shelf) => shelf.title)).toEqual(
+      BODY_PART_ORDER.map((part) => BODY_PART_LABELS[part]),
+    );
+  });
+
+  it('shelves a move by the part it works, not the reason to do it', () => {
+    const legs = shelvesFor('part').find((shelf) => shelf.id === 'legs');
+
+    // Onboarding files calf raises under low energy; the body shelves cannot.
+    expect(legs?.exercises.map((exercise) => exercise.id)).toContain(
+      'calf-raises',
+    );
   });
 
   it('files every move under exactly one setting', () => {
@@ -57,6 +81,13 @@ describe('the library search', () => {
     expect(found).toContain('neck-rolls');
     // Named for the muscle, not the area, so only the area match reaches it.
     expect(found).toContain('chin-tucks');
+  });
+
+  it('finds a move by the body part it works', () => {
+    const found = searchExercises('legs').map((exercise) => exercise.id);
+
+    expect(found).toContain('calf-raises');
+    expect(found).toContain('desk-squats');
   });
 
   it('ignores case and surrounding space', () => {

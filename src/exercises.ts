@@ -35,10 +35,48 @@ export const EXERCISES_PER_BREAK = 4;
 export const BREAK_DURATION_SECONDS =
   EXERCISES_PER_BREAK * EXERCISE_DURATION_SECONDS;
 
+/**
+ * Where on the body a move works, head to feet.
+ *
+ * Not the same thing as `region`: a region is a reason to take a break, the
+ * way onboarding asks for it, so it includes "Eyes" and "Low energy". Calf
+ * raises are for low energy, but they work the legs, and the library's body
+ * shelves have to put them there.
+ */
+export type BodyPart =
+  | 'head'
+  | 'arms'
+  | 'hands'
+  | 'upperBack'
+  | 'lowerBack'
+  | 'hips'
+  | 'legs';
+
+export const BODY_PART_ORDER: BodyPart[] = [
+  'head',
+  'arms',
+  'hands',
+  'upperBack',
+  'lowerBack',
+  'hips',
+  'legs',
+];
+
+export const BODY_PART_LABELS: Record<BodyPart, string> = {
+  head: 'Head & neck',
+  arms: 'Shoulders & arms',
+  hands: 'Wrists & hands',
+  upperBack: 'Upper back',
+  lowerBack: 'Lower back',
+  hips: 'Hips',
+  legs: 'Legs & feet',
+};
+
 export interface Exercise {
   id: string;
   name: string;
   region: BodyRegion;
+  part: BodyPart;
   /** Works seated and unnoticeably — the "open office" filter. */
   subtle: boolean;
   /** Worked one side at a time, so the player prompts a switch halfway. */
@@ -52,6 +90,7 @@ export const EXERCISES: Exercise[] = [
     id: 'neck-rolls',
     name: 'Neck rolls',
     region: 'neck',
+    part: 'head',
     subtle: true,
     cues: ['Slow half circles', 'Chin towards your chest', 'Other way now'],
   },
@@ -59,6 +98,7 @@ export const EXERCISES: Exercise[] = [
     id: 'neck-release',
     name: 'Neck release',
     region: 'neck',
+    part: 'head',
     subtle: true,
     sides: true,
     cues: ['Ear towards your shoulder', 'Breathe out and soften', 'Let it lengthen'],
@@ -67,6 +107,7 @@ export const EXERCISES: Exercise[] = [
     id: 'shoulder-rolls',
     name: 'Shoulder rolls',
     region: 'shoulders',
+    part: 'arms',
     subtle: true,
     cues: ['Breathe out as you roll back', 'Big slow circles', 'Hold, 5 more seconds'],
   },
@@ -74,6 +115,7 @@ export const EXERCISES: Exercise[] = [
     id: 'chest-opener',
     name: 'Doorway chest opener',
     region: 'shoulders',
+    part: 'arms',
     subtle: false,
     cues: ['Forearms on the frame', 'Step through gently', 'Keep your ribs down'],
   },
@@ -81,6 +123,7 @@ export const EXERCISES: Exercise[] = [
     id: 'blade-squeeze',
     name: 'Shoulder blade squeeze',
     region: 'upperBack',
+    part: 'upperBack',
     subtle: true,
     cues: ['Pinch your shoulder blades', 'Hold for three', 'And release'],
   },
@@ -88,6 +131,7 @@ export const EXERCISES: Exercise[] = [
     id: 'cat-cow',
     name: 'Cat-cow at the desk',
     region: 'upperBack',
+    part: 'upperBack',
     subtle: false,
     cues: ['Round through your back', 'Now open the chest', 'Follow your breath'],
   },
@@ -95,6 +139,7 @@ export const EXERCISES: Exercise[] = [
     id: 'spinal-twist',
     name: 'Seated spinal twist',
     region: 'lowerBack',
+    part: 'lowerBack',
     subtle: true,
     sides: true,
     cues: ['Hand on the chair back', 'Turn from the ribs', 'Breathe into it'],
@@ -103,6 +148,7 @@ export const EXERCISES: Exercise[] = [
     id: 'back-extension',
     name: 'Standing back extension',
     region: 'lowerBack',
+    part: 'lowerBack',
     subtle: false,
     cues: ['Hands on your hips', 'Lean back gently', 'Only as far as feels good'],
   },
@@ -110,6 +156,7 @@ export const EXERCISES: Exercise[] = [
     id: 'wrist-circles',
     name: 'Wrist circles',
     region: 'wrists',
+    part: 'hands',
     subtle: true,
     cues: ['Slow circles', 'Now the other direction', 'Shake them out'],
   },
@@ -117,6 +164,7 @@ export const EXERCISES: Exercise[] = [
     id: 'wrist-stretch',
     name: 'Wrist & finger stretch',
     region: 'wrists',
+    part: 'hands',
     subtle: true,
     sides: true,
     cues: ['Fingers down, press gently', 'Now fingers up', 'Spread them wide'],
@@ -125,6 +173,7 @@ export const EXERCISES: Exercise[] = [
     id: 'figure-four',
     name: 'Seated figure four',
     region: 'hips',
+    part: 'hips',
     subtle: true,
     sides: true,
     cues: ['Ankle over the knee', 'Lean forward a little', 'Sink a bit deeper'],
@@ -133,6 +182,7 @@ export const EXERCISES: Exercise[] = [
     id: 'hip-90-90',
     name: '90/90 hip switch',
     region: 'hips',
+    part: 'hips',
     subtle: false,
     sides: true,
     cues: ['Both knees at ninety', 'Sit tall, chest up', 'Switch when it eases'],
@@ -141,6 +191,7 @@ export const EXERCISES: Exercise[] = [
     id: 'hip-opener',
     name: 'Standing hip opener',
     region: 'hips',
+    part: 'hips',
     subtle: false,
     sides: true,
     cues: ['Foot on the chair', 'Sink your weight down', 'Chest stays tall'],
@@ -149,6 +200,7 @@ export const EXERCISES: Exercise[] = [
     id: 'twenty-foot-gaze',
     name: 'Twenty-foot gaze',
     region: 'eyes',
+    part: 'head',
     subtle: true,
     cues: ['Find something far away', 'Let your eyes relax', 'Blink it out'],
   },
@@ -156,6 +208,7 @@ export const EXERCISES: Exercise[] = [
     id: 'eye-circles',
     name: 'Eye circles',
     region: 'eyes',
+    part: 'head',
     subtle: true,
     cues: ['Trace a slow circle', 'Now the other way', 'Close and rest'],
   },
@@ -163,6 +216,7 @@ export const EXERCISES: Exercise[] = [
     id: 'standing-march',
     name: 'Standing march',
     region: 'lowEnergy',
+    part: 'legs',
     subtle: false,
     cues: ['Knees up', 'Keep it light', 'Almost there'],
   },
@@ -170,6 +224,7 @@ export const EXERCISES: Exercise[] = [
     id: 'desk-squats',
     name: 'Desk squats',
     region: 'lowEnergy',
+    part: 'legs',
     subtle: false,
     cues: ['Sit back, stand up', 'Chest tall', 'Nice and steady'],
   },
@@ -177,6 +232,7 @@ export const EXERCISES: Exercise[] = [
     id: 'desk-push-offs',
     name: 'Desk push-offs',
     region: 'lowEnergy',
+    part: 'arms',
     subtle: true,
     cues: ['Hands on the desk edge', 'Slow and controlled', 'Five more'],
   },
@@ -184,6 +240,7 @@ export const EXERCISES: Exercise[] = [
     id: 'chin-tucks',
     name: 'Chin tucks',
     region: 'neck',
+    part: 'head',
     subtle: true,
     cues: ['Slide your chin straight back', 'Tall through the crown', 'Hold for three, release'],
   },
@@ -191,6 +248,7 @@ export const EXERCISES: Exercise[] = [
     id: 'levator-stretch',
     name: 'Levator stretch',
     region: 'neck',
+    part: 'head',
     subtle: true,
     sides: true,
     cues: ['Nose towards your armpit', 'Let that shoulder drop', 'Breathe, then switch'],
@@ -199,6 +257,7 @@ export const EXERCISES: Exercise[] = [
     id: 'shoulder-shrugs',
     name: 'Shoulder shrugs',
     region: 'shoulders',
+    part: 'arms',
     subtle: true,
     cues: ['Lift them to your ears', 'Hold at the top', 'Drop and breathe out'],
   },
@@ -206,6 +265,7 @@ export const EXERCISES: Exercise[] = [
     id: 'arm-circles',
     name: 'Arm circles',
     region: 'shoulders',
+    part: 'arms',
     subtle: true,
     cues: ['Small circles forward', 'Let them grow', 'Now wind them back'],
   },
@@ -213,6 +273,7 @@ export const EXERCISES: Exercise[] = [
     id: 'overhead-reach',
     name: 'Overhead reach',
     region: 'shoulders',
+    part: 'arms',
     subtle: true,
     cues: ['Reach for the ceiling', 'Lengthen one side', 'Keep your ribs down'],
   },
@@ -220,6 +281,7 @@ export const EXERCISES: Exercise[] = [
     id: 'triceps-stretch',
     name: 'Triceps stretch',
     region: 'shoulders',
+    part: 'arms',
     subtle: true,
     sides: true,
     cues: ['Elbow up, hand down your back', 'Ease it over with the other hand', 'Switch when it eases'],
@@ -228,6 +290,7 @@ export const EXERCISES: Exercise[] = [
     id: 'wall-angels',
     name: 'Wall angels',
     region: 'upperBack',
+    part: 'upperBack',
     subtle: false,
     cues: ['Back flat against the wall', 'Slide your arms up', 'Keep the contact'],
   },
@@ -235,6 +298,7 @@ export const EXERCISES: Exercise[] = [
     id: 'pelvic-tilts',
     name: 'Seated pelvic tilts',
     region: 'lowerBack',
+    part: 'lowerBack',
     subtle: true,
     cues: ['Roll your hips back', 'Now tip them forward', 'Small and slow'],
   },
@@ -242,6 +306,7 @@ export const EXERCISES: Exercise[] = [
     id: 'side-bend',
     name: 'Standing side bend',
     region: 'lowerBack',
+    part: 'lowerBack',
     subtle: true,
     sides: true,
     cues: ['One arm overhead', 'Reach up and over', 'Switch when it eases'],
@@ -250,6 +315,7 @@ export const EXERCISES: Exercise[] = [
     id: 'prayer-stretch',
     name: 'Prayer stretch',
     region: 'wrists',
+    part: 'hands',
     subtle: true,
     cues: ['Palms together at your chest', 'Lower your hands slowly', 'Elbows stay wide'],
   },
@@ -257,6 +323,7 @@ export const EXERCISES: Exercise[] = [
     id: 'nerve-glide',
     name: 'Nerve glide',
     region: 'wrists',
+    part: 'hands',
     subtle: true,
     sides: true,
     cues: ['Arm out, palm up', 'Tip your head away', 'Gently, never forced'],
@@ -265,6 +332,7 @@ export const EXERCISES: Exercise[] = [
     id: 'hip-flexor-lunge',
     name: 'Half-kneeling hip flexor',
     region: 'hips',
+    part: 'hips',
     subtle: false,
     sides: true,
     cues: ['One knee down, one up', 'Tuck your hips under', 'Squeeze the back glute'],
@@ -273,6 +341,7 @@ export const EXERCISES: Exercise[] = [
     id: 'quad-stretch',
     name: 'Standing quad stretch',
     region: 'hips',
+    part: 'legs',
     subtle: false,
     sides: true,
     cues: ['Heel towards your seat', 'Knees stay together', 'Hold the desk if you need'],
@@ -281,6 +350,7 @@ export const EXERCISES: Exercise[] = [
     id: 'palming',
     name: 'Palming',
     region: 'eyes',
+    part: 'head',
     subtle: true,
     cues: ['Rub your palms warm', 'Cup them over your eyes', 'Just darkness, breathe'],
   },
@@ -288,6 +358,7 @@ export const EXERCISES: Exercise[] = [
     id: 'ankle-circles',
     name: 'Ankle circles',
     region: 'lowEnergy',
+    part: 'legs',
     subtle: true,
     sides: true,
     cues: ['Lift one foot', 'Slow circles, both ways', 'Other foot now'],
@@ -296,6 +367,7 @@ export const EXERCISES: Exercise[] = [
     id: 'calf-raises',
     name: 'Calf raises',
     region: 'lowEnergy',
+    part: 'legs',
     subtle: true,
     cues: ['Up onto your toes', 'Pause at the top', 'Lower slowly'],
   },
@@ -303,6 +375,7 @@ export const EXERCISES: Exercise[] = [
     id: 'arm-swings',
     name: 'Arm swings',
     region: 'lowEnergy',
+    part: 'arms',
     subtle: false,
     cues: ['Swing them wide', 'Cross them over', 'Keep it loose'],
   },
