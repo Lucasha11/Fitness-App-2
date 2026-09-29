@@ -1,4 +1,6 @@
 import {
+  BODY_PART_LABELS,
+  BODY_PART_ORDER,
   EXERCISES,
   EXERCISE_SETS,
   setExercises,
@@ -19,14 +21,15 @@ import {
  * keeps "browse the library" from turning into "narrow the library down",
  * which is what the filters on Today already do.
  */
-export type LibraryAxis = 'sets' | 'area' | 'setting';
+export type LibraryAxis = 'sets' | 'part' | 'area' | 'setting';
 
-export const LIBRARY_AXES: LibraryAxis[] = ['sets', 'area', 'setting'];
+export const LIBRARY_AXES: LibraryAxis[] = ['sets', 'part', 'area', 'setting'];
 
 export const AXIS_LABELS: Record<LibraryAxis, string> = {
   sets: 'Sets',
+  part: 'Body part',
   area: 'What hurts',
-  setting: 'Where you are',
+  setting: 'Location',
 };
 
 export interface LibraryShelf {
@@ -48,6 +51,14 @@ const SETTINGS: { id: string; title: string; subtle: boolean }[] = [
   { id: 'desk', title: 'At your desk', subtle: true },
   { id: 'standing', title: 'Standing room', subtle: false },
 ];
+
+function byPart(): LibraryShelf[] {
+  return BODY_PART_ORDER.map((part) => ({
+    id: part,
+    title: BODY_PART_LABELS[part],
+    exercises: EXERCISES.filter((exercise) => exercise.part === part),
+  }));
+}
 
 function byArea(): LibraryShelf[] {
   return BODY_REGION_ORDER.map((region: BodyRegion) => ({
@@ -83,17 +94,22 @@ function bySet(): LibraryShelf[] {
  * the catalogue can grow a body area before it has the moves to fill it.
  */
 export function shelvesFor(axis: LibraryAxis): LibraryShelf[] {
-  const shelves =
-    axis === 'area' ? byArea() : axis === 'setting' ? bySetting() : bySet();
+  const shelves = {
+    sets: bySet,
+    part: byPart,
+    area: byArea,
+    setting: bySetting,
+  }[axis]();
 
   return shelves.filter((shelf) => shelf.exercises.length >= SHELF_MINIMUM);
 }
 
 /**
- * Moves matching what was typed, by name or by the name of the body area they
- * work. Searching "neck" has to find "Chin tucks", or the field only works
- * for people who already know what the move is called — which is the opposite
- * of what a library is for.
+ * Moves matching what was typed, by name, by the body area they help or by
+ * the body part they work. Searching "neck" has to find "Chin tucks", or the
+ * field only works for people who already know what the move is called —
+ * which is the opposite of what a library is for. Likewise "legs" has to find
+ * "Calf raises", which onboarding files under low energy.
  */
 export function searchExercises(query: string): Exercise[] {
   const needle = query.trim().toLowerCase();
@@ -101,8 +117,11 @@ export function searchExercises(query: string): Exercise[] {
 
   return EXERCISES.filter((exercise) => {
     const area = BODY_REGION_LABELS[exercise.region].toLowerCase();
+    const part = BODY_PART_LABELS[exercise.part].toLowerCase();
     return (
-      exercise.name.toLowerCase().includes(needle) || area.includes(needle)
+      exercise.name.toLowerCase().includes(needle) ||
+      area.includes(needle) ||
+      part.includes(needle)
     );
   });
 }

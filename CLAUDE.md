@@ -133,7 +133,7 @@ contributor accept a diff they did not read line by line.
   daily goal a past day was planned against, so `insights/progress.ts` reads
   every day by the current `dailyGoal`. Raising it re-shades old days.
 - **The library browses, it does not curate.** `library/catalogue.ts` groups
-  the whole catalogue three ways; picking an axis replaces the shelves rather
+  the whole catalogue four ways; picking an axis replaces the shelves rather
   than filtering them. **Tapping a card plays that one move and nothing else**
   — `BreakPlayer`'s `length` prop, 1 from here and `EXERCISES_PER_BREAK`
   everywhere else — and exits back to the library rather than to Today. There
