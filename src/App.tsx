@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { CoachProvider } from './components/CoachProvider';
 import type { Tab } from './components/TabBar';
 import type { Exercise } from './exercises';
+import { Library } from './library/Library';
 import { OnboardingFlow } from './onboarding/OnboardingFlow';
 import { loadState, saveState, type OnboardingState } from './onboarding/state';
 import { pickExercises } from './schedule';
@@ -15,8 +16,9 @@ import { Today } from './today/Today';
 type View =
   | { name: 'onboarding' }
   | { name: 'today' }
+  | { name: 'library' }
   | { name: 'settings' }
-  | { name: 'player'; lead: Exercise; slot: number | null }
+  | { name: 'player'; lead: Exercise; slot: number | null; length?: number }
   | { name: 'lockScreen' };
 
 function Root() {
@@ -32,6 +34,15 @@ function Root() {
     setView({ name: 'player', lead, slot });
   }, []);
 
+  /**
+   * The library plays the one move that was tapped. A break built around it
+   * would be three moves the user did not choose, which is the opposite of
+   * what browsing a catalogue is for.
+   */
+  const startExercise = useCallback((lead: Exercise) => {
+    setView({ name: 'player', lead, slot: null, length: 1 });
+  }, []);
+
   // Onboarding keeps its own copy while it runs and saves it on the way out,
   // so only a finished answer sheet is written back from here.
   useEffect(() => {
@@ -43,7 +54,9 @@ function Root() {
   }, []);
 
   const selectTab = useCallback((tab: Tab) => {
-    setView(tab === 'you' ? { name: 'settings' } : { name: 'today' });
+    if (tab === 'you') return setView({ name: 'settings' });
+    if (tab === 'library') return setView({ name: 'library' });
+    setView({ name: 'today' });
   }, []);
 
   useReminders(answers, startBreak);
@@ -97,8 +110,17 @@ function Root() {
           answers={answers}
           lead={view.lead}
           slot={view.slot}
-          onExit={() => setView({ name: 'today' })}
+          length={view.length}
+          onExit={() =>
+            setView(view.length === 1 ? { name: 'library' } : { name: 'today' })
+          }
         />
+      );
+    }
+
+    if (view.name === 'library') {
+      return (
+        <Library onStartExercise={startExercise} onSelectTab={selectTab} />
       );
     }
 

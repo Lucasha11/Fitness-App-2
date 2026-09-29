@@ -9,7 +9,7 @@ import {
 import { COACH_LABEL, useCoach } from '../components/coach';
 import { hasDemo } from '../components/demos';
 import { Mascot } from '../components/Mascot';
-import type { Exercise } from '../exercises';
+import { EXERCISES_PER_BREAK, type Exercise } from '../exercises';
 import {
   BODY_REGION_LABELS,
   type BodyRegion,
@@ -58,11 +58,23 @@ interface BreakPlayerProps {
   lead: Exercise;
   /** The scheduled slot this break satisfies, if it came from the plan. */
   slot: number | null;
+  /**
+   * How many moves to run. The library starts a single move, because there
+   * the user picked that one thing: surrounding it with three others they did
+   * not ask for turns browsing into a commitment.
+   */
+  length?: number;
   /** Leaving the player, whether finished or abandoned. */
   onExit: () => void;
 }
 
-export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
+export function BreakPlayer({
+  answers,
+  lead,
+  slot,
+  length = EXERCISES_PER_BREAK,
+  onExit,
+}: BreakPlayerProps) {
   const {
     session,
     completeBreak,
@@ -86,7 +98,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
   const [seconds, setSeconds] = useState(session.exerciseSeconds);
 
   const [sequence, setSequence] = useState<Exercise[]>(() =>
-    buildSequence(answers, lead, session),
+    buildSequence(answers, lead, session, length),
   );
   const [index, setIndex] = useState(0);
   const [remaining, setRemaining] = useState<number>(seconds);
@@ -413,7 +425,7 @@ export function BreakPlayer({ answers, lead, slot, onExit }: BreakPlayerProps) {
         onDone={onExit}
         onOneMore={() => {
           const next = pickExercises(answers, 1, session)[0];
-          setSequence(buildSequence(answers, next, session));
+          setSequence(buildSequence(answers, next, session, length));
           setIndex(0);
           movedRef.current = 0;
           remainingRef.current = seconds;

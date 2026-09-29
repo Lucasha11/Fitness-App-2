@@ -197,7 +197,9 @@ export function BreakStart({
 
       <button type="button" className="start__sequence" onClick={onOverview}>
         <span>
-          {sequence.length} exercises · {formatClock(totalSeconds)} total
+          {sequence.length}{' '}
+          {sequence.length === 1 ? 'exercise' : 'exercises'} ·{' '}
+          {formatClock(totalSeconds)} total
         </span>
         <ChevronRightIcon size={18} />
       </button>

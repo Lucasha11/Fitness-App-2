@@ -127,7 +127,13 @@ contributor accept a diff they did not read line by line.
   a reminder already pending still fires.
 - **Support links are placeholders.** `src/settings/links.ts` points at
   example.com until the real inbox, help site and privacy policy exist.
-- Library and Insights are disabled - no designs exist. You opens Settings.
+- **Insights is disabled** - no designs exist. You opens Settings.
+- **The library browses, it does not curate.** `library/catalogue.ts` groups
+  the whole catalogue three ways; picking an axis replaces the shelves rather
+  than filtering them. **Tapping a card plays that one move and nothing else**
+  — `BreakPlayer`'s `length` prop, 1 from here and `EXERCISES_PER_BREAK`
+  everywhere else — and exits back to the library rather than to Today. There
+  is no move detail screen and no way to favourite from here yet.
 
 ## Conventions
 

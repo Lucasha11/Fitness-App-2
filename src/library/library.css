@@ -1,0 +1,317 @@
+/* D1 · Library */
+
+.library {
+  position: absolute;
+  inset: 0;
+  background: var(--sheet);
+  overflow: hidden;
+  animation: step-in 240ms ease-out both;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Content scrolls up under the clock; a strip of the page's own colour keeps
+   the status bar legible over it. */
+.library::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  height: env(safe-area-inset-top);
+  background: color-mix(in oklch, var(--sheet) 92%, transparent);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.library__scroll {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  padding-bottom: 104px;
+}
+
+.library__scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.library__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: max(44px, calc(env(safe-area-inset-top) + 8px)) 20px 0;
+}
+
+.library__title {
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.library__count {
+  margin: 3px 0 14px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--ink-muted);
+}
+
+.library__coach {
+  flex-shrink: 0;
+  margin-right: -4px;
+}
+
+/* ---- Search -------------------------------------------------------- */
+
+.library__search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 20px;
+  padding: 0 16px;
+  height: 46px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.library__search-icon {
+  flex-shrink: 0;
+  color: var(--ink-muted);
+}
+
+.library__field {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.library__field::placeholder {
+  color: var(--ink-muted);
+  font-weight: 700;
+}
+
+.library__field:focus {
+  outline: none;
+}
+
+/* Safari draws its own clear button inside a search field, and it lands on
+   top of the rounded edge. */
+.library__field::-webkit-search-decoration,
+.library__field::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+/* ---- Axis pills ---------------------------------------------------- */
+
+.library__axes {
+  display: flex;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.library__axes::-webkit-scrollbar {
+  display: none;
+}
+
+.library__axis {
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 800;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.library__axis[aria-checked='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--ink-on-accent);
+  font-weight: 900;
+  box-shadow: var(--shadow-accent);
+}
+
+/* ---- Shelves ------------------------------------------------------- */
+
+.library__shelves {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 22px;
+}
+
+.shelf-b {
+  margin-top: 22px;
+}
+
+.library__shelves .shelf-b {
+  margin-top: 0;
+}
+
+.shelf-b__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 20px;
+}
+
+.shelf-b__title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.shelf-b__all {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--accent);
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+.shelf-b__chev {
+  transition: transform 160ms ease-out;
+}
+
+.shelf-b__chev--open {
+  transform: rotate(90deg);
+}
+
+.shelf-b__row,
+.shelf-b__grid {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+/* Shelves run to the edge of the screen: a card clipped by the bezel is what
+   tells the thumb there is more sideways. */
+.shelf-b__row {
+  display: flex;
+  gap: 12px;
+  padding: 0 20px;
+  overflow-x: auto;
+  /* A non-visible overflow-x makes overflow-y compute to auto, which lets a
+     shelf drift vertically under a diagonal drag. Only the page scrolls
+     vertically; a shelf is locked to its axis. */
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+
+.shelf-b__row::-webkit-scrollbar {
+  display: none;
+}
+
+/* Fixed columns, not fractions: a fraction stretches the card to whatever
+   width is going, and the same move then has one shape in a row and another
+   in an expanded shelf. The leftover width becomes the gutter instead. */
+.shelf-b__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 160px);
+  justify-content: space-between;
+  gap: 14px;
+  padding: 0 20px;
+}
+
+/* ---- Poster card --------------------------------------------------- */
+
+/* One card, one size, everywhere it appears. */
+.poster {
+  flex-shrink: 0;
+  width: 160px;
+  scroll-snap-align: start;
+}
+
+/* The caption sits on the art rather than under it: the pose is what is being
+   browsed, and a name below each card turns the row back into a list. */
+.poster__art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 160px;
+  height: 196px;
+  border: none;
+  border-radius: var(--radius-card);
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* Clears the caption, which is absolutely positioned so that a name running
+   to two lines lengthens the band rather than the card. */
+.poster__art img {
+  margin-bottom: 30px;
+}
+
+.poster__caption {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  border-radius: var(--radius-inner);
+  background: oklch(1 0 0 / 93%);
+  color: var(--ink);
+  font-size: 11.5px;
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+  padding: 8px 10px;
+}
+
+.poster__meta {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--ink-muted);
+}
+
+/* ---- Empty search -------------------------------------------------- */
+
+.library__empty {
+  margin: 34px 20px 0;
+  padding: 22px;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
+  text-align: center;
+}
+
+.library__empty-line {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.library__empty-hint {
+  margin: 6px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-muted);
+}
