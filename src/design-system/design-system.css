@@ -411,85 +411,15 @@
   justify-content: center;
 }
 
-/* ---- Streak calendar ------------------------------------------------------ */
+/* ---- Insights specimens ------------------------------------------------ */
 
-.ds__calendar {
+/* The cards at the width they get inside a 390pt phone, side by side. */
+.ds__insights {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-  max-width: 400px;
-  margin-bottom: 16px;
-}
-
-.ds__day {
-  aspect-ratio: 1;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-  font-size: 11px;
-  font-weight: 900;
-  background: var(--fill);
-  color: var(--ink-muted);
-}
-
-.ds__day[data-state='met'] {
-  background: var(--accent);
-  color: var(--ink-on-accent);
-}
-
-.ds__day[data-state='partial'] {
-  background: var(--lime);
-  color: var(--lime-ink);
-}
-
-.ds__day[data-state='future'] {
-  background: oklch(0.94 0.025 130 / 40%);
-  color: oklch(0.51 0.045 22 / 60%);
-}
-
-.ds__day[data-today='true'] {
-  box-shadow: 0 0 0 2px var(--accent), 0 0 0 4px var(--surface);
-}
-
-.ds__legend {
-  display: flex;
-  gap: 16px;
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--ink-muted);
+  grid-template-columns: repeat(auto-fill, 350px);
+  align-items: start;
+  gap: 20px;
   margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.ds__legend-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.ds__legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: var(--radius-pill);
-}
-
-.ds__stat {
-  border-radius: 16px;
-  background: var(--surface);
-  padding: 12px;
-  text-align: center;
-  box-shadow: var(--shadow-card-strong);
-}
-
-.ds__stat-value {
-  font-size: 18px;
-  font-weight: 900;
-}
-
-.ds__stat-label {
-  font-size: 9px;
-  font-weight: 800;
-  color: var(--ink-muted);
 }
 
 /* ---- Tab bar specimen ------------------------------------------------------ */

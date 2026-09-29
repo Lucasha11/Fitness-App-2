@@ -55,6 +55,8 @@ after — history, skips, snoozes, exclusions, sitting clock — reached via
 `useSession()`. Session mutations are pure `withX(session, …)` functions;
 `SessionProvider` is their only caller. Streaks and coverage are selectors over
 date-keyed records, not counters, so there is nothing to keep in sync.
+A day off in `activeDays` never breaks a streak; Today, the break player and
+Insights all read the same `currentStreak`.
 
 **`schedule.ts` is the single source of the day's plan.** Onboarding's preview
 and Today's timeline call the same functions. Change scheduling here, not in a
@@ -127,7 +129,9 @@ contributor accept a diff they did not read line by line.
   a reminder already pending still fires.
 - **Support links are placeholders.** `src/settings/links.ts` points at
   example.com until the real inbox, help site and privacy policy exist.
-- **Insights is disabled** - no designs exist. You opens Settings.
+- **Insights measures against today's goal.** History doesn't record the
+  daily goal a past day was planned against, so `insights/progress.ts` reads
+  every day by the current `dailyGoal`. Raising it re-shades old days.
 - **The library browses, it does not curate.** `library/catalogue.ts` groups
   the whole catalogue three ways; picking an axis replaces the shelves rather
   than filtering them. **Tapping a card plays that one move and nothing else**

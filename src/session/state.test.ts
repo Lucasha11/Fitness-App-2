@@ -10,7 +10,9 @@ import { describe, expect, it } from 'vitest';
 import {
   type CompletedBreak,
   type SessionState,
+  COVERAGE_GROUPS,
   activeExclusions,
+  bestStreak,
   currentStreak,
   dateKey,
   emptySession,
@@ -24,6 +26,7 @@ import {
   storedFavourites,
 } from './state';
 import { EXERCISE_DURATION_SECONDS } from '../exercises';
+import { BODY_REGION_ORDER } from '../onboarding/state';
 
 /** A date key `days` ago, for building history by hand. */
 function daysAgo(days: number): string {
@@ -125,22 +128,81 @@ describe('exclusions', () => {
   });
 });
 
+/** Monday to Friday, the default schedule. */
+const WEEKDAYS = [true, true, true, true, true, false, false];
+const EVERY_DAY = [true, true, true, true, true, true, true];
+
+/** A session with one break on each of the given dates. */
+function withHistoryOnDates(days: Date[]): SessionState {
+  const session = emptySession();
+  for (const day of days) session.history[dateKey(day)] = [aBreak()];
+  return session;
+}
+
+/** A day in September 2026: the 28th is a Monday. */
+function sept(day: number): Date {
+  return new Date(2026, 8, day, 12);
+}
+
 describe('the streak', () => {
   it('counts consecutive days that have a break', () => {
-    expect(currentStreak(withHistoryOn([0, 1, 2]))).toBe(3);
+    expect(currentStreak(withHistoryOn([0, 1, 2]), EVERY_DAY)).toBe(3);
   });
 
   it('survives today being empty, because the day is still in progress', () => {
     // Opening the app at 9am must not show a broken streak.
-    expect(currentStreak(withHistoryOn([1, 2]))).toBe(2);
+    expect(currentStreak(withHistoryOn([1, 2]), EVERY_DAY)).toBe(2);
   });
 
   it('breaks on a missed day that is not today', () => {
-    expect(currentStreak(withHistoryOn([0, 2, 3]))).toBe(1);
+    expect(currentStreak(withHistoryOn([0, 2, 3]), EVERY_DAY)).toBe(1);
   });
 
   it('is zero for a user who has never taken a break', () => {
-    expect(currentStreak(emptySession())).toBe(0);
+    expect(currentStreak(emptySession(), EVERY_DAY)).toBe(0);
+  });
+
+  it('steps over a weekend the user is not scheduled on, rather than breaking', () => {
+    const session = withHistoryOnDates([sept(24), sept(25), sept(28)]);
+    expect(currentStreak(session, WEEKDAYS, sept(28))).toBe(3);
+  });
+
+  it('still breaks on a scheduled day with no breaks', () => {
+    const session = withHistoryOnDates([sept(23), sept(25), sept(28)]);
+    expect(currentStreak(session, WEEKDAYS, sept(28))).toBe(2);
+  });
+
+  it('counts a break taken on a day off towards the streak', () => {
+    const session = withHistoryOnDates([sept(25), sept(26), sept(28)]);
+    expect(currentStreak(session, WEEKDAYS, sept(28))).toBe(3);
+  });
+});
+
+describe('the best streak', () => {
+  it('remembers the longest run after it has ended', () => {
+    const session = withHistoryOnDates([
+      sept(14), sept(15), sept(16), sept(17), sept(18),
+      sept(22), sept(28),
+    ]);
+    // The 21st was a scheduled Monday with no break, so the run of five ended.
+    expect(bestStreak(session, WEEKDAYS, sept(28))).toBe(5);
+    expect(currentStreak(session, WEEKDAYS, sept(28))).toBe(1);
+  });
+
+  it('is never shorter than the streak running now', () => {
+    const session = withHistoryOnDates([sept(24), sept(25), sept(28)]);
+    expect(bestStreak(session, WEEKDAYS, sept(28))).toBe(3);
+  });
+});
+
+describe('weekly coverage', () => {
+  it('sends every body area but low energy to exactly one coverage column', () => {
+    for (const region of BODY_REGION_ORDER) {
+      const columns = COVERAGE_GROUPS.filter((group) =>
+        (group.regions as readonly string[]).includes(region),
+      ).length;
+      expect(columns, region).toBe(region === 'lowEnergy' ? 0 : 1);
+    }
   });
 });
 

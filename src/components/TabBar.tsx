@@ -1,14 +1,12 @@
 import { ChartIcon, GridIcon, PersonIcon, TargetIcon } from './icons';
 import './tab-bar.css';
 
-/** The tabs that have a screen behind them. */
-export type Tab = 'today' | 'library' | 'you';
+export type Tab = 'today' | 'library' | 'insights' | 'you';
 
 const TABS = [
   { id: 'today', label: 'Today', icon: <TargetIcon size={20} /> },
   { id: 'library', label: 'Library', icon: <GridIcon size={20} /> },
-  // Section H: no designs exist yet, so this one stays visibly off.
-  { id: null, label: 'Insights', icon: <ChartIcon size={20} /> },
+  { id: 'insights', label: 'Insights', icon: <ChartIcon size={20} /> },
   { id: 'you', label: 'You', icon: <PersonIcon size={20} /> },
 ] as const;
 
@@ -26,36 +24,18 @@ export function TabBar({
 }) {
   return (
     <nav className="tabbar" aria-label="Main">
-      {TABS.map((tab) => {
-        if (tab.id === null) {
-          return (
-            <button
-              key={tab.label}
-              type="button"
-              className="tab"
-              aria-disabled="true"
-              disabled
-            >
-              {tab.icon}
-              <span className="tab__label">{tab.label}</span>
-            </button>
-          );
-        }
-
-        const id = tab.id;
-        return (
-          <button
-            key={tab.label}
-            type="button"
-            className="tab"
-            aria-current={current === id ? 'page' : undefined}
-            onClick={() => onSelect(id)}
-          >
-            {tab.icon}
-            <span className="tab__label">{tab.label}</span>
-          </button>
-        );
-      })}
+      {TABS.map((tab) => (
+        <button
+          key={tab.id}
+          type="button"
+          className="tab"
+          aria-current={current === tab.id ? 'page' : undefined}
+          onClick={() => onSelect(tab.id)}
+        >
+          {tab.icon}
+          <span className="tab__label">{tab.label}</span>
+        </button>
+      ))}
     </nav>
   );
 }

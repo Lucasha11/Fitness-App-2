@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { CoachProvider } from './components/CoachProvider';
 import type { Tab } from './components/TabBar';
 import type { Exercise } from './exercises';
+import { Insights } from './insights/Insights';
 import { Library } from './library/Library';
 import { OnboardingFlow } from './onboarding/OnboardingFlow';
 import { loadState, saveState, type OnboardingState } from './onboarding/state';
@@ -17,6 +18,7 @@ type View =
   | { name: 'onboarding' }
   | { name: 'today' }
   | { name: 'library' }
+  | { name: 'insights' }
   | { name: 'settings' }
   | { name: 'player'; lead: Exercise; slot: number | null; length?: number }
   | { name: 'lockScreen' };
@@ -56,6 +58,7 @@ function Root() {
   const selectTab = useCallback((tab: Tab) => {
     if (tab === 'you') return setView({ name: 'settings' });
     if (tab === 'library') return setView({ name: 'library' });
+    if (tab === 'insights') return setView({ name: 'insights' });
     setView({ name: 'today' });
   }, []);
 
@@ -122,6 +125,10 @@ function Root() {
       return (
         <Library onStartExercise={startExercise} onSelectTab={selectTab} />
       );
+    }
+
+    if (view.name === 'insights') {
+      return <Insights answers={answers} onSelectTab={selectTab} />;
     }
 
     if (view.name === 'settings') {

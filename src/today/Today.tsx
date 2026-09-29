@@ -30,6 +30,7 @@ import { poseForSet, tintFor } from '../player/poses';
 import { type BreakSlot, buildDay, nextBreak, pickExercises } from '../schedule';
 import { useSession } from '../session/context';
 import {
+  COVERAGE_GROUPS,
   breaksThisWeek,
   breaksToday,
   currentStreak,
@@ -78,7 +79,7 @@ export function Today({ answers, onStartBreak, onSelectTab }: TodayProps) {
 
   const done = breaksToday(session).length;
   const goal = answers.dailyGoal;
-  const streak = currentStreak(session);
+  const streak = currentStreak(session, answers.activeDays, now);
   const sitting = sittingMinutes(session, answers, now.getTime());
   /**
    * How long a break takes at the length the user last chose on the start
@@ -666,15 +667,6 @@ function TimelineRow({
 /* ------------------------------------------------------------------ */
 /* Weekly coverage                                                     */
 /* ------------------------------------------------------------------ */
-
-/** The five columns the design shows, and which body areas feed each. */
-const COVERAGE_GROUPS = [
-  { label: 'Neck', regions: ['neck'] },
-  { label: 'Back', regions: ['upperBack', 'lowerBack', 'shoulders'] },
-  { label: 'Wrists', regions: ['wrists'] },
-  { label: 'Hips', regions: ['hips'] },
-  { label: 'Eyes', regions: ['eyes'] },
-] as const;
 
 function Coverage() {
   const coach = useCoachNoun();

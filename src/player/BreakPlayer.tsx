@@ -421,7 +421,7 @@ export function BreakPlayer({
         doneToday={breaksToday(session).length}
         goal={answers.dailyGoal}
         movedSeconds={movedSecondsToday(session)}
-        streak={currentStreak(session)}
+        streak={currentStreak(session, answers.activeDays)}
         onDone={onExit}
         onOneMore={() => {
           const next = pickExercises(answers, 1, session)[0];

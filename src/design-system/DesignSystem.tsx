@@ -32,6 +32,25 @@ import {
 import '../onboarding/onboarding.css';
 import { ClockTimer, LinearTimer } from '../player/timers';
 import { TabBar } from '../components/TabBar';
+import { ChairCard, DayDetail, MilestoneGrid, MonthCalendar, StreakTiles } from '../insights/cards';
+import {
+  dayLevel,
+  dayScore,
+  firstDay,
+  milestones,
+  monthDays,
+  weeksOnTarget,
+} from '../insights/progress';
+import { type BodyRegion, initialState } from '../onboarding/state';
+import {
+  type SessionState,
+  bestStreak,
+  currentStreak,
+  dateKey,
+  emptySession,
+  fromDateKey,
+  isDayOff,
+} from '../session/state';
 import '../today/today.css';
 import './design-system.css';
 import {
@@ -752,71 +771,94 @@ function Progress() {
   );
 }
 
-const CALENDAR = [
-  { day: 17, state: 'met' },
-  { day: 18, state: 'partial' },
-  { day: 19, state: 'rest' },
-  { day: 20, state: 'met', today: true },
-  { day: 21, state: 'met' },
-  { day: 22, state: 'future' },
-  { day: 23, state: 'future' },
-] as const;
+/*
+ * A made-up September, run through the same selectors the app uses, so the
+ * specimens below are the real components drawing the real rules.
+ */
+const SAMPLE_NOW = new Date(2026, 8, 24, 14, 50);
+const SAMPLE_SCHEDULE = {
+  ...initialState,
+  completedAt: new Date(2026, 8, 1).toISOString(),
+};
+const SAMPLE_REGIONS: BodyRegion[] = ['neck', 'hips', 'lowerBack', 'wrists', 'eyes', 'shoulders'];
+/** Breaks per day from the 1st; the last entry is "today", part-way through. */
+const SAMPLE_COUNTS = [6, 4, 6, 3, 0, 0, 6, 6, 0, 5, 6, 0, 0, 6, 6, 4, 6, 6, 0, 0, 6, 5, 6, 4];
 
-const LEGEND = [
-  { label: 'Goal met', color: 'var(--accent)' },
-  { label: 'Partial', color: 'var(--lime)' },
-  { label: 'Rest', color: 'var(--fill)' },
-];
-
-const STATS = [
-  { value: '7', label: 'DAY STREAK' },
-  { value: '12', label: 'BEST STREAK' },
-  { value: '18', label: 'GOALS MET' },
-];
+function sampleSession(): SessionState {
+  const session = emptySession();
+  SAMPLE_COUNTS.forEach((count, index) => {
+    if (count === 0) return;
+    session.history[dateKey(new Date(2026, 8, index + 1))] = Array.from(
+      { length: count },
+      (_, n) => ({
+        exerciseId: 'neck-rolls',
+        region: SAMPLE_REGIONS[(index + n) % SAMPLE_REGIONS.length],
+        // Lunch is a gap, so one hour goes to the chair.
+        at: 9 * 60 + 35 + n * 70 + (n >= 3 ? 60 : 0),
+        slot: null,
+        seconds: 180,
+      }),
+    );
+  });
+  return session;
+}
 
 function Stats() {
+  const [session] = useState(sampleSession);
+  const [picked, setPicked] = useState(() => dateKey(new Date(2026, 8, 22)));
+  const minutes = SAMPLE_NOW.getHours() * 60 + SAMPLE_NOW.getMinutes();
+  const pickedDate = fromDateKey(picked);
+  const pickedBreaks = session.history[picked] ?? [];
+  const isToday = picked === dateKey(SAMPLE_NOW);
+
   return (
     <Section
       id="stats"
       title="Streaks & stats"
-      intro="A four-tone system marks calendar completion: goal met, partial, rest, and future."
+      intro="Insights reads the history four ways: the day as a contest with the chair, the streaks it feeds, the month as a calendar, and milestones. Sitting is grey-green and an empty scheduled day is 'quiet': progress is never drawn in red."
     >
-      <div className="ds__calendar">
-        {CALENDAR.map((entry) => (
-          <span
-            key={entry.day}
-            className="ds__day"
-            data-state={entry.state}
-            data-today={'today' in entry ? true : undefined}
-          >
-            {entry.day}
-          </span>
-        ))}
-      </div>
-
-      <div className="ds__legend">
-        {LEGEND.map((item) => (
-          <span key={item.label} className="ds__legend-item">
-            <span className="ds__legend-dot" style={{ background: item.color }} />
-            {item.label}
-          </span>
-        ))}
-      </div>
-
-      <div className="ds__grid ds__grid--3" style={{ maxWidth: 420 }}>
-        {STATS.map((stat) => (
-          <div key={stat.label} className="ds__stat">
-            <div className="ds__stat-value">{stat.value}</div>
-            <div className="ds__stat-label">{stat.label}</div>
-          </div>
-        ))}
+      <div className="ds__insights">
+        <div className="ds__stack">
+          <ChairCard
+            score={dayScore(SAMPLE_SCHEDULE, session.history[dateKey(SAMPLE_NOW)] ?? [], minutes)}
+            goal={SAMPLE_SCHEDULE.dailyGoal}
+            now={minutes}
+            dayOff={false}
+          />
+          <StreakTiles
+            current={currentStreak(session, SAMPLE_SCHEDULE.activeDays, SAMPLE_NOW)}
+            best={bestStreak(session, SAMPLE_SCHEDULE.activeDays, SAMPLE_NOW)}
+            weeksOnTarget={weeksOnTarget(session, SAMPLE_SCHEDULE, SAMPLE_NOW)}
+            hasDaysOff
+          />
+        </div>
+        <div className="ds__stack">
+          <MonthCalendar
+            month={new Date(2026, 8, 1)}
+            days={monthDays(session, SAMPLE_SCHEDULE, 2026, 8, SAMPLE_NOW)}
+            selectedKey={picked}
+            onSelect={(day) => setPicked(day.key)}
+          />
+          <DayDetail
+            date={pickedDate}
+            level={dayLevel(pickedBreaks.length, SAMPLE_SCHEDULE.dailyGoal, pickedDate, {
+              today: SAMPLE_NOW,
+              start: firstDay(session, SAMPLE_SCHEDULE),
+              dayOff: isDayOff(pickedDate, SAMPLE_SCHEDULE.activeDays),
+            })}
+            breaks={pickedBreaks}
+            goal={SAMPLE_SCHEDULE.dailyGoal}
+            score={dayScore(SAMPLE_SCHEDULE, pickedBreaks, isToday ? minutes : null)}
+          />
+        </div>
+        <MilestoneGrid milestones={milestones(session, SAMPLE_SCHEDULE, SAMPLE_NOW)} />
       </div>
 
       <p className="ds__note">
-        Today&rsquo;s weekly body-coverage strip uses the same three-step
-        intensity: accent for twice or more, lime for once, muted for untouched.
-        The calendar itself belongs to Insights
-        <Status built={false}>Section H, not built</Status>.
+        The calendar&rsquo;s shades are the accent mixed into the surface at
+        100, 45 and 18 percent. A day off, or a day before setup, is left blank
+        rather than marked. Whole body week uses the same five columns as
+        Today&rsquo;s weekly coverage strip.
       </p>
     </Section>
   );
@@ -834,9 +876,8 @@ function Navigation() {
       </div>
       <p className="ds__note">
         The raised centre button is the most important control in the app: one
-        tap starts a break from anywhere, with no intermediate screen. Library and
-        Insights are disabled until those sections exist
-        <Status built={false}>Sections D, H</Status>. You opens Settings.
+        tap starts a break from anywhere, with no intermediate screen. Every tab
+        has a screen behind it; You opens Settings.
       </p>
     </Section>
   );

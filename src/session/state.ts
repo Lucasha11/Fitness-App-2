@@ -234,24 +234,104 @@ export function activeExclusions(
   };
 }
 
-/** Consecutive days ending today with at least one break. */
-export function currentStreak(session: SessionState): number {
-  const cursor = new Date();
+/** `YYYY-MM-DD` back to local midnight on that day. */
+export function fromDateKey(key: string): Date {
+  const [year, month, day] = key.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+/**
+ * Whether the user's schedule leaves this day free. `activeDays` is Monday
+ * first, as A8 draws it; `Date#getDay` is Sunday first.
+ */
+export function isDayOff(date: Date, activeDays: boolean[]): boolean {
+  return !activeDays[(date.getDay() + 6) % 7];
+}
+
+function breaksOn(session: SessionState, date: Date): number {
+  return (session.history[dateKey(date)] ?? []).length;
+}
+
+/** The earliest day with a break on it, or null before the first break. */
+export function firstBreakDay(session: SessionState): Date | null {
+  const keys = Object.keys(session.history)
+    .filter((key) => session.history[key].length > 0)
+    .sort();
+  return keys.length > 0 ? fromDateKey(keys[0]) : null;
+}
+
+/**
+ * Consecutive days ending today with at least one break.
+ *
+ * A day off in the user's schedule is stepped over rather than counted as a
+ * miss: nobody should lose a streak to a weekend they never asked to be
+ * nudged on. A break taken on a day off still counts towards it.
+ */
+export function currentStreak(
+  session: SessionState,
+  activeDays: boolean[],
+  now: Date = new Date(),
+): number {
+  const first = firstBreakDay(session);
+  if (!first) return 0;
+
+  const cursor = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   let streak = 0;
 
-  // A day still in progress shouldn't break the streak, so start counting at
-  // today and allow the first miss only if it is today.
-  for (let day = 0; day < 400; day += 1) {
-    const done = (session.history[dateKey(cursor)] ?? []).length > 0;
-    if (done) {
+  // A day still in progress shouldn't break the streak, so today may be
+  // empty without ending it.
+  for (let day = 0; cursor >= first; day += 1) {
+    if (breaksOn(session, cursor) > 0) {
       streak += 1;
-    } else if (day > 0) {
+    } else if (day > 0 && !isDayOff(cursor, activeDays)) {
       break;
     }
     cursor.setDate(cursor.getDate() - 1);
   }
 
   return streak;
+}
+
+/** The longest streak ever held, by the same rules as `currentStreak`. */
+export function bestStreak(
+  session: SessionState,
+  activeDays: boolean[],
+  now: Date = new Date(),
+): number {
+  const first = firstBreakDay(session);
+  if (!first) return 0;
+
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let run = 0;
+  let best = 0;
+  for (const cursor = new Date(first); cursor <= today; cursor.setDate(cursor.getDate() + 1)) {
+    if (breaksOn(session, cursor) > 0) {
+      run += 1;
+      best = Math.max(best, run);
+    } else if (cursor < today && !isDayOff(cursor, activeDays)) {
+      run = 0;
+    }
+  }
+  return best;
+}
+
+/**
+ * The five columns of the weekly body-coverage strip, and which body areas
+ * feed each. Low energy is a mood, not a place, so it feeds none.
+ */
+export const COVERAGE_GROUPS = [
+  { label: 'Neck', regions: ['neck'] },
+  { label: 'Back', regions: ['upperBack', 'lowerBack', 'shoulders'] },
+  { label: 'Wrists', regions: ['wrists'] },
+  { label: 'Hips', regions: ['hips'] },
+  { label: 'Eyes', regions: ['eyes'] },
+] as const satisfies readonly { label: string; regions: readonly BodyRegion[] }[];
+
+/** The coverage column a body area feeds, or -1 for one that feeds none. */
+export function coverageGroupOf(region: BodyRegion): number {
+  return COVERAGE_GROUPS.findIndex((group) =>
+    (group.regions as readonly BodyRegion[]).includes(region),
+  );
 }
 
 /**
