@@ -1,19 +1,19 @@
 import { Mascot } from '../../components/Mascot';
 import {
   Button,
-  ProgressBar,
   Screen,
   ScreenFooter,
   TextButton,
 } from '../../components/ui';
 import { requestReminderPermission } from '../../reminders/notifications';
-import { PROGRESS, type StepProps } from '../types';
+import { StepHeader } from '../chrome';
+import type { StepProps } from '../types';
 
 /**
  * Permission priming: the mocked notification does the explaining, and only
  * the primary CTA reaches for the real system prompt.
  */
-export function A11Notifications({ set, next }: StepProps) {
+export function Notifications({ set, next, back }: StepProps) {
   const enable = async () => {
     // Through the notifications plugin rather than the browser's own API,
     // which the iOS web view does not have: there, asking that way was a
@@ -24,10 +24,10 @@ export function A11Notifications({ set, next }: StepProps) {
   };
 
   return (
-    <Screen labelledBy="a11-title">
-      <ProgressBar percent={PROGRESS.A11 ?? 0} />
+    <Screen labelledBy="notifications-title">
+      <StepHeader step="notifications" onBack={back} />
 
-      <h1 className="title" id="a11-title">
+      <h1 className="title title--step" id="notifications-title">
         This is the whole app, really
       </h1>
       <p className="subtitle subtitle--lg">

@@ -24,11 +24,11 @@ import {
   Button,
   Chip,
   LinkRow,
-  ProgressBar,
   Segmented,
   TextButton,
   ToggleRow,
 } from '../components/ui';
+import { CoachSays, ScorePill, StepHeader } from '../onboarding/chrome';
 import '../onboarding/onboarding.css';
 import { ClockTimer, LinearTimer } from '../player/timers';
 import { TabBar } from '../components/TabBar';
@@ -355,7 +355,8 @@ function Shape() {
       <p className="ds__note">
         Two gradients carry the brand: <code>--header-gradient</code> at 135°
         behind Today&rsquo;s header, and <code>--warm-gradient</code> at 165°
-        for full-screen moments like A1 and the break-complete screen.
+        for full-screen moments like onboarding&rsquo;s hook and the
+        break-complete screen.
       </p>
     </Section>
   );
@@ -491,7 +492,7 @@ function Iconography() {
         rolls), the player plays it instead: a looping animated WebP driven
         from the pose&rsquo;s own drawing, held on its first frame while
         paused. The coach is held in one context, so a screen can never
-        mix species. The squirrel is retired for now, and A1b&rsquo;s picker
+        mix species. The squirrel is retired for now, and the coach picker
         with it, but both sets still carry every pose, and <code>Mascot</code> will not compile until a new pose is
         drawn for each. Adding an animal means an entry in
         <code>COACH_PROFILES</code> and its art; the carousel, its pager and
@@ -731,7 +732,7 @@ function Progress() {
     <Section
       id="progress"
       title="Progress & rings"
-      intro="Three shapes, each with a job: the segmented goal ring counts breaks, the clock timer counts an exercise down on the grove, and a flat bar carries anything nested in a row."
+      intro="Four shapes, each with a job: the segmented goal ring counts breaks, the clock timer counts an exercise down on the grove, a flat bar carries anything nested in a row, and the trail walks setup's four chapters, with the score it plays for."
     >
       <div className="ds__on-gradient" style={{ marginBottom: 16 }}>
         <GoalRing done={3} goal={6} />
@@ -750,20 +751,21 @@ function Progress() {
       </div>
 
       <div className="ds__progress">
-        <div className="ds__bar-block">
-          <div className="ds__bar-labels">
-            <span>Setup progress</span>
-            <span className="ds__bar-left">62%</span>
-          </div>
-          <ProgressBar percent={62} />
+        <div className="ds__trail">
+          <StepHeader step="schedule" onBack={() => {}} />
         </div>
+        <ScorePill you={1} chair={1} />
+        <ScorePill you={5} chair={3} />
+      </div>
+
+      <div className="ds__trail" style={{ marginTop: 20 }}>
+        <CoachSays pose="sit">We&rsquo;ll nudge you Monday to Friday, 9:00 AM to 5:30 PM.</CoachSays>
       </div>
 
       <p className="ds__note">
         The goal ring is drawn one arc per break rather than as a continuous
         sweep, so a completed break is visibly its own segment — the geometry
-        lives in <code>components/goal-ring.ts</code> and is shared by
-        Today&rsquo;s header and the A10 stepper. The timer rings are SVG
+        lives in <code>components/goal-ring.ts</code>. The timer rings are SVG
         strokes, not conic gradients, because they animate a single value and
         need a rounded cap.
       </p>
@@ -968,12 +970,12 @@ const EXTENSIONS = [
   {
     title: 'Schedule editor & day toggles',
     built: true,
-    body: 'A8 reuses the day-cell chip pattern for the weekly picker rather than a checkbox row, and pairs it with two tappable time cards over native pickers.',
+    body: 'The schedule screen reuses the day-cell chip pattern for the weekly picker rather than a checkbox row, and pairs it with two tappable time cards over native pickers.',
   },
   {
     title: 'Still missing from the brief’s Section L',
     built: false,
-    body: 'Segmented control, stepper-with-ring, toggle row and sheet header now exist. Slider with labelled stops, empty-state block, and info/success banner tones are still unbuilt — design each once, add it here, then reuse.',
+    body: 'Segmented control, toggle row, sheet header and the setup trail now exist. Slider with labelled stops, empty-state block, and info/success banner tones are still unbuilt — design each once, add it here, then reuse.',
   },
 ];
 

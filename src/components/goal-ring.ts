@@ -2,8 +2,8 @@
  * Segmented ring geometry.
  *
  * One arc per break: 62 units drawn, 28 units of gap, on a normalised path.
- * The geometry is identical whether the goal is 2 breaks or 12, and B1's daily
- * ring and A10's stepper ring are the same recipe at different sizes.
+ * The geometry is identical whether the goal is 2 breaks or 12, so the ring
+ * reads the same at any daily goal.
  */
 
 const SEGMENT_DRAWN = 62;

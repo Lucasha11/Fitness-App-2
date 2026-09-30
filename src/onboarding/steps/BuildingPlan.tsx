@@ -3,7 +3,7 @@ import { CheckIcon } from '../../components/icons';
 import { useCoachNoun } from '../../components/coach';
 import { Mascot } from '../../components/Mascot';
 import { Screen } from '../../components/ui';
-import { BODY_REGION_LABELS } from '../state';
+import type { Visibility } from '../state';
 import type { StepProps } from '../types';
 
 /** How long each status line stays on screen before the next one ticks over. */
@@ -19,23 +19,27 @@ const WEEKDAY_NAMES = [
   'Sundays',
 ];
 
-export function A14BuildingPlan({ state, next }: StepProps) {
+/** How the first line describes the room the moves have to fit. */
+const ROOM: Record<Visibility, string> = {
+  private: 'a room of your own',
+  some: 'a shared room',
+  open: 'an open office',
+};
+
+export function BuildingPlan({ state, next }: StepProps) {
   // The lines name the user's own answers, so the wait reads as work being
   // done for them rather than as a generic spinner.
   const lines = useMemo(() => {
-    const focus = state.bothers[0]
-      ? BODY_REGION_LABELS[state.bothers[0]].toLowerCase()
-      : 'stiff afternoons';
     const firstActive = state.activeDays.findIndex(Boolean);
     const weekday =
       firstActive === -1 ? 'week' : WEEKDAY_NAMES[firstActive];
 
     return [
-      `Picking exercises for your ${focus}…`,
-      `Reading your ${weekday}…`,
+      `Picking moves for ${ROOM[state.visibility]}…`,
+      `Fitting them around your ${weekday}…`,
       'Hiding the ones you’d hate…',
     ];
-  }, [state.bothers, state.activeDays]);
+  }, [state.visibility, state.activeDays]);
 
   const [done, setDone] = useState(0);
 
@@ -58,7 +62,7 @@ export function A14BuildingPlan({ state, next }: StepProps) {
   const percent = Math.min(100, ((done + 0.6) / lines.length) * 100);
 
   return (
-    <Screen tone="warm" className="build" labelledBy="a14-title">
+    <Screen tone="warm" className="build" labelledBy="building-title">
       <div className="bob">
         <Mascot
           name="armsout"
@@ -67,7 +71,7 @@ export function A14BuildingPlan({ state, next }: StepProps) {
         />
       </div>
 
-      <h1 className="build__title" id="a14-title">
+      <h1 className="build__title" id="building-title">
         Building your plan
       </h1>
 

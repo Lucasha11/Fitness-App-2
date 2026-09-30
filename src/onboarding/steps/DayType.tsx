@@ -10,57 +10,59 @@ import {
 } from '../../components/icons';
 import {
   Button,
-  ProgressBar,
   Screen,
   ScreenBody,
   ScreenFooter,
   Spacer,
 } from '../../components/ui';
-import type { DayType } from '../state';
-import { PROGRESS, type StepProps } from '../types';
+import { CoachSays, StepHeader } from '../chrome';
+import { DAY_TYPE_LINES } from '../reactions';
+import { DAY_TYPE_LABELS, DAY_TYPE_ORDER, type DayType } from '../state';
+import type { StepProps } from '../types';
 
-const OPTIONS: { value: DayType; label: string; icon: ReactNode }[] = [
-  { value: 'desk', label: 'Desk job', icon: <MonitorIcon /> },
-  { value: 'hybrid', label: 'Hybrid', icon: <HomeIcon /> },
-  { value: 'driver', label: 'Driver', icon: <CarIcon /> },
-  { value: 'student', label: 'Student', icon: <GraduationIcon /> },
-  { value: 'shift', label: 'Shift work', icon: <ClockIcon /> },
-  { value: 'home', label: 'Mostly home', icon: <SofaIcon /> },
-];
+const ICONS: Record<DayType, ReactNode> = {
+  desk: <MonitorIcon />,
+  hybrid: <HomeIcon />,
+  driver: <CarIcon />,
+  student: <GraduationIcon />,
+  shift: <ClockIcon />,
+  home: <SofaIcon />,
+};
 
-export function A3DayType({ state, set, next }: StepProps) {
+export function DayTypeStep({ state, set, next, back }: StepProps) {
   return (
-    <Screen labelledBy="a3-title">
-      <ProgressBar percent={PROGRESS.A3 ?? 0} />
+    <Screen labelledBy="daytype-title">
+      <StepHeader step="dayType" onBack={back} />
 
       <ScreenBody>
-        <h1 className="title" id="a3-title">
+        <h1 className="title title--step" id="daytype-title">
           What does your day look like?
         </h1>
         <p className="subtitle">Pick the closest one. You can change it later.</p>
 
         <div className="option-grid">
-          {OPTIONS.map((option) => {
-            const selected = state.dayType === option.value;
+          {DAY_TYPE_ORDER.map((dayType) => {
+            const selected = state.dayType === dayType;
             return (
               <button
-                key={option.value}
+                key={dayType}
                 type="button"
                 className="option"
                 aria-pressed={selected}
-                onClick={() => set({ dayType: option.value })}
+                onClick={() => set({ dayType })}
               >
                 <span className="option__head">
-                  {option.icon}
+                  {ICONS[dayType]}
                   {selected ? <CheckIcon size={20} /> : null}
                 </span>
-                <span className="option__label">{option.label}</span>
+                <span className="option__label">{DAY_TYPE_LABELS[dayType]}</span>
               </button>
             );
           })}
         </div>
 
         <Spacer />
+        <CoachSays pose="hips">{DAY_TYPE_LINES[state.dayType ?? 'none']}</CoachSays>
       </ScreenBody>
 
       <ScreenFooter>

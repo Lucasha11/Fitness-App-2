@@ -1,14 +1,16 @@
 /**
- * Where Settings sends people for help and for the legal pages.
+ * Where Settings and the paywall send people for help and the legal pages.
  *
  * PLACEHOLDERS. These point at example.com (reserved, so they can never reach
- * a stranger) until the real support inbox, help site and privacy policy
- * exist. App Review follows every one of them: replace all three before
+ * a stranger) until the real support inbox, help site, privacy policy and
+ * terms exist. App Review follows every one of them: replace them all before
  * submitting, and use the same URLs in App Store Connect.
  */
 export const SUPPORT_EMAIL = 'support@example.com';
 export const SUPPORT_URL = 'https://example.com/support';
 export const PRIVACY_POLICY_URL = 'https://example.com/privacy';
+/** The paywall links here, and App Review requires it for subscriptions. */
+export const TERMS_URL = 'https://example.com/terms';
 
 /**
  * A `mailto:` link with the version filled in, so the first reply can be

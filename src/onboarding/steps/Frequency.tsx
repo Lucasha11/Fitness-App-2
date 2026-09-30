@@ -1,6 +1,5 @@
 import {
   Button,
-  ProgressBar,
   Screen,
   ScreenBody,
   ScreenFooter,
@@ -14,7 +13,9 @@ import {
   previewOffsets,
   type Interval,
 } from '../state';
-import { PROGRESS, type StepProps } from '../types';
+import { CoachSays, StepHeader } from '../chrome';
+import { INTERVAL_LINES } from '../reactions';
+import type { StepProps } from '../types';
 
 const INTERVALS: { value: Interval; label: string }[] = [
   { value: 30, label: '30m' },
@@ -23,7 +24,7 @@ const INTERVALS: { value: Interval; label: string }[] = [
   { value: 90, label: '90m' },
 ];
 
-export function A9Frequency({ state, set, next }: StepProps) {
+export function Frequency({ state, set, next, back }: StepProps) {
   const isAuto = state.interval === 'auto';
   const breaks = breaksPerDay(state);
   const minutes = movementMinutes(breaks);
@@ -33,11 +34,11 @@ export function A9Frequency({ state, set, next }: StepProps) {
   );
 
   return (
-    <Screen labelledBy="a9-title">
-      <ProgressBar percent={PROGRESS.A9 ?? 0} />
+    <Screen labelledBy="frequency-title">
+      <StepHeader step="frequency" onBack={back} />
 
       <ScreenBody>
-        <h1 className="title" id="a9-title">
+        <h1 className="title title--step" id="frequency-title">
           How often should we nudge?
         </h1>
 
@@ -88,6 +89,7 @@ export function A9Frequency({ state, set, next }: StepProps) {
         </div>
 
         <Spacer />
+        <CoachSays pose="wave">{INTERVAL_LINES[state.interval]}</CoachSays>
       </ScreenBody>
 
       <ScreenFooter>

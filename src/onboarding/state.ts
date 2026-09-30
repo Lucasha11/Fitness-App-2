@@ -1,13 +1,17 @@
 /**
  * The onboarding answer sheet.
  *
- * Every screen in Onboarding.dc.html writes into this object and nothing else,
- * so "what did the user tell us" is a single serialisable value that the rest
- * of the app (the scheduler, the exercise picker) can read later.
+ * Every setup screen writes into this object and nothing else, so "what did
+ * the user tell us" is a single serialisable value that the rest of the app
+ * (the scheduler, the exercise picker) can read later.
  */
 
 import { availableCoach, type Coach } from '../components/coach';
 import { BREAK_DURATION_SECONDS } from '../exercises';
+import type { PlanId } from '../purchases/plans';
+
+/** The answer to "How long did you sit yesterday?", as the four tiles ask it. */
+export type SittingBand = 'under4' | '4to6' | '6to8' | '8plus';
 
 export type DayType = 'desk' | 'hybrid' | 'driver' | 'student' | 'shift' | 'home';
 
@@ -38,14 +42,20 @@ export type Interval = 30 | 45 | 60 | 90 | 'auto';
 export type AccountChoice = 'apple' | 'email' | 'local';
 
 export interface OnboardingState {
+  sittingBand: SittingBand | null;
   dayType: DayType | null;
-  /** Which animal coaches the user, picked on A1. */
+  /** Which animal coaches the user, picked on the coach screen. */
   coach: Coach;
+  /**
+   * Body areas to favour. Setup no longer asks for these, so a new sheet
+   * keeps it empty and the scheduler draws on the whole catalogue; a sheet
+   * saved before the redesign keeps the areas it chose.
+   */
   bothers: BodyRegion[];
   visibility: Visibility;
   intensity: Intensity;
   adaptations: Record<Adaptation, boolean>;
-  /** Index 0 is Monday, index 6 is Sunday — the M T W T F S S row in A8. */
+  /** Index 0 is Monday, index 6 is Sunday — the M T W T F S S row. */
   activeDays: boolean[];
   /** Minutes from midnight. */
   startMinutes: number;
@@ -56,11 +66,14 @@ export interface OnboardingState {
   useMotion: boolean;
   saveToHealth: boolean;
   account: AccountChoice | null;
+  /** The plan bought on the paywall; null until then. */
+  plan: PlanId | null;
   completedAt: string | null;
 }
 
 /** Every default here is the value the design shows in its "resting" state. */
 export const initialState: OnboardingState = {
+  sittingBand: null,
   dayType: null,
   coach: 'panda',
   bothers: [],
@@ -82,10 +95,9 @@ export const initialState: OnboardingState = {
   useMotion: true,
   saveToHealth: false,
   account: null,
+  plan: null,
   completedAt: null,
 };
-
-export const MAX_BOTHERS = 4;
 
 export const BODY_REGION_LABELS: Record<BodyRegion, string> = {
   neck: 'Neck',
@@ -98,7 +110,7 @@ export const BODY_REGION_LABELS: Record<BodyRegion, string> = {
   lowEnergy: 'Low energy',
 };
 
-/** Chip order as drawn in A5. */
+/** Head to feet, the order every list of body areas uses. */
 export const BODY_REGION_ORDER: BodyRegion[] = [
   'neck',
   'shoulders',
@@ -124,6 +136,24 @@ export const ADAPTATION_ORDER: Adaptation[] = [
   'wristLimited',
   'avoidFloor',
   'avoidOverhead',
+];
+
+export const DAY_TYPE_LABELS: Record<DayType, string> = {
+  desk: 'Desk job',
+  hybrid: 'Hybrid',
+  driver: 'Driver',
+  student: 'Student',
+  shift: 'Shift work',
+  home: 'Mostly home',
+};
+
+export const DAY_TYPE_ORDER: DayType[] = [
+  'desk',
+  'hybrid',
+  'driver',
+  'student',
+  'shift',
+  'home',
 ];
 
 export const DAY_INITIALS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
@@ -152,7 +182,7 @@ export function formatTime(minutes: number): string {
   return `${hour12}:${String(minute).padStart(2, '0')} ${suffix}`;
 }
 
-/** The three columns of the A8 time wheels. */
+/** The three columns of the schedule screen's time wheels. */
 export interface ClockParts {
   /** 12 for both noon and midnight, as the wheel reads it. */
   hour12: number;
@@ -207,7 +237,7 @@ export function movementMinutes(breaks: number): number {
 }
 
 /**
- * The live sentence under the day/time pickers in A8, e.g.
+ * The live sentence under the schedule screen's pickers, e.g.
  * "We'll nudge you Monday to Friday, 9:00 AM to 5:30 PM."
  */
 export function scheduleSentence(state: OnboardingState): string {
@@ -244,13 +274,70 @@ export function scheduleSentence(state: OnboardingState): string {
   return `We’ll nudge you ${list}, ${window}.`;
 }
 
-/** Evenly spaced nudge positions as percentages, for the A9 preview rail. */
+/** Evenly spaced nudge positions as percentages, for the frequency rail. */
 export function previewOffsets(count: number): number[] {
   if (count <= 1) return [50];
   const first = 2;
   const last = 90;
   const gap = (last - first) / (count - 1);
   return Array.from({ length: count }, (_, index) => first + index * gap);
+}
+
+/* ------------------------------------------------------------------ */
+/* You vs. The Chair                                                   */
+/* ------------------------------------------------------------------ */
+
+export const SITTING_BAND_ORDER: SittingBand[] = ['under4', '4to6', '6to8', '8plus'];
+
+export const SITTING_BANDS: Record<
+  SittingBand,
+  { label: string; tag: string; hours: number }
+> = {
+  // `hours` is what the chair is scored for a day in the band: the middle of
+  // a closed band, and the floor of the open one, so the score the user is
+  // asked to beat is never inflated.
+  under4: { label: 'Under 4', tag: 'Light', hours: 3 },
+  '4to6': { label: '4 – 6', tag: 'Typical', hours: 5 },
+  '6to8': { label: '6 – 8', tag: 'Heavy', hours: 7 },
+  '8plus': { label: '8+', tag: 'Chair-bound', hours: 8 },
+};
+
+/** A working year: 52 weeks of five days, less holidays and time off. */
+export const WORKDAYS_A_YEAR = 240;
+
+/** The chair's opening score: a year of the user's sitting, in hours. */
+export function chairHoursPerYear(band: SittingBand): number {
+  return SITTING_BANDS[band].hours * WORKDAYS_A_YEAR;
+}
+
+/** The same year as whole days, for the headline under the scoreboard. */
+export function chairDaysPerYear(band: SittingBand): number {
+  return Math.round(chairHoursPerYear(band) / 24);
+}
+
+/* ------------------------------------------------------------------ */
+/* Daily goal tiers                                                    */
+/* ------------------------------------------------------------------ */
+
+export type GoalTier = 'easy' | 'steady' | 'slayer';
+
+export const GOAL_TIERS: {
+  id: GoalTier;
+  name: string;
+  goal: number;
+  note: string;
+}[] = [
+  { id: 'easy', name: 'Easy going', goal: 4, note: 'Dip a toe in' },
+  { id: 'steady', name: 'Steady', goal: 6, note: 'Where most people start' },
+  { id: 'slayer', name: 'Chair slayer', goal: 8, note: 'For the truly restless' },
+];
+
+/**
+ * The tier a daily goal belongs to. A goal between tiers (one saved before
+ * the tiers existed) matches none, so no tile claims a goal it doesn't set.
+ */
+export function tierForGoal(goal: number): GoalTier | null {
+  return GOAL_TIERS.find((tier) => tier.goal === goal)?.id ?? null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -284,13 +371,5 @@ export function saveState(state: OnboardingState): void {
   } catch {
     // Private browsing or a full quota: onboarding still works, it just
     // won't survive a reload. Not worth interrupting the flow over.
-  }
-}
-
-export function clearState(): void {
-  try {
-    window.localStorage.removeItem(STORAGE_KEY);
-  } catch {
-    // Same as above.
   }
 }

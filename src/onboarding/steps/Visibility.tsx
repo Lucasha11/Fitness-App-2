@@ -2,14 +2,15 @@ import { CheckIcon } from '../../components/icons';
 import { Mascot, type MascotName } from '../../components/Mascot';
 import {
   Button,
-  ProgressBar,
   Screen,
   ScreenBody,
   ScreenFooter,
   Spacer,
 } from '../../components/ui';
+import { CoachSays, StepHeader } from '../chrome';
+import { VISIBILITY_LINES } from '../reactions';
 import type { Visibility } from '../state';
-import { PROGRESS, type StepProps } from '../types';
+import type { StepProps } from '../types';
 
 interface Level {
   value: Visibility;
@@ -44,13 +45,13 @@ const LEVELS: Level[] = [
   },
 ];
 
-export function A6Visibility({ state, set, next }: StepProps) {
+export function VisibilityStep({ state, set, next, back }: StepProps) {
   return (
-    <Screen labelledBy="a6-title">
-      <ProgressBar percent={PROGRESS.A6 ?? 0} />
+    <Screen labelledBy="visibility-title">
+      <StepHeader step="visibility" onBack={back} />
 
       <ScreenBody>
-        <h1 className="title" id="a6-title">
+        <h1 className="title title--step" id="visibility-title">
           How visible can you be?
         </h1>
         <p className="subtitle">This decides how big the moves get.</p>
@@ -87,6 +88,7 @@ export function A6Visibility({ state, set, next }: StepProps) {
         </div>
 
         <Spacer />
+        <CoachSays>{VISIBILITY_LINES[state.visibility]}</CoachSays>
       </ScreenBody>
 
       <ScreenFooter>

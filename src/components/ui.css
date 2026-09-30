@@ -39,7 +39,12 @@
   overscroll-behavior: contain;
   /* Keep the pinned CTA from clipping the last card on short viewports. */
   margin: 0 -22px;
-  padding: 0 22px;
+  /*
+   * The 4px at the foot holds the mascot's bob: its 1° tilt pokes a corner a
+   * couple of pixels past its box, which would otherwise make a screen that
+   * fits exactly scroll by that much.
+   */
+  padding: 0 22px 4px;
 }
 
 .screen__spacer {
@@ -65,6 +70,24 @@
   line-height: 1.12;
 }
 
+.title--step {
+  margin-top: 14px;
+}
+
+.title--flush {
+  margin-top: 0;
+}
+
+.title--center {
+  text-align: center;
+}
+
+/* Headlines break into even lines rather than leaving one word behind. */
+.title,
+.title--center {
+  text-wrap: balance;
+}
+
 .subtitle {
   font-size: 14px;
   font-weight: 700;
@@ -76,25 +99,6 @@
   font-size: 15px;
   line-height: 1.5;
   margin-top: 10px;
-}
-
-/* ------------------------------------------------------------------ */
-/* Progress bar                                                        */
-/* ------------------------------------------------------------------ */
-
-.progress {
-  height: 5px;
-  border-radius: var(--radius-pill);
-  background: var(--line);
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.progress__fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: var(--radius-pill);
-  transition: width 240ms ease-out;
 }
 
 /* ------------------------------------------------------------------ */
@@ -152,6 +156,14 @@
   color: var(--ink);
   font-size: 16px;
   padding: 17px;
+}
+
+/* A button label led by an icon, e.g. the lock on "Unlock my plan". */
+.btn__with-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .btn--text {
@@ -404,6 +416,11 @@
   background: var(--mint);
   color: var(--ink);
   cursor: default;
+}
+
+.chip--lime {
+  background: var(--lime);
+  color: var(--lime-ink);
 }
 
 /* ------------------------------------------------------------------ */
