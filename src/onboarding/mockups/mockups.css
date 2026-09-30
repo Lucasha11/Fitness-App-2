@@ -1,0 +1,1085 @@
+/* The onboarding redesign board. Every value comes from tokens.css. */
+
+/* ---- Board ---------------------------------------------------------- */
+
+.mk-board {
+  min-height: 100%;
+  background: var(--fill);
+  padding: 56px 56px 96px;
+}
+
+.mk-board__header {
+  max-width: 1100px;
+}
+
+.mk-board__title {
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1.08;
+  margin: 8px 0 0;
+}
+
+.mk-board__lede {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.55;
+  color: var(--ink-muted);
+  max-width: 62ch;
+  margin: 14px 0 0;
+}
+
+.mk-board__flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 28px 0 0;
+}
+
+.mk-board__flow li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px 8px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
+}
+
+.mk-board__flow-n {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--ink-on-accent);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.mk-board__flow-name {
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.mk-board__flow-count {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink-muted);
+}
+
+.mk-mechanics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.mk-mechanic {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
+}
+
+.mk-mechanic__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-inner);
+  background: var(--mint);
+  display: grid;
+  place-items: center;
+  margin-bottom: 4px;
+}
+
+.mk-mechanic__title {
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.mk-mechanic__body {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--ink-muted);
+}
+
+.mk-chapter {
+  margin-top: 72px;
+}
+
+.mk-chapter__head {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  max-width: 900px;
+}
+
+.mk-chapter__n {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--radius-control);
+  background: var(--warm-gradient);
+  color: var(--ink-on-accent);
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  font-weight: 900;
+  box-shadow: var(--shadow-accent);
+}
+
+.mk-chapter__title {
+  font-size: 28px;
+  font-weight: 900;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.mk-chapter__purpose {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  margin: 4px 0 0;
+}
+
+.mk-chapter__keeps {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.45;
+  margin: 10px 0 0;
+  padding: 8px 12px;
+  border-radius: var(--radius-inner);
+  background: var(--warning-wash);
+}
+
+.mk-frames {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-top: 28px;
+}
+
+.mk-frame {
+  margin: 0;
+  width: var(--device-width);
+}
+
+.mk-device {
+  position: relative;
+  width: var(--device-width);
+  height: var(--device-height);
+  border-radius: var(--radius-device);
+  background: var(--bg);
+  box-shadow: var(--shadow-device);
+  overflow: hidden;
+}
+
+/*
+ * iOS draws no resting scrollbar, and the panda's bob can push a body a few
+ * pixels past its edge, which a desktop browser would answer with one.
+ */
+.mk-device * {
+  scrollbar-width: none;
+}
+
+.mk-frame__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  margin-top: 18px;
+}
+
+.mk-frame__code {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+.mk-frame__name {
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.mk-frame__note {
+  flex-basis: 100%;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--ink-muted);
+}
+
+@media (max-width: 520px) {
+  .mk-board {
+    padding: 32px 16px 64px;
+  }
+
+  .mk-board__title {
+    font-size: 32px;
+  }
+
+  .mk-frames {
+    justify-content: center;
+  }
+}
+
+/* ---- Shared helpers --------------------------------------------------- */
+
+/* Headlines break into even lines rather than leaving one word behind. */
+.mk-device .title,
+.mk-device .a1__title,
+.mk-device .a2__title {
+  text-wrap: balance;
+}
+
+.mk-center {
+  text-align: center;
+  text-wrap: balance;
+}
+
+.mk-eyebrow-gap {
+  margin-top: 22px;
+}
+
+.mk-title-tight {
+  margin-top: 14px;
+}
+
+.mk-title-flush {
+  margin-top: 0;
+}
+
+.mk-chip-flush {
+  margin-top: 0;
+  gap: 7px;
+}
+
+.mk-chip-lime {
+  background: var(--lime);
+  color: var(--lime-ink);
+}
+
+.mk-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ---- Trail ------------------------------------------------------------ */
+
+.mk-trail-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  min-height: 32px;
+}
+
+.mk-back {
+  width: 32px;
+  height: 32px;
+  margin-left: -6px;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+.mk-trail {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Each stop owns the path leading into it, so the path fills as stops do. */
+.mk-trail__stop {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.mk-trail__stop:first-child {
+  flex: 0 0 auto;
+}
+
+.mk-trail__stop:not(:first-child)::before {
+  content: '';
+  flex: 1;
+  height: 4px;
+  margin: 0 3px;
+  border-radius: var(--radius-pill);
+  background: var(--line);
+}
+
+.mk-trail__stop[data-state='done']::before,
+.mk-trail__stop[data-state='current']::before {
+  background: var(--accent);
+}
+
+.mk-trail__node {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--line);
+  display: grid;
+  place-items: center;
+  color: var(--ink-on-accent);
+}
+
+.mk-trail__stop[data-state='done'] .mk-trail__node {
+  background: var(--accent);
+}
+
+.mk-trail__stop[data-state='current'] .mk-trail__node {
+  background: var(--surface);
+  box-shadow:
+    inset 0 0 0 5px var(--accent),
+    0 0 0 5px oklch(0.62 0.18 34 / 18%);
+}
+
+.mk-trail__label {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--accent);
+  white-space: nowrap;
+  min-width: 62px;
+  text-align: right;
+}
+
+.mk-qcount {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--ink-muted);
+  flex-shrink: 0;
+}
+
+.mk-qcount__pips {
+  display: flex;
+  gap: 4px;
+}
+
+.mk-qcount__pips span {
+  width: 14px;
+  height: 5px;
+  border-radius: var(--radius-pill);
+  background: var(--line);
+}
+
+.mk-qcount__pips span[data-done='true'] {
+  background: var(--mint-deep);
+}
+
+/* ---- Score pill -------------------------------------------------------- */
+
+.mk-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.mk-score__side {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: var(--radius-pill);
+}
+
+.mk-score__side b {
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.mk-score__side[data-leading='true'] {
+  background: var(--lime);
+  color: var(--lime-ink);
+}
+
+.mk-score__side[data-leading='true'] b {
+  color: inherit;
+}
+
+.mk-score__vs {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.mk-score--warm {
+  background: var(--scene-frost);
+  box-shadow: var(--shadow-bubble);
+  margin-top: 22px;
+}
+
+/* ---- Coach reaction ---------------------------------------------------- */
+
+.mk-says {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.mk-says__face {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--mint);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Cropped to head and shoulders, the way a chat avatar reads. */
+.mk-says__face > span {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* The global img rule would shrink the crop back to the circle's width. */
+.mk-says__face img {
+  max-width: none;
+}
+
+.mk-says__bubble {
+  position: relative;
+  margin: 0 0 8px;
+  padding: 11px 14px;
+  border-radius: 16px 16px 16px 6px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+  text-wrap: pretty;
+}
+
+/* ---- 1.1 Hook ---------------------------------------------------------- */
+
+.mk-hook__art {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+}
+
+/* The chips carry the space A1 leaves under its copy, so the gap is shorter. */
+.mk-hook .a1__gap {
+  flex: 0.35;
+}
+
+.mk-aches {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 22px;
+}
+
+.mk-ache {
+  padding: 7px 12px;
+  border-radius: var(--radius-pill);
+  background: oklch(0.99 0.005 100 / 16%);
+  box-shadow: inset 0 0 0 1px oklch(0.99 0.005 100 / 22%);
+  font-size: 12.5px;
+  font-weight: 900;
+  color: var(--ink-on-accent);
+}
+
+.mk-ache:nth-child(odd) {
+  transform: rotate(-2deg);
+}
+
+.mk-ache:nth-child(even) {
+  transform: rotate(2deg);
+}
+
+/* ---- 1.2 Hours --------------------------------------------------------- */
+
+.mk-hours {
+  padding-bottom: 16px;
+}
+
+.mk-hours__value {
+  display: block;
+  margin-top: 16px;
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.mk-hours__value small {
+  font-size: 15px;
+}
+
+.mk-hours__tag {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink-muted);
+}
+
+.mk-hours[aria-pressed='true'] .mk-hours__tag {
+  color: inherit;
+  opacity: 0.85;
+}
+
+/* ---- 1.3 Versus -------------------------------------------------------- */
+
+.mk-versus {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  margin-top: 30px;
+  padding: 22px 12px 18px;
+}
+
+.mk-versus__side {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.mk-versus__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-control);
+  display: grid;
+  place-items: center;
+  margin-bottom: 6px;
+}
+
+.mk-versus__icon--you {
+  background: var(--mint);
+}
+
+.mk-versus__icon--chair {
+  background: var(--warning-wash);
+  color: var(--accent-deep);
+}
+
+.mk-versus__name {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--ink-muted);
+}
+
+.mk-versus__value {
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.mk-versus__unit {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--ink-muted);
+}
+
+.mk-versus__vs {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--ink-on-accent);
+  background: var(--ink);
+  border-radius: var(--radius-pill);
+  padding: 7px 9px;
+}
+
+.mk-versus__crown {
+  position: absolute;
+  top: -34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--warning);
+  color: var(--ink);
+  font-size: 10.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ---- 2.1 Before and after --------------------------------------------- */
+
+.mk-day {
+  margin-top: 16px;
+  padding: 16px 16px 14px;
+}
+
+.mk-day + .mk-day {
+  margin-top: 12px;
+}
+
+.mk-day--before {
+  box-shadow: var(--shadow-card-soft);
+}
+
+.mk-day__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mk-day__verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--warning-wash);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.mk-day__verdict--you {
+  background: var(--lime);
+  color: var(--lime-ink);
+}
+
+.mk-day__rail {
+  position: relative;
+  height: 16px;
+  margin-top: 14px;
+}
+
+.mk-day__block {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--goal-track);
+}
+
+.mk-day--before .mk-day__block {
+  background: var(--warning);
+}
+
+.mk-day__break {
+  position: absolute;
+  top: 0;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--surface);
+}
+
+.mk-day__scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--ink-muted);
+}
+
+.mk-day__stats {
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 14px;
+}
+
+/* The panda introduces itself here, now that no screen is spent on it alone. */
+.mk-intro {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.mk-intro__art {
+  flex-shrink: 0;
+  margin-left: -14px;
+}
+
+.mk-intro__bubble {
+  position: relative;
+  flex: 1;
+  margin: 0 0 76px;
+  padding: 12px 15px;
+  border-radius: 18px 18px 18px 6px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+/* The tail points back at the panda, so the line reads as its speech. */
+.mk-intro__bubble::after {
+  content: '';
+  position: absolute;
+  left: -6px;
+  bottom: 10px;
+  width: 12px;
+  height: 12px;
+  background: var(--surface);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+/* ---- 4.2 Welcome ------------------------------------------------------ */
+
+.mk-earned {
+  justify-content: flex-end;
+}
+
+.mk-earned__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.mk-earned__eyebrow {
+  margin-top: 26px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--lime);
+  color: var(--lime-ink);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.mk-earned__title {
+  margin-top: 14px;
+  font-size: 36px;
+}
+
+.mk-earned__note {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  color: oklch(0.99 0.005 100 / 78%);
+}
+
+.mk-confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.mk-confetti__bit {
+  position: absolute;
+  width: 8px;
+  height: 14px;
+  border-radius: 3px;
+  animation: mk-drift 3.6s ease-in-out infinite alternate;
+}
+
+.mk-confetti__bit--lime {
+  background: var(--lime);
+}
+
+.mk-confetti__bit--mint {
+  background: var(--mint);
+}
+
+.mk-confetti__bit--violet {
+  background: var(--violet);
+}
+
+.mk-confetti__bit--surface {
+  background: var(--surface);
+  opacity: 0.7;
+}
+
+/* `translate` rather than `transform`, so each fleck keeps its own tilt. */
+@keyframes mk-drift {
+  from {
+    translate: 0 -4px;
+  }
+  to {
+    translate: 0 6px;
+  }
+}
+
+/* ---- 3.x Setup --------------------------------------------------------- */
+
+.mk-tier {
+  padding: 16px 14px;
+}
+
+.mk-tier__segments {
+  width: 50px;
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3px;
+}
+
+.mk-tier__segments span {
+  height: 9px;
+  border-radius: var(--radius-pill);
+  background: var(--fill);
+}
+
+.mk-tier__segments span[data-on='true'] {
+  background: var(--accent);
+}
+
+.mk-tier[aria-pressed='true'] .mk-tier__segments span {
+  background: oklch(0.99 0.005 100 / 30%);
+}
+
+.mk-tier[aria-pressed='true'] .mk-tier__segments span[data-on='true'] {
+  background: var(--ink-on-accent);
+}
+
+.mk-tier__note {
+  max-width: 76px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.3;
+  text-align: right;
+  color: var(--ink-muted);
+}
+
+.mk-tier__tag {
+  max-width: 84px;
+  padding: 5px 9px;
+  border-radius: 10px;
+  background: var(--lime);
+  color: var(--lime-ink);
+  font-size: 10.5px;
+  font-weight: 900;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.mk-plan-title {
+  margin-top: 20px;
+}
+
+.mk-plan-card {
+  margin-top: 16px;
+}
+
+.mk-plan-more {
+  box-shadow: none;
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--line);
+}
+
+.mk-plan-more .plan__name {
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+/* ---- 4.1 Plans --------------------------------------------------------- */
+
+.mk-saved {
+  margin-top: 18px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.mk-saved__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-inner);
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+}
+
+.mk-paywall {
+  padding-top: 50px;
+}
+
+.mk-paywall__top {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mk-paywall__restore {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--ink-muted);
+}
+
+.mk-paywall__hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.mk-paywall__halo {
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--mint);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.mk-perks {
+  list-style: none;
+  padding: 0;
+  margin: 18px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.mk-perks li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.mk-perks__tick {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--lime);
+  color: var(--lime-ink);
+  display: grid;
+  place-items: center;
+}
+
+.mk-plans {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 22px;
+}
+
+.mk-plan {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 15px 16px;
+  border: none;
+  border-radius: var(--radius-card-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow-card-soft);
+  font-family: inherit;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mk-plan[aria-checked='true'] {
+  padding-top: 22px;
+  box-shadow:
+    inset 0 0 0 2.5px var(--accent),
+    var(--shadow-card-strong);
+}
+
+.mk-plan__ribbon {
+  position: absolute;
+  top: -10px;
+  left: 16px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--ink-on-accent);
+  font-size: 10.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: var(--shadow-accent);
+}
+
+.mk-plan__radio {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  box-shadow: inset 0 0 0 2px var(--line);
+}
+
+.mk-plan[aria-checked='true'] .mk-plan__radio {
+  box-shadow: inset 0 0 0 7px var(--accent);
+}
+
+.mk-plan__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.mk-plan__name {
+  display: block;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.mk-plan__sub {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-muted);
+}
+
+.mk-plan__price {
+  font-size: 17px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.mk-plan__price small {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink-muted);
+}
+
+.mk-fine {
+  margin: 12px 0 0;
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.mk-fine span {
+  text-decoration: underline;
+}
