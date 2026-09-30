@@ -1,0 +1,33 @@
+# Runs the same three checks CLAUDE.md asks for before calling a change done,
+# so a pull request cannot be merged on a red suite even when nobody remembers
+# to run them locally.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # `ci` rather than `install`: it installs exactly the lockfile, so a run
+      # here matches what everyone has locally.
+      - run: npm ci
+
+      - run: npm run test:run
+
+      # Type-checks as well as bundling — an unused import fails here, not just
+      # in the linter.
+      - run: npm run build
+
+      - run: npm run lint
