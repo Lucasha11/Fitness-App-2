@@ -33,13 +33,13 @@ const SETTLE_MS = 120;
 const SCROLL_MS = 420;
 
 /**
- * A1b · picking the coach.
+ * Picking the coach.
  *
  * A swipeable carousel rather than a grid, because the roster is meant to
  * grow: one card is the unit, and everything around it (pager, rail, copy)
  * derives from COACH_PROFILES.length.
  */
-export function A1bCoach({ state, set, next }: StepProps) {
+export function CoachPicker({ state, set, next }: StepProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const settleTimer = useRef<number | undefined>(undefined);
   const index = Math.max(

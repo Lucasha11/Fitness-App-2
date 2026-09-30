@@ -38,7 +38,7 @@ export const COACH_LABEL: Record<Coach, string> = {
 
 /**
  * What the picker shows for each coach. Adding an animal here (with its art
- * in `Mascot`) and to COACHES is the whole job — A1b's carousel, its pager
+ * in `Mascot`) and to COACHES is the whole job — the coach picker's carousel, its pager
  * and its jump rail all size themselves off COACH_PROFILES.
  */
 export interface CoachProfile {

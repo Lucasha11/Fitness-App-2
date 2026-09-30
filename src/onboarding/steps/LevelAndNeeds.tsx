@@ -1,6 +1,5 @@
 import {
   Button,
-  ProgressBar,
   Screen,
   ScreenBody,
   ScreenFooter,
@@ -13,7 +12,9 @@ import {
   ADAPTATION_ORDER,
   type Intensity,
 } from '../state';
-import { PROGRESS, type StepProps } from '../types';
+import { CoachSays, StepHeader } from '../chrome';
+import { INTENSITY_LINES } from '../reactions';
+import type { StepProps } from '../types';
 
 const INTENSITIES: { value: Intensity; label: string }[] = [
   { value: 'gentle', label: 'Gentle' },
@@ -21,13 +22,13 @@ const INTENSITIES: { value: Intensity; label: string }[] = [
   { value: 'energetic', label: 'Energetic' },
 ];
 
-export function A7LevelAndNeeds({ state, set, next }: StepProps) {
+export function LevelAndNeeds({ state, set, next, back }: StepProps) {
   return (
-    <Screen labelledBy="a7-title">
-      <ProgressBar percent={PROGRESS.A7 ?? 0} />
+    <Screen labelledBy="level-title">
+      <StepHeader step="level" onBack={back} />
 
       <ScreenBody>
-        <h1 className="title" id="a7-title">
+        <h1 className="title title--step" id="level-title">
           How hard should we push?
         </h1>
 
@@ -64,6 +65,7 @@ export function A7LevelAndNeeds({ state, set, next }: StepProps) {
         </div>
 
         <Spacer />
+        <CoachSays pose="wave">{INTENSITY_LINES[state.intensity]}</CoachSays>
       </ScreenBody>
 
       <ScreenFooter>

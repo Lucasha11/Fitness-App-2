@@ -364,21 +364,10 @@
   flex-wrap: wrap;
 }
 
-.ds__bar-block {
-  flex: 1;
-  min-width: 240px;
-}
-
-.ds__bar-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  font-weight: 800;
-  margin-bottom: 8px;
-}
-
-.ds__bar-left {
-  color: var(--accent);
+/* The trail and the coach's line are drawn for a phone's width. */
+.ds__trail {
+  width: 346px;
+  max-width: 100%;
 }
 
 /* The app's rings live on dark or gradient grounds; the page gives them one. */

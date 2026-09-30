@@ -58,6 +58,12 @@ date-keyed records, not counters, so there is nothing to keep in sync.
 A day off in `activeDays` never breaks a streak; Today, the break player and
 Insights all read the same `currentStreak`.
 
+**Onboarding's path is data.** `FLOW` in `onboarding/types.ts` lists the
+steps in order, each tagged with its chapter (the trail's stop) and whether it
+is a numbered question. Add, drop or reorder a screen there; the trail, the
+question counter and Next all follow. The paywall sits between the finished
+plan and the welcome, and `flow.test.ts` holds it there.
+
 **`schedule.ts` is the single source of the day's plan.** Onboarding's preview
 and Today's timeline call the same functions. Change scheduling here, not in a
 screen.
@@ -73,7 +79,7 @@ Sets repeat a body area on purpose — "Neck relief" is four neck exercises. The
 *(The README still states that rule unconditionally; it predates sets.)*
 
 **The coach is context, never a prop.** A screen never mixes panda and
-squirrel. `Mascot`'s `coach` override exists only for the A1b picker.
+squirrel. `Mascot`'s `coach` override exists only for the coach picker.
 
 **HealthKit:** the `METRICS` names in `health/plugin.ts` are the contract with
 the Swift plugin. `null` is never `0` — a denied read and an empty day both
@@ -128,7 +134,12 @@ contributor accept a diff they did not read line by line.
   "if you've already moved, we shut up" only applies once the app is opened:
   a reminder already pending still fires.
 - **Support links are placeholders.** `src/settings/links.ts` points at
-  example.com until the real inbox, help site and privacy policy exist.
+  example.com until the real inbox, help site, privacy policy and terms exist.
+- **The paywall charges nothing.** There are no App Store products yet:
+  `purchases/store.ts` is the seam StoreKit will fill, and today `purchase`
+  always succeeds and `restorePurchases` never finds anything. The prices in
+  `purchases/plans.ts` are placeholders too. Only new users see the paywall;
+  a sheet finished before it existed goes straight to Today.
 - **Insights measures against today's goal.** History doesn't record the
   daily goal a past day was planned against, so `insights/progress.ts` reads
   every day by the current `dailyGoal`. Raising it re-shades old days.

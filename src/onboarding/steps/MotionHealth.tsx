@@ -2,20 +2,20 @@ import { FootprintsIcon, HeartIcon } from '../../components/icons';
 import { Mascot } from '../../components/Mascot';
 import {
   Button,
-  ProgressBar,
   Screen,
   ScreenFooter,
   TextButton,
   ToggleRow,
 } from '../../components/ui';
-import { PROGRESS, type StepProps } from '../types';
+import { StepHeader } from '../chrome';
+import type { StepProps } from '../types';
 
-export function A13MotionHealth({ state, set, next }: StepProps) {
+export function MotionHealth({ state, set, next, back }: StepProps) {
   return (
-    <Screen labelledBy="a13-title">
-      <ProgressBar percent={PROGRESS.A13 ?? 0} />
+    <Screen labelledBy="motion-title">
+      <StepHeader step="motion" onBack={back} />
 
-      <h1 className="title" id="a13-title">
+      <h1 className="title title--step" id="motion-title">
         If you’ve already moved, we shut up
       </h1>
       <p className="subtitle subtitle--lg">

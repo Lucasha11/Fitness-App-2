@@ -1,16 +1,17 @@
 import { useMemo } from 'react';
+import { LockIcon } from '../../components/icons';
 import { Mascot } from '../../components/Mascot';
-import {
-  Button,
-  Screen,
-  ScreenBody,
-  ScreenFooter,
-  TextButton,
-} from '../../components/ui';
+import { Button, Screen, ScreenBody, ScreenFooter } from '../../components/ui';
 import { BREAK_DURATION_SECONDS, formatDurationShort } from '../../exercises';
 import { previewNextBreaks } from '../../schedule';
 import { useSession } from '../../session/context';
-import { BODY_REGION_LABELS, formatTime } from '../state';
+import { StepHeader } from '../chrome';
+import {
+  DAY_TYPE_LABELS,
+  GOAL_TIERS,
+  formatTime,
+  tierForGoal,
+} from '../state';
 import type { StepProps } from '../types';
 
 /** `9:00 AM` -> `9`, `5:30 PM` -> `5:30`, so the stat reads `9–5:30`. */
@@ -25,27 +26,36 @@ function railTime(minutes: number): string {
   return formatTime(minutes).replace(/\s(AM|PM)$/, '');
 }
 
-export function A15PlanReady({ state, finish }: StepProps) {
+/**
+ * The finished plan, previewed with the same function Today uses, so what is
+ * shown here is what the first day brings. It ends on the unlock rather than
+ * in the app: the paywall sits between a built plan and its first break.
+ */
+export function PlanReady({ state, next, back }: StepProps) {
   const { session } = useSession();
   const plan = useMemo(
     () => previewNextBreaks(state, session),
     [state, session],
   );
+  const tier = GOAL_TIERS.find((item) => item.id === tierForGoal(state.dailyGoal));
 
   return (
-    <Screen labelledBy="a15-title">
+    <Screen labelledBy="ready-title">
+      <StepHeader step="planReady" onBack={back} />
+
       <ScreenBody>
-        <h1 className="title title--lg" id="a15-title" style={{ marginTop: 0 }}>
+        <h1 className="title title--lg" id="ready-title">
           Your plan is ready
         </h1>
 
-        <div className="card card--strong" style={{ marginTop: 18 }}>
-          <div className="chip-wrap" style={{ marginTop: 0, gap: 7 }}>
-            {state.bothers.map((region) => (
-              <span key={region} className="chip chip--static">
-                {BODY_REGION_LABELS[region]}
-              </span>
-            ))}
+        <div className="card card--strong ready-card">
+          <div className="chip-wrap ready-card__chips">
+            {state.dayType ? (
+              <span className="chip chip--static">{DAY_TYPE_LABELS[state.dayType]}</span>
+            ) : null}
+            {tier ? (
+              <span className="chip chip--static chip--lime">{tier.name}</span>
+            ) : null}
           </div>
 
           <div className="summary__stats">
@@ -77,17 +87,16 @@ export function A15PlanReady({ state, finish }: StepProps) {
         </ul>
 
         <div className="art-fill bob">
-          <Mascot name="wave" size={160} />
+          <Mascot name="stride" size={150} />
         </div>
       </ScreenBody>
 
       <ScreenFooter>
-        <Button onClick={() => finish({ startBreak: true })}>
-          Start my first break
+        <Button onClick={next}>
+          <span className="btn__with-icon">
+            <LockIcon size={18} /> Unlock my plan
+          </span>
         </Button>
-        <TextButton onClick={() => finish({ startBreak: false })}>
-          Take me to the app
-        </TextButton>
       </ScreenFooter>
     </Screen>
   );

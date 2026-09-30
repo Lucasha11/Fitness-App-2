@@ -66,12 +66,23 @@ from the tokens in [`src/theme/tokens.css`](src/theme/tokens.css).
 
 ### Onboarding
 
-The fifteen screens the canvas draws, in
-[`src/onboarding/steps/`](src/onboarding/steps): welcome, a value carousel, what
-your day looks like, what bothers you (a tappable body diagram), how visible you
-can be, movement level and adaptations, your sitting hours, how often to nudge,
-your daily goal, notification and motion priming, a plan-building loading
-state, your finished plan, and an optional sign-in.
+Four chapters, in [`src/onboarding/steps/`](src/onboarding/steps), walked on
+a trail across the top of the screen:
+
+1. **The ache.** A hook that names the aches of a day spent sitting, one
+   question (how long did you sit yesterday?), and round one of *You vs. The
+   Chair*: the answer scaled to a working year of hours.
+2. **The fix.** The same day before and after, with the panda introducing
+   itself.
+3. **Your plan.** Six numbered questions (your day, how visible you can be,
+   level and adaptations, when you sit, how often to nudge, and the daily goal
+   as a difficulty tier), each answered by a line from the coach; then
+   notification and motion priming, a plan-building state, and the finished
+   plan.
+4. **Unlock.** A paywall (yearly with a free week, monthly, lifetime) between
+   the finished plan and its first break, then a welcome that levels the score.
+
+An optional sign-in hangs off the hook.
 
 ### Today
 
@@ -130,6 +141,7 @@ changes. Each section also states its own coverage, so the gaps stay visible.
 ```
 src/
   onboarding/     the setup flow, its answer sheet and persistence
+  purchases/      what the paywall sells, and the seam StoreKit will fill
   today/          the home screen
   player/         the break, stage by stage
   insights/       the chair score, streaks, calendar and milestones
@@ -147,9 +159,10 @@ Nothing on screen is a mock. The onboarding answers drive everything downstream:
 
 - The plan previewed at the end of setup is the plan Today shows — same
   function, same catalogue.
-- Exercise choice honours your focus areas, your privacy level, the "seated
+- Exercise choice honours your privacy level, the "seated
   only" adaptation and any active exclusions, and never repeats a body area back
-  to back.
+  to back. Setup no longer asks which areas bother you; a sheet saved before
+  the redesign keeps its focus areas and the picker still favours them.
 - Finishing a break advances the goal ring, marks its timeline row done, resets
   the sitting clock, and feeds the streak chip, weekly coverage and Insights.
 - **The sitting clock also resets from Core Motion.** On iOS the app asks the

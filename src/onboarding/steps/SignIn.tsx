@@ -4,17 +4,17 @@ import { Button, Screen, TextButton } from '../../components/ui';
 import type { StepProps } from '../types';
 
 /**
- * Optional account screen, reachable from A1. Signing in only changes where
- * the data lives, so every route out of here returns to the flow.
+ * Optional account screen, reachable from the hook. Signing in only changes
+ * where the data lives, so every route out of here returns to the flow.
  */
-export function A17SignIn({ set, back }: StepProps) {
+export function SignIn({ set, back }: StepProps) {
   const choose = (account: 'apple' | 'email' | 'local') => {
     set({ account });
     back();
   };
 
   return (
-    <Screen labelledBy="a17-title">
+    <Screen labelledBy="signin-title">
       <button
         type="button"
         className="icon-btn"
@@ -24,7 +24,7 @@ export function A17SignIn({ set, back }: StepProps) {
         <ChevronLeftIcon size={24} />
       </button>
 
-      <h1 className="title title--lg" style={{ marginTop: 24 }} id="a17-title">
+      <h1 className="title title--lg" style={{ marginTop: 24 }} id="signin-title">
         Only if you want to
       </h1>
       <p className="subtitle subtitle--lg">

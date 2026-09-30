@@ -45,29 +45,6 @@ export function ScreenFooter({ children }: { children: ReactNode }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Progress                                                            */
-/* ------------------------------------------------------------------ */
-
-/**
- * The thin rail at the top of every question screen. `percent` comes from the
- * design so the flow's rhythm matches the canvas exactly.
- */
-export function ProgressBar({ percent }: { percent: number }) {
-  return (
-    <div
-      className="progress"
-      role="progressbar"
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={Math.round(percent)}
-      aria-label="Setup progress"
-    >
-      <div className="progress__fill" style={{ width: `${percent}%` }} />
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
 /* Buttons                                                             */
 /* ------------------------------------------------------------------ */
 

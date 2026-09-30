@@ -1,17 +1,16 @@
 import { useRef, useState } from 'react';
 import { ChevronDownIcon } from '../../components/icons';
-import { Mascot } from '../../components/Mascot';
 import { TimeWheelSheet } from '../../components/TimeWheelSheet';
 import {
   Button,
-  ProgressBar,
   Screen,
   ScreenBody,
   ScreenFooter,
   Spacer,
 } from '../../components/ui';
+import { CoachSays, StepHeader } from '../chrome';
 import { DAY_INITIALS, scheduleSentence, splitTime } from '../state';
-import { PROGRESS, type StepProps } from '../types';
+import type { StepProps } from '../types';
 
 const DAY_NAMES = [
   'Monday',
@@ -29,7 +28,7 @@ const LAST_MINUTE = 1439;
 
 type Edited = 'start' | 'end';
 
-export function A8Schedule({ state, set, next }: StepProps) {
+export function Schedule({ state, set, next, back }: StepProps) {
   const [editing, setEditing] = useState<Edited | null>(null);
   const startCard = useRef<HTMLButtonElement>(null);
   const endCard = useRef<HTMLButtonElement>(null);
@@ -71,11 +70,11 @@ export function A8Schedule({ state, set, next }: StepProps) {
   };
 
   return (
-    <Screen labelledBy="a8-title">
-      <ProgressBar percent={PROGRESS.A8 ?? 0} />
+    <Screen labelledBy="schedule-title">
+      <StepHeader step="schedule" onBack={back} />
 
       <ScreenBody>
-        <h1 className="title" id="a8-title">
+        <h1 className="title title--step" id="schedule-title">
           When are you sitting?
         </h1>
 
@@ -132,12 +131,9 @@ export function A8Schedule({ state, set, next }: StepProps) {
           </button>
         </div>
 
-        <p className="note a8__note" aria-live="polite">
-          <Mascot name="sit" size={44} />
-          <span>{scheduleSentence(state)}</span>
-        </p>
-
         <Spacer />
+        {/* The coach reads the schedule back, so a wrong day is caught here. */}
+        <CoachSays pose="sit">{scheduleSentence(state)}</CoachSays>
       </ScreenBody>
 
       <ScreenFooter>
