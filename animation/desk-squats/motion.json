@@ -1,0 +1,38 @@
+{
+  "exercise": "desk-squats",
+  "description": "Sit the hips back and down towards a chair until the thighs are nearly level, chest tall with a natural forward lean, knees tracking out over the toes, heels down; pause, then stand by driving through the feet. Lowering takes longer than rising, as in a controlled squat.",
+  "planted": true,
+  "repeats": 1,
+  "keyframes": [
+    { "t": 0.0, "pose": { "both": { "hip": { "abd": 6 } } } },
+    { "t": 0.4, "pose": { "both": { "hip": { "abd": 6 } } } },
+    {
+      "t": 2.4,
+      "pose": {
+        "trunk": { "flex": 38 },
+        "neck": { "flex": -28 },
+        "both": {
+          "hip": { "flex": 92, "abd": 16 },
+          "knee": 118,
+          "shoulder": { "flex": 55, "abd": 12 },
+          "elbow": 105
+        }
+      }
+    },
+    {
+      "t": 2.8,
+      "pose": {
+        "trunk": { "flex": 38 },
+        "neck": { "flex": -28 },
+        "both": {
+          "hip": { "flex": 92, "abd": 16 },
+          "knee": 118,
+          "shoulder": { "flex": 55, "abd": 12 },
+          "elbow": 105
+        }
+      }
+    },
+    { "t": 4.4, "pose": { "both": { "hip": { "abd": 6 } } } },
+    { "t": 4.8, "pose": { "both": { "hip": { "abd": 6 } } } }
+  ]
+}

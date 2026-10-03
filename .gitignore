@@ -36,3 +36,7 @@ pnpm-debug.log*
 # iOS / Swift Package Manager build state
 ios/App/CapApp-SPM/.build/
 ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+
+# Exercise animation working files: the spec and approved keyframes are
+# committed, the raw generated takes are not (docs/exercise-animations.md).
+animation/*/takes/
